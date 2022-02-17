@@ -1,0 +1,13 @@
+You can request an data clear of your account/guild by dm my discord
+
+<Updated?> Terms of Service
+Support/Main Server: https://discord.gg/VDuRyuZ
+
+1. When you sending an command to the bot will automatic collect your account information (e.g. UserId, UserName) as make an limite for adding games to monitor.
+2. Ones you invite the bot to your guild will automatic logged guild info to database for saving datas (e.g. GuildId, GuildName, NotificatinoChannelId, RolesId)
+
+<RoSniper> Terms of Service
+Support/Main Server: https://discord.gg/Da9QbeMHHg
+
+1. When you sending an command to the bot will automatic collect your account information (e.g. UserId, UserName) as make an limite for adding games to snipe.
+2. Ones you invite the bot to your guild will automatic logged guild info to database for saving datas (e.g. GuildId, GuildName, NotificatinoChannelId, RolesId)
