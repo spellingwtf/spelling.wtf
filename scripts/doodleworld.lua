@@ -1,18 +1,3 @@
-getgenv().autofarm_settings = {
-    catch_when_shiny = true,
-    catch_when_skin = true,
-    catch_when_havent_caught_before = false,
-    catch_when_specific_doodle = true,
-    specific_doodles = { --add a comma after each doodle except for the last one
-        "Glubbie",
-        "Wisp",
-        "Moss",
-        "Mold",
-        "Yagoat",
-        "Leapo",
-        "Glimmew"
-    }
-}
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Client = require(LocalPlayer.Packer.Client)
