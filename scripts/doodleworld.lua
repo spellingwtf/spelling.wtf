@@ -15,7 +15,7 @@ local function run()
         task.wait(1.5)
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
-while true do task.wait()
+while getgenv().autofarm_settings.enabled == true do task.wait()
     print("starting battle")
     if CurrentRoute.Name == "007_Lakewood" then
         Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
