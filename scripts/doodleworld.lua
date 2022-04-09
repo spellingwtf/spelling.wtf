@@ -10,7 +10,10 @@ for i,v in pairs(workspace:GetChildren()) do
 end
 local function run()
     repeat
-        repeat task.wait() until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Run.MouseButton1Click)[1] ~= nil
+        repeat
+            task.wait()
+            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r") then return end
+        until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Run.MouseButton1Click)[1] ~= nil
         getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Run.MouseButton1Click)[1]:Fire()
         print("ran")
         task.wait(2)
@@ -23,7 +26,7 @@ local function catch()
     VirtualInputManager:SendMouseButtonEvent(bagbutton.AbsolutePosition.X + bagbutton.AbsoluteSize.X / 2, bagbutton.AbsolutePosition.Y + bagbutton.AbsoluteSize.Y / 2, 1, false, bagbutton, 1)
 end
 local function kill()
-    local noteffectivemoves = {}
+    local notsupereffectivemoves = {}
     local foundeffective = false
     repeat
         repeat
@@ -61,7 +64,7 @@ local function kill()
                 if movepower == "--" or movepower == "Varies" then movepower = 0 end
                 movepower = tonumber(movepower)
                 local movename = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text
-                noteffectivemoves[movename] = movepower
+                notsupereffectivemoves[movename] = movepower
                 getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Close.MouseButton1Click)[1]:Fire()
                 getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.CloseBar.Cancel.MouseButton1Click)[1]:Fire()
             end
@@ -69,7 +72,7 @@ local function kill()
         if foundeffective == false then
             local strongestmove 
             local num = 0
-            for i,v in pairs(noteffectivemoves) do
+            for i,v in pairs(notsupereffectivemoves) do
                 if v > num then
                     num = v
                     strongestmove = i
