@@ -16,6 +16,12 @@ local function run()
         task.wait(2)
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
+local function catch()
+    repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
+    local bagbutton = game.Players.LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Items
+    VirtualInputManager:SendMouseMoveEvent(bagbutton.AbsolutePosition.X + bagbutton.AbsoluteSize.X / 2, bagbutton.AbsolutePosition.Y + bagbutton.AbsoluteSize.Y / 2, bagbutton)
+    VirtualInputManager:SendMouseButtonEvent(bagbutton.AbsolutePosition.X + bagbutton.AbsoluteSize.X / 2, bagbutton.AbsolutePosition.Y + bagbutton.AbsoluteSize.Y / 2, 1, false, bagbutton, 1)
+end
 local function kill()
     local noteffectivemoves = {}
     local foundeffective = false
@@ -47,8 +53,10 @@ local function kill()
                         break
                     end
                 end
-                VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
-                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
+                repeat
+                    task.wait()
+                    VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
+                until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
                 local movepower = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.StatHolder.Power.Desc.Label.Text
                 if movepower == "--" or movepower == "Varies" then movepower = 0 end
                 movepower = tonumber(movepower)
