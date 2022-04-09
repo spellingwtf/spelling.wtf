@@ -20,22 +20,26 @@ local function kill()
     local noteffectivemoves = {}
     local foundeffective = false
     repeat
-        repeat wait() until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
+        repeat
+            task.wait()
+            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") then return end
+        until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
         for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
             getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
-            if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= 4597964542 and v.Effective.Image ~= 4597964185 then
+            if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= 4597964542 and v.Effective.Image ~= 4597964185 then
                 getconnections(v.MouseButton1Click)[1]:Fire()
                 foundeffective = true
                 break
-            elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) then
+            elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) then
+                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
                 getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
-                task.wait()
+                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
                 getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.Party1.Activated)[1]:Fire()
-                task.wait()
+                repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
                 getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Stats.MouseButton1Click)[1]:Fire()
-                task.wait()
+                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.Visible == true
                 getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Tabs.Moves.MouseButton1Click)[1]:Fire()
-                task.wait()
+                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Visible == true
                 local movebutton
                 for i2,v2 in pairs(LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Holder:GetChildren()) do
                     if v2:IsA("ImageButton") and v2:FindFirstChild("MoveName") and v2.MoveName.Text == v.MoveName.Text then
@@ -43,9 +47,8 @@ local function kill()
                         break
                     end
                 end
-                task.wait(0.1)
                 VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
-                task.wait(0.4)
+                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
                 local movepower = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.StatHolder.Power.Desc.Label.Text
                 if movepower == "--" or movepower == "Varies" then movepower = 0 end
                 movepower = tonumber(movepower)
@@ -73,10 +76,11 @@ local function kill()
             end
         end
         print("attacked")
-        task.wait(2)
-    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^"..LocalPlayer.PlayerGui.MainGui.MainBattle.BackBox.NameLabel.Text.." used")
+    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted")
 end
 while getgenv().autofarm_settings.enabled == true do task.wait()
+    print("healing")
+    Client.Network:post("PlayerData", "Heal")
     print("starting battle")
     if CurrentRoute.Name == "007_Lakewood" then
         Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
@@ -117,6 +121,4 @@ while getgenv().autofarm_settings.enabled == true do task.wait()
     repeat
         task.wait()
     until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false
-    print("healing")
-    Client.Network:post("PlayerData", "Heal")
 end
