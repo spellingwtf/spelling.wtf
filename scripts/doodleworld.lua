@@ -28,7 +28,7 @@ while getgenv().autofarm_settings.enabled == true do task.wait()
     task.wait(1)
     if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.catch_when_shiny == true then
         print("found shiny doodle")
-    elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.TextColor3 ~= Color3.fromRGB(255,255,255) and getgenv().autofarm_settings.catch_when_skin == true then
+    elseif tostring(game:GetService("Players").LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.catch_when_skin == true then
         print("found skin")
     elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true then
         print("found doodle that hasnt been caught before")
