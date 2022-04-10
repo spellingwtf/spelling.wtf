@@ -39,23 +39,23 @@ local function notify(title, text)
     game:GetService("StarterGui"):SetCore("SendNotification", configTable)
 end
 local function validatesettings()
-    if getgenv().autofarm_settings.catch_when_shiny == getgenv().autofarm_settings.kill_when_shiny then
+    if getgenv().autofarm_settings.catch_when_shiny == getgenv().autofarm_settings.kill_when_shiny and getgenv().autofarm_settings.kill_when_shiny == true then
         notify("Shiny Settings Anomaly", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_skin == getgenv().autofarm_settings.kill_when_skin then
+    if getgenv().autofarm_settings.catch_when_skin == getgenv().autofarm_settings.kill_when_skin and getgenv().autofarm_settings.kill_when_skin == true then
         notify("Skin Settings Anomaly", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_tint == getgenv().autofarm_settings.kill_when_tint then
+    if getgenv().autofarm_settings.catch_when_tint == getgenv().autofarm_settings.kill_when_tint and getgenv().autofarm_settings.kill_when_tint == true then
         notify("Tint Settings Anomaly", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_havent_caught_before == getgenv().autofarm_settings.kill_when_havent_caught_before then
+    if getgenv().autofarm_settings.catch_when_havent_caught_before == getgenv().autofarm_settings.kill_when_havent_caught_before and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
         notify("Doodles Not Caught Before Settings Anomaly", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_specific_doodle == getgenv().autofarm_settings.kill_when_specific_doodle then
+    if getgenv().autofarm_settings.catch_when_specific_doodle == getgenv().autofarm_settings.kill_when_specific_doodle and getgenv().autofarm_settings.kill_when_specific_doodle == true then
         notify("Specific Doodle Settings Anomaly", "You can't have catch and kill set to true")
         return false
     end
