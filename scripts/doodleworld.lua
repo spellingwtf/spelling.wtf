@@ -92,7 +92,7 @@ local function validatesettings()
         return false
     end
     if type(getgenv().autofarm_settings.specific_doodles) ~= "table" then
-        notify("Invalid Specific Doodle Setting")
+        notify("Invalid Specific Doodle Table")
         return false
     end
     return true
