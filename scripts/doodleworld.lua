@@ -151,9 +151,11 @@ SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill"}, function(mode)
 end)
 local GUISettings = Window:NewTab("GUI Settings")
 local GUISettingsSection = GUISettings:NewSection("Settings")
+local ToggleGUIConnection 
 local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
     KeyBind = txt
-    game:GetService("UserInputService").InputBegan:Connect(function(key)
+    if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
+    ToggleGUIConnection = game:GetService("UserInputService").InputBegan:Connect(function(key)
         if (string.len(txt)) and key.KeyCode == Enum.KeyCode[txt:upper()] then
             Library:ToggleUI()
         end
