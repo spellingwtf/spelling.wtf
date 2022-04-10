@@ -156,8 +156,10 @@ local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", fu
     KeyBind = txt
     if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
     ToggleGUIConnection = game:GetService("UserInputService").InputBegan:Connect(function(key)
-        if (string.len(txt)) and key.KeyCode == Enum.KeyCode[txt:upper()] then
+        if (string.len(txt) == 1) and key.KeyCode == Enum.KeyCode[txt:upper()] then
             Library:ToggleUI()
+        elseif string.len(txt) ~= 1 then
+            notify("only 1 character for keybind")
         end
     end)
 end)
