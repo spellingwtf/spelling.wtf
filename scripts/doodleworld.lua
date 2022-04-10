@@ -190,7 +190,7 @@ SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
         getgenv().autofarm_settings.kill_when_specific_doodle = false
     end
 end)
-local AutoCatch = SettingsTab:NewSection("AutoCatch")
+local AutoCatch = SettingsTab:NewSection("AutoCatch (coming soon, doesnt work rn")
 local Capsules = {}
 for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
     table.insert(Capsules, i)
