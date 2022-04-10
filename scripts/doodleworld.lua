@@ -64,35 +64,35 @@ local function validatesettings()
         return false
     end
     if type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_shiny) ~= "boolean" then
-        notify("Invalid Shiny Settings")
+        notify("Invalid Shiny Settings", "Setting hasn't been set")
         return false
     end
     if type(getgenv().autofarm_settings.catch_when_skin) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_skin) ~= "boolean" then
-        notify("Invalid Skin Settings")
+        notify("Invalid Skin Settings", "Setting hasn't been set")
         return false
     end
     if type(getgenv().autofarm_settings.catch_when_tint) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_tint) ~= "boolean" then
-        notify("Invalid Tint Settings")
+        notify("Invalid Tint Settings", "Setting hasn't been set")
         return false
     end
     if type(getgenv().autofarm_settings.catch_when_havent_caught_before) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_havent_caught_before) ~= "boolean" then
-        notify("Invalid Doodle that hasn't been caught before Settings")
+        notify("Invalid Doodle that hasn't been caught before Settings", "Setting hasn't been set")
         return false
     end
     if type(getgenv().autofarm_settings.catch_when_specific_doodle) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_specific_doodle) ~= "boolean" then
-        notify("Invalid Specific Doodle Settings")
+        notify("Invalid Specific Doodle Settings", "Setting hasn't been set")
         return false
     end
     if type(getgenv().autofarm_settings.autocatchcapsule) ~= "string" then
-        notify("Invalid Capsule Setting")
+        notify("Invalid Capsule Setting", "Setting hasn't been set")
         return false
     end
     if type(getgenv().autofarm_settings.autoheal) ~= "boolean" then
-        notify("Invalid AutoHeal Setting")
+        notify("Invalid AutoHeal Setting", "Setting hasn't been set")
         return false
     end
     if type(getgenv().autofarm_settings.specific_doodles) ~= "table" then
-        notify("Invalid Specific Doodle Table")
+        notify("Invalid Specific Doodle Table", "Setting hasn't been set")
         return false
     end
     return true
