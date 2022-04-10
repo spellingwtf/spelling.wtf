@@ -67,7 +67,7 @@ local function validatesettings()
         notify("Invalid Shiny Settings")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_skin) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_tint) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_skin) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_skin) ~= "boolean" then
         notify("Invalid Skin Settings")
         return false
     end
@@ -85,6 +85,14 @@ local function validatesettings()
     end
     if type(getgenv().autofarm_settings.autocatchcapsule) ~= "string" then
         notify("Invalid Capsule Setting")
+        return false
+    end
+    if type(getgenv().autofarm_settings.autoheal) ~= "boolean" then
+        notify("Invalid AutoHeal Setting")
+        return false
+    end
+    if type(getgenv().autofarm_settings.specific_doodles) ~= "table" then
+        notify("Invalid Specific Doodle Setting")
         return false
     end
     return true
