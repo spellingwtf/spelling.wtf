@@ -247,6 +247,9 @@ end)
 local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function()
     Client.PC.new()
 end)
+local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
+    Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
+end)
 
 local function run()
     repeat
