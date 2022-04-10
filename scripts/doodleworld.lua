@@ -63,7 +63,7 @@ local function validatesettings()
         notify("Kill/Catch All Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_shiny) ~= "boolean" then
         notify("Invalid Shiny Settings")
         return false
     end
@@ -75,11 +75,11 @@ local function validatesettings()
         notify("Invalid Tint Settings")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_havent_caught_before) ~= "boolean" or type(getgenv().autofarm_settings.catch_when_havent_caught_before) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_havent_caught_before) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_havent_caught_before) ~= "boolean" then
         notify("Invalid Doodle that hasn't been caught before Settings")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_specific_doodle) ~= "boolean" or type(getgenv().autofarm_settings.catch_when_specific_doodle) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_specific_doodle) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_specific_doodle) ~= "boolean" then
         notify("Invalid Specific Doodle Settings")
         return false
     end
@@ -190,7 +190,7 @@ SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
         getgenv().autofarm_settings.kill_when_specific_doodle = false
     end
 end)
-local AutoCatch = SettingsTab:NewSection("AutoCatch (coming soon, doesnt work rn")
+local AutoCatch = SettingsTab:NewSection("AutoCatch")
 local Capsules = {}
 for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
     table.insert(Capsules, i)
@@ -245,7 +245,25 @@ local function run()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
 local function catch()
-    notify("AutoFarm Error", "AutoCatch Coming Soon")
+    local breakloop = false
+    while string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" do
+        if breakloop == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" then break end
+        if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
+            Client.Network:post("BattleAction", {{
+                ActionType = "Item",
+                Action = "Basic Capsule",
+                User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
+            }})
+            print("capsule thrown")
+            Client.SelectedAction:Fire(true)
+        end
+        if breakloop == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" then break end
+        wait(2)
+        if breakloop == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" then break end
+    end
+    print("broke the autocatch loop")
+    breakloop = true
+    return
 end
 local function kill()
     local notsupereffectivemoves = {}
