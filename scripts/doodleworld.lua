@@ -59,6 +59,10 @@ local function validatesettings()
         notify("Specific Doodle Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
+    if getgenv().autofarm_settings.kill_all == getgenv().autofarm_settings.catch_all and getgenv().autofarm_settings.kill_all == true then
+        notify("Kill/Catch All Settings Invalid", "You can't have catch and kill set to true")
+        return false
+    end
     if type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" then
         notify("Invalid Shiny Settings")
         return false
@@ -199,13 +203,17 @@ local GUISettings = Window:NewTab("GUI Settings")
 local GUISettingsSection = GUISettings:NewSection("Settings")
 local ToggleGUIConnection 
 local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
-    KeyBind = txt
+    if Enum.KeyCode[txt] ~= nil then
+        KeyBind = txt
+    elseif Enum.KeyCode[txt:upper()] ~= nil then
+        Keybind = txt:upper()
+    else
+        notify("Invalid KeyBind", "")
+    end
     if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
     ToggleGUIConnection = game:GetService("UserInputService").InputBegan:Connect(function(key)
-        if (string.len(txt) == 1) and key.KeyCode == Enum.KeyCode[txt:upper()] then
+        if key.KeyCode == Enum.KeyCode[txt:upper()] or key.KeyCode == Enum.KeyCode[txt] then
             Library:ToggleUI()
-        elseif string.len(txt) ~= 1 then
-            notify("only 1 character for keybind")
         end
     end)
 end)
@@ -237,27 +245,7 @@ local function run()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
 local function catch()
-    repeat
-        repeat
-            task.wait()
-            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") or LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then return end 
-        until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true and string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "What will")
-        wait(0.5)
-        Client.SelectedAction:Fire(true)
-        Client.Network:post("BattleAction", {{
-            ActionType = "Item",
-            Action = getgenv().autofarm_settings.autocatchcapsule,
-            User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
-        }})
-        --Client.SelectedAction:Fire(true)
-        local old = tick()
-        repeat
-            task.wait()
-        until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You used "..getgenv().autofarm_settings.autocatchcapsule)
-        print("used capsule")
-        wait(1.5)
-    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught")
-    print("catch fully finished")
+    notify("AutoFarm Error", "AutoCatch Coming Soon")
 end
 local function kill()
     local notsupereffectivemoves = {}
