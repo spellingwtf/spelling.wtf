@@ -86,7 +86,6 @@ local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
-local WarningLabel2 = MainSection:NewLabel("you have to start and end a battle before enabling")
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     local validsettings = validatesettings()
     if validsettings == true then
@@ -106,6 +105,13 @@ Misc:NewToggle("Kill All", "Bypasses every other kill setting", function(state)
         getgenv().autofarm_settings.kill_all = true
     else
         getgenv().autofarm_settings.kill_all = false
+    end
+end)
+Misc:NewToggle("Catch All", "Bypasses every other kill setting", function(state)
+    if state == true then
+        getgenv().autofarm_settings.catch_all = true
+    else
+        getgenv().autofarm_settings.catch_all = false
     end
 end)
 Misc:NewToggle("AutoHeal", "", function(state)
@@ -180,6 +186,15 @@ SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
         getgenv().autofarm_settings.kill_when_specific_doodle = false
     end
 end)
+local AutoCatch = SettingsTab:NewSection("AutoCatch")
+local Capsules = {}
+for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
+    table.insert(Capsules, i)
+end
+local CapsuleSelection = AutoCatch:NewDropdown("Capsule", "choose your capsule", Capsules, function(capsule)
+    getgenv().autofarm_settings.autocatchcapsule = capsule
+end)
+
 local GUISettings = Window:NewTab("GUI Settings")
 local GUISettingsSection = GUISettings:NewSection("Settings")
 local ToggleGUIConnection 
@@ -194,6 +209,21 @@ local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", fu
         end
     end)
 end)
+local MiscTab = Window:NewTab("Misc")
+local MainMiscSection = MiscTab:NewSection("Main")
+local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player list and overhead name GUI", function()
+    LocalPlayer.PlayerGui.MainGui:FindFirstChild(LocalPlayer.Name).Visible = false
+    LocalPlayer.PlayerGui.MainGui:FindFirstChild(LocalPlayer.Name):GetPropertyChangedSignal("Visible"):Connect(function(value)
+        if LocalPlayer.PlayerGui.MainGui:FindFirstChild(LocalPlayer.Name).Visible == true then
+            LocalPlayer.PlayerGui.MainGui:FindFirstChild(LocalPlayer.Name).Visible = false
+        end
+    end)
+    LocalPlayer.PlayerGui.MainGui.PlayerList.Visible = false
+    LocalPlayer.Character.Head.Nametag.Username.Visible = false
+end)
+local OpenShop = MainMiscSection:NewButton("Open Shop", "Opens the shop GUI", function()
+    Client.NormalShop.new()
+end)
 
 local function run()
     repeat
@@ -207,11 +237,27 @@ local function run()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
 local function catch()
-    repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
-    local bagbutton = LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Items
-    VirtualInputManager:SendMouseMoveEvent(bagbutton.AbsolutePosition.X + bagbutton.AbsoluteSize.X / 2, bagbutton.AbsolutePosition.Y + bagbutton.AbsoluteSize.Y / 2, bagbutton)
-    VirtualInputManager:SendMouseButtonEvent(bagbutton.AbsolutePosition.X + bagbutton.AbsoluteSize.X / 2, bagbutton.AbsolutePosition.Y + bagbutton.AbsoluteSize.Y / 2, 1, true, bagbutton, 1)
-    VirtualInputManager:SendMouseButtonEvent(bagbutton.AbsolutePosition.X + bagbutton.AbsoluteSize.X / 2, bagbutton.AbsolutePosition.Y + bagbutton.AbsoluteSize.Y / 2, 1, false, bagbutton, 1)
+    repeat
+        repeat
+            task.wait()
+            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") or LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then return end 
+        until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true and string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "What will")
+        wait(0.5)
+        Client.SelectedAction:Fire(true)
+        Client.Network:post("BattleAction", {{
+            ActionType = "Item",
+            Action = getgenv().autofarm_settings.autocatchcapsule,
+            User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
+        }})
+        --Client.SelectedAction:Fire(true)
+        local old = tick()
+        repeat
+            task.wait()
+        until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You used "..getgenv().autofarm_settings.autocatchcapsule)
+        print("used capsule")
+        wait(1.5)
+    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught")
+    print("catch fully finished")
 end
 local function kill()
     local notsupereffectivemoves = {}
@@ -228,33 +274,35 @@ local function kill()
                 foundsupereffective = true
                 break
             elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) then
-                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
-                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
-                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
-                getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.Party1.Activated)[1]:Fire()
-                repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
-                getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Stats.MouseButton1Click)[1]:Fire()
-                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.Visible == true
-                getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Tabs.Moves.MouseButton1Click)[1]:Fire()
-                repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Visible == true
-                local movebutton
-                for i2,v2 in pairs(LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Holder:GetChildren()) do
-                    if v2:IsA("ImageButton") and v2:FindFirstChild("MoveName") and v2.MoveName.Text == v.MoveName.Text then
-                        movebutton = v2
-                        break
+                if notsupereffectivemoves[v.MoveName.Text] == nil then
+                    repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
+                    getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
+                    repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
+                    getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.Party1.Activated)[1]:Fire()
+                    repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
+                    getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Stats.MouseButton1Click)[1]:Fire()
+                    repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.Visible == true
+                    getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Tabs.Moves.MouseButton1Click)[1]:Fire()
+                    repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Visible == true
+                    local movebutton
+                    for i2,v2 in pairs(LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Holder:GetChildren()) do
+                        if v2:IsA("ImageButton") and v2:FindFirstChild("MoveName") and v2.MoveName.Text == v.MoveName.Text then
+                            movebutton = v2
+                            break
+                        end
                     end
+                    repeat
+                        task.wait()
+                        VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
+                    until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
+                    local movepower = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.StatHolder.Power.Desc.Label.Text
+                    if movepower == "--" or movepower == "Varies" then movepower = 0 end
+                    movepower = tonumber(movepower)
+                    local movename = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text
+                    notsupereffectivemoves[movename] = movepower
+                    getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Close.MouseButton1Click)[1]:Fire()
+                    getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.CloseBar.Cancel.MouseButton1Click)[1]:Fire()
                 end
-                repeat
-                    task.wait()
-                    VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
-                until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
-                local movepower = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.StatHolder.Power.Desc.Label.Text
-                if movepower == "--" or movepower == "Varies" then movepower = 0 end
-                movepower = tonumber(movepower)
-                local movename = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text
-                notsupereffectivemoves[movename] = movepower
-                getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Close.MouseButton1Click)[1]:Fire()
-                getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.CloseBar.Cancel.MouseButton1Click)[1]:Fire()
             end
         end
         if foundsupereffective == false then
@@ -290,13 +338,19 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             print("healing")
             Client.Network:post("PlayerData", "Heal")
         end
+        for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
+            table.insert(Capsules, i)
+        end
+        CapsuleSelection:Refresh(Capsules)
         print("starting battle")
         if CurrentRoute.Name == "007_Lakewood" then
-            Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
+            --Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
+            Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
         elseif CurrentRoute.Name == "011_Sewer" then
-            Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+            --Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+            Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
         else
-            Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+            Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
         task.wait(1)
@@ -305,38 +359,51 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             notify("AutoFarm Found:", "Shiny Doodle")
             if getgenv().autofarm_settings.kill_when_shiny == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
+            elseif getgenv().autofarm_settings.catch_when_shiny == true then
+                catch()
             end
         elseif tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.catch_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.kill_when_skin == true then
             print("found skin")
             notify("AutoFarm Found:", "Skin")
             if getgenv().autofarm_settings.kill_when_skin == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
+            elseif getgenv().autofarm_settings.catch_when_skin == true then
+                catch()
             end
         elseif LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.catch_when_tint == true or LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.kill_when_tint == true then
             print("found tint")
             notify("AutoFarm Found:", "Tint")
             if getgenv().autofarm_settings.kill_when_tint == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
+            elseif getgenv().autofarm_settings.catch_when_tint == true then
+                catch()
             end
         elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
             print("found doodle that hasnt been caught before")
             notify("AutoFarm Found:", "Doodle that hasn't been caught before")
             if getgenv().autofarm_settings.kill_when_havent_caught_before == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
+            elseif getgenv().autofarm_settings.catch_when_havent_caught_before == true then
+                catch()
             end
         elseif table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
             print("found specific doodle")
             notify("AutoFarm Found:", "Specific Doodle")
             if getgenv().autofarm_settings.kill_when_specific_doodle == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
+            elseif getgenv().autofarm_settings.catch_when_specific_doodle == true then
+                catch()
             end
         else
             if getgenv().autofarm_settings.kill_all == true then
                 kill()
+            elseif getgenv().autofarm_settings.catch_all == true then
+                catch()
             else
                 run()
             end
         end
+        print("waiting till battle gui gone")
         repeat
             task.wait()
         until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false
