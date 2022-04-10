@@ -1,3 +1,33 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Client = require(LocalPlayer.Packer.Client)
+local CurrentRoute
+local AutoFarmConnection
+local UninjectConnection
+local InABattle = false
+local KeyBind = "RightShift"
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+for i,v in pairs(workspace:GetChildren()) do
+    if v:IsA("Model") and string.find(v.Name, "_") and v ~= LocalPlayer.Character then
+        CurrentRoute = v
+    end
+end
+
+--// PREVENT REEXECUTES
+if getgenv().executed == true then
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Already Executed",
+        Text = "Uninject first by pressing comma!",
+        Duration = 3,
+    })
+    return
+end
+getgenv().executed = true
+
 local function notify(title, text)
     local configTable = {
         Title = title,
@@ -49,8 +79,7 @@ local function validatesettings()
     end
     return true
 end
-local KeyBind = "RightShift"
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+
 local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
@@ -64,7 +93,7 @@ local Enabled = MainSection:NewToggle("Enabled", "", function(state)
             getgenv().autofarm_settings.enabled = false
         end
     else
-
+        notify("unable to enable", "invalid settings")
     end
 end)
 local SettingsTab = Window:NewTab("Settings")
@@ -128,30 +157,6 @@ local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", fu
         end
     end)
 end)
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local VirtualInputManager = game:GetService("VirtualInputManager")
-local StarterGui = game:GetService("StarterGui")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Client = require(LocalPlayer.Packer.Client)
-local CurrentRoute
-local AutoFarmConnection
-local UninjectConnection
-local InABattle = false
-for i,v in pairs(workspace:GetChildren()) do
-    if v:IsA("Model") and string.find(v.Name, "_") and v ~= LocalPlayer.Character then
-        CurrentRoute = v
-    end
-end
-
---// PREVENT REEXECUTES
-if getgenv().executed == true then
-    notify("Already Executed", "Uninject first by pressing comma!")
-    return
-end
-getgenv().executed = true
 
 local function run()
     repeat
