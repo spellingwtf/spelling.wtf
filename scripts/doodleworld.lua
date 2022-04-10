@@ -99,6 +99,21 @@ local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     end
 end)
 local SettingsTab = Window:NewTab("Settings")
+local Misc = SettingsTab:NewSection("Misc")
+Misc:NewToggle("Kill All", "Bypasses every other kill setting", function(state)
+    if state == true then
+        getgenv().autofarm_settings.kill_all = true
+    else
+        getgenv().autofarm_settings.kill_all = false
+    end
+end)
+Misc:NewToggle("AutoHeal", "", function(state)
+    if state == true then
+        getgenv().autofarm_settings.autoheal = true
+    else
+        getgenv().autofarm_settings.autoheal = false
+    end
+end)
 local Shiny = SettingsTab:NewSection("Shiny")
 Shiny:NewDropdown("Mode", "", {"Catch", "Kill"}, function(mode)
     if mode == "Catch" then
@@ -255,8 +270,10 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
     if InABattle == true or getgenv().autofarm_settings.enabled == false then return end
     if getgenv().autofarm_settings.enabled == true then
         InABattle = true
-        print("healing")
-        Client.Network:post("PlayerData", "Heal")
+        if getgenv().autofarm_settings.autoheal == true then
+            print("healing")
+            Client.Network:post("PlayerData", "Heal")
+        end
         print("starting battle")
         if CurrentRoute.Name == "007_Lakewood" then
             Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
@@ -267,31 +284,31 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
         task.wait(1)
-        if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true then
+        if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.catch_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.kill_when_shiny == true then
             print("found shiny doodle")
             notify("AutoFarm Found:", "Shiny Doodle")
             if getgenv().autofarm_settings.kill_when_shiny == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
             end
-        elseif tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " then
+        elseif tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.catch_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.kill_when_skin == true then
             print("found skin")
             notify("AutoFarm Found:", "Skin")
             if getgenv().autofarm_settings.kill_when_skin == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
             end
-        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") then
+        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.catch_when_tint == true or LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.kill_when_tint == true then
             print("found tint")
             notify("AutoFarm Found:", "Tint")
             if getgenv().autofarm_settings.kill_when_tint == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
             end
-        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false then
+        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
             print("found doodle that hasnt been caught before")
             notify("AutoFarm Found:", "Doodle that hasn't been caught before")
             if getgenv().autofarm_settings.kill_when_havent_caught_before == true or getgenv().autofarm_settings.kill_all == true then
                 kill()
             end
-        elseif table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) then
+        elseif table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
             print("found specific doodle")
             notify("AutoFarm Found:", "Specific Doodle")
             if getgenv().autofarm_settings.kill_when_specific_doodle == true or getgenv().autofarm_settings.kill_all == true then
