@@ -40,23 +40,23 @@ local function notify(title, text)
 end
 local function validatesettings()
     if getgenv().autofarm_settings.catch_when_shiny == getgenv().autofarm_settings.kill_when_shiny and getgenv().autofarm_settings.kill_when_shiny == true then
-        notify("Shiny Settings Anomaly", "You can't have catch and kill set to true")
+        notify("Shiny Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
     if getgenv().autofarm_settings.catch_when_skin == getgenv().autofarm_settings.kill_when_skin and getgenv().autofarm_settings.kill_when_skin == true then
-        notify("Skin Settings Anomaly", "You can't have catch and kill set to true")
+        notify("Skin Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
     if getgenv().autofarm_settings.catch_when_tint == getgenv().autofarm_settings.kill_when_tint and getgenv().autofarm_settings.kill_when_tint == true then
-        notify("Tint Settings Anomaly", "You can't have catch and kill set to true")
+        notify("Tint Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
     if getgenv().autofarm_settings.catch_when_havent_caught_before == getgenv().autofarm_settings.kill_when_havent_caught_before and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
-        notify("Doodles Not Caught Before Settings Anomaly", "You can't have catch and kill set to true")
+        notify("Doodles Not Caught Before Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
     if getgenv().autofarm_settings.catch_when_specific_doodle == getgenv().autofarm_settings.kill_when_specific_doodle and getgenv().autofarm_settings.kill_when_specific_doodle == true then
-        notify("Specific Doodle Settings Anomaly", "You can't have catch and kill set to true")
+        notify("Specific Doodle Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
     if type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" then
@@ -86,6 +86,7 @@ local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
+local WarningLabel2 = MainSection:NewLabel("you have to start and end a battle before enabling")
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     local validsettings = validatesettings()
     if validsettings == true then
@@ -214,7 +215,7 @@ local function catch()
 end
 local function kill()
     local notsupereffectivemoves = {}
-    local foundeffective = false
+    local foundsupereffective = false
     repeat
         repeat
             task.wait()
@@ -224,7 +225,7 @@ local function kill()
             getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
             if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= 4597964542 and v.Effective.Image ~= 4597964185 then
                 getconnections(v.MouseButton1Click)[1]:Fire()
-                foundeffective = true
+                foundsupereffective = true
                 break
             elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) then
                 repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
@@ -256,7 +257,7 @@ local function kill()
                 getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.CloseBar.Cancel.MouseButton1Click)[1]:Fire()
             end
         end
-        if foundeffective == false then
+        if foundsupereffective == false then
             local strongestmove 
             local num = 0
             for i,v in pairs(notsupereffectivemoves) do
@@ -347,7 +348,6 @@ end)
 UninjectConnection = UserInputService.InputBegan:Connect(function(key)
     if key.KeyCode == Enum.KeyCode.Comma then
         notify("AutoFarm", "Uninjecting...")
-        UninjectConnection:Disconnect()
         getgenv().executed = false
         notify("AutoFarm", "Uninjected") 
         AutoFarmConnection:Disconnect()  
@@ -363,5 +363,7 @@ UninjectConnection = UserInputService.InputBegan:Connect(function(key)
                 v:Destroy()
             end
         end
+        getgenv().autofarm_settings.enabled = false
+        UninjectConnection:Disconnect()
     end
 end)
