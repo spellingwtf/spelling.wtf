@@ -115,53 +115,68 @@ Misc:NewToggle("AutoHeal", "", function(state)
     end
 end)
 local Shiny = SettingsTab:NewSection("Shiny")
-Shiny:NewDropdown("Mode", "", {"Catch", "Kill"}, function(mode)
+Shiny:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.kill_when_shiny = false
         getgenv().autofarm_settings.catch_when_shiny = true
     elseif mode == "Kill" then
         getgenv().autofarm_settings.catch_when_shiny = false
         getgenv().autofarm_settings.kill_when_shiny = true
+    elseif mode == "Run" then
+        getgenv().autofarm_settings.catch_when_shiny = false
+        getgenv().autofarm_settings.kill_when_shiny = false
     end
 end)
 local Skin = SettingsTab:NewSection("Skin")
-Skin:NewDropdown("Mode", "", {"Catch", "Kill"}, function(mode)
+Skin:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.kill_when_skin = false
         getgenv().autofarm_settings.catch_when_skin = true
     elseif mode == "Kill" then
         getgenv().autofarm_settings.catch_when_skin = false
         getgenv().autofarm_settings.kill_when_skin = true
+    elseif mode == "Run" then
+        getgenv().autofarm_settings.catch_when_skin = false
+        getgenv().autofarm_settings.kill_when_skin = false
     end
 end)
 local Tint = SettingsTab:NewSection("Tint")
-Tint:NewDropdown("Mode", "", {"Catch", "Kill"}, function(mode)
+Tint:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.kill_when_tint = false
         getgenv().autofarm_settings.catch_when_tint = true
     elseif mode == "Kill" then
         getgenv().autofarm_settings.catch_when_tint = false
         getgenv().autofarm_settings.kill_when_tint = true
+    elseif mode == "Run" then
+        getgenv().autofarm_settings.catch_when_tint = false
+        getgenv().autofarm_settings.kill_when_tint = false
     end
 end)
 local DoodlesThatHaventBeenCaughtBefore = SettingsTab:NewSection("Doodles that haven't been caught before")
-DoodlesThatHaventBeenCaughtBefore:NewDropdown("Mode", "", {"Catch", "Kill"}, function(mode)
+DoodlesThatHaventBeenCaughtBefore:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.kill_when_havent_caught_before = false
         getgenv().autofarm_settings.catch_when_havent_caught_before = true
     elseif mode == "Kill" then
         getgenv().autofarm_settings.catch_when_havent_caught_before = false
         getgenv().autofarm_settings.kill_when_havent_caught_before = true
+    elseif mode == "Run" then
+        getgenv().autofarm_settings.catch_when_havent_caught_before = false
+        getgenv().autofarm_settings.kill_when_havent_caught_before = false
     end
 end)
 local SpecificDoodles = SettingsTab:NewSection("Specific Doodle")
-SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill"}, function(mode)
+SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.kill_when_specific_doodle = false
         getgenv().autofarm_settings.catch_when_specific_doodle = true
     elseif mode == "Kill" then
         getgenv().autofarm_settings.catch_when_specific_doodle = false
         getgenv().autofarm_settings.kill_when_specific_doodle = true
+    elseif mode == "Run" then
+        getgenv().autofarm_settings.catch_when_specific_doodle = false
+        getgenv().autofarm_settings.kill_when_specific_doodle = false
     end
 end)
 local GUISettings = Window:NewTab("GUI Settings")
