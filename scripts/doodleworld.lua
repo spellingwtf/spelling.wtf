@@ -103,6 +103,7 @@ local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
+    validatesettings()
     local validsettings = validatesettings()
     if validsettings == true then
         if state == true then
