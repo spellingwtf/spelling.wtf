@@ -319,14 +319,14 @@ UninjectConnection = UserInputService.InputBegan:Connect(function(key)
         getgenv().executed = false
         notify("AutoFarm", "Uninjected") 
         AutoFarmConnection:Disconnect()  
-        for i,v in pairs(game:GetService("CoreGui"):GetChildren()) do
-            function isNumeric(value)
-                if value == tostring(tonumber(value)) then
-                    return true
-                else
-                    return false
-                end
+        local function isNumeric(value)
+            if value == tostring(tonumber(value)) then
+                return true
+            else
+                return false
             end
+        end
+        for i,v in pairs(game:GetService("CoreGui"):GetChildren()) do
             if isNumeric(v.Name) then
                 v:Destroy()
             end
