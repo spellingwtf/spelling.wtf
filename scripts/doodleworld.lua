@@ -206,7 +206,7 @@ local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", fu
     if Enum.KeyCode[txt] ~= nil then
         KeyBind = txt
     elseif Enum.KeyCode[txt:upper()] ~= nil then
-        Keybind = txt:upper()
+        KeyBind = txt:upper()
     else
         notify("Invalid KeyBind", "")
     end
