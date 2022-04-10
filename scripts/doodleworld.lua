@@ -83,6 +83,10 @@ local function validatesettings()
         notify("Invalid Specific Doodle Settings")
         return false
     end
+    if type(getgenv().autofarm_settings.autocatchcapsule) ~= "string" then
+        notify("Invalid Capsule Setting")
+        return false
+    end
     return true
 end
 
@@ -232,6 +236,9 @@ end)
 local OpenShop = MainMiscSection:NewButton("Open Shop", "Opens the shop GUI", function()
     Client.NormalShop.new()
 end)
+local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function()
+    Client.PC.new()
+end)
 
 local function run()
     repeat
@@ -251,7 +258,7 @@ local function catch()
         if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
             Client.Network:post("BattleAction", {{
                 ActionType = "Item",
-                Action = "Basic Capsule",
+                Action = getgenv().autofarm_settings.autocatchcapsule,
                 User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
             }})
             print("capsule thrown")
@@ -264,6 +271,23 @@ local function catch()
     print("broke the autocatch loop")
     breakloop = true
     return
+end
+local function catch2()
+    repeat 
+        repeat
+            task.wait()
+        until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" 
+        if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
+            Client.Network:post("BattleAction", {{
+                ActionType = "Item",
+                Action = getgenv().autofarm_settings.autocatchcapsule,
+                User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
+            }})
+            print("capsule thrown")
+            Client.SelectedAction:Fire(true)
+        end
+        task.wait(1)
+    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" 
 end
 local function kill()
     local notsupereffectivemoves = {}
