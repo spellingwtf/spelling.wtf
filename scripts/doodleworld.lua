@@ -28,6 +28,8 @@ if getgenv().executed == true then
 end
 getgenv().executed = true
 
+if type(getgenv().autofarm_settings) ~="table" then getgenv().autofarm_settings = {} end
+
 local function notify(title, text)
     local configTable = {
         Title = title,
@@ -152,7 +154,7 @@ local GUISettingsSection = GUISettings:NewSection("Settings")
 local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
     KeyBind = txt
     game:GetService("UserInputService").InputBegan:Connect(function(key)
-        if (string.len(txt)) and key.KeyCode == Enum.KeyCode[txt] then
+        if (string.len(txt)) and key.KeyCode == Enum.KeyCode[txt:upper()] then
             Library:ToggleUI()
         end
     end)
@@ -242,7 +244,9 @@ local function kill()
 end
 
 notify("AutoFarm Loaded", "Press comma to uninject")
+
 getgenv().autofarm_settings.enabled = false
+
 AutoFarmConnection = RunService.RenderStepped:Connect(function()
     if InABattle == true or getgenv().autofarm_settings.enabled == false then return end
     if getgenv().autofarm_settings.enabled == true then
