@@ -9,6 +9,7 @@ local CurrentRoute
 local AutoFarmConnection
 local UninjectConnection
 local InABattle = false
+local FirstEncounter = true
 local KeyBind = "RightShift"
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 for i,v in pairs(workspace:GetChildren()) do
@@ -108,6 +109,7 @@ local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     if validsettings == true then
         if state == true then
             getgenv().autofarm_settings.enabled = true
+            FirstEncounter = true
         elseif state == false then
             getgenv().autofarm_settings.enabled = false
         end
@@ -264,25 +266,19 @@ local function run()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
 local function catch()
-    local breakloop = false
     while string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" do
-        if breakloop == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" then break end
         if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
             Client.Network:post("BattleAction", {{
                 ActionType = "Item",
-                Action = getgenv().autofarm_settings.autocatchcapsule,
+                Action = "Basic Capsule",
                 User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
             }})
-            print("capsule thrown")
             Client.SelectedAction:Fire(true)
+            print("capsule thrown")
+            task.wait(1)
         end
-        if breakloop == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" then break end
-        wait(2)
-        if breakloop == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" then break end
+        task.wait()
     end
-    print("broke the autocatch loop")
-    breakloop = true
-    return
 end
 local function catch2()
     repeat 
@@ -385,14 +381,26 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         end
         CapsuleSelection:Refresh(Capsules)
         print("starting battle")
-        if CurrentRoute.Name == "007_Lakewood" then
-            --Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
-            Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
-        elseif CurrentRoute.Name == "011_Sewer" then
-            --Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
-            Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
-        else
-            Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
+        if FirstEncounter == true then
+            print("first encounter true")
+            if CurrentRoute.Name == "007_Lakewood" then
+                Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
+            elseif CurrentRoute.Name == "011_Sewer" then
+                Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
+            else
+                Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
+            end
+        elseif FirstEncounter == false then
+            print("first encounter false")
+            repeat task.wait()
+                if CurrentRoute.Name == "007_Lakewood" then
+                    Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
+                elseif CurrentRoute.Name == "011_Sewer" then
+                    Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+                else
+                    Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+                end
+            until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
         task.wait(1)
@@ -448,8 +456,9 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         print("waiting till battle gui gone")
         repeat
             task.wait()
-        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false
+        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true
     end
+    FirstEncounter = false
     InABattle = false
 end)
 
