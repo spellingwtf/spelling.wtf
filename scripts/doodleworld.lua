@@ -63,13 +63,13 @@ local function validatesettings()
         return false
     end
     if getgenv().autofarm_settings.kill_all == getgenv().autofarm_settings.catch_all and getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.kill_all == getgenv().autofarm_settings.pause_all and getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.pause_all == getgenv().autofarm_settings.catch_all and getgenv().autofarm_settings.pause_all == true then
-        notify("Kill/Catch All Settings Invalid", "You can't have catch and kill set to true")
+        notify("Kill/Catch/Pause All Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
     if getgenv().autofarm_settings.kill_when_normal_doodle == getgenv().autofarm_settings.pause_when_normal_doodle and getgenv().autofarm_settings.kill_when_normal_doodle == true then
         notify("Normal Doodle Settings Invalid", "You can't have catch and pause set to true")
     end
-    --settings that haven't been set
+    --mandatory settings that haven't been set
     if type(getgenv().autofarm_settings.kill_when_normal_doodle) ~= "boolean" or type(getgenv().autofarm_settings.pause_when_normal_doodle) ~= "boolean" then
         notify("Invalid Normal Doodle Settings", "Setting hasn't been set")
     end
@@ -112,6 +112,7 @@ local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
+local WarningLabel2 = MainSection:NewLabel("Support Discord Server:\n  discord.gg/4KaJ2xdJXH")
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     local validsettings = validatesettings()
     if validsettings == true then
