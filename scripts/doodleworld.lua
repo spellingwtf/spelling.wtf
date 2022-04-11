@@ -135,8 +135,8 @@ Misc:NewToggle("AutoHeal", "", function(state)
         getgenv().autofarm_settings.autoheal = false
     end
 end)
-local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting)")
-AllDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Pause"}, function(mode)
+local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting) (Optional)")
+AllDoodles:NewDropdown("Mode (Optional Setting)", "", {"Catch", "Kill", "Pause"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.pause_all = false
         getgenv().autofarm_settings.kill_all = false
