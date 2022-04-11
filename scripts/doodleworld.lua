@@ -463,6 +463,9 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         print("waiting till battle gui gone")
         repeat
             task.wait()
+            if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
+                LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
+            end
         until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true
     end
     FirstEncounter = false
