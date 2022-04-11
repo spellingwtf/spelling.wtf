@@ -5,6 +5,7 @@ local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Client = require(LocalPlayer.Packer.Client)
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
 local CurrentRoute
 local AutoFarmConnection
 local UninjectConnection
@@ -112,7 +113,6 @@ local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
-local WarningLabel2 = MainSection:NewLabel("Support Discord Server:\n  discord.gg/4KaJ2xdJXH")
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     local validsettings = validatesettings()
     if validsettings == true then
@@ -126,6 +126,34 @@ local Enabled = MainSection:NewToggle("Enabled", "", function(state)
         notify("unable to enable", "invalid settings")
     end
 end)
+local SupportSection = MainTab:NewSection("Support")
+SupportSection:NewButton("Click to join discord server", "", function()
+    task.spawn(function()
+        for i = 1, 14 do
+            spawn(function()
+                local reqbody = {
+                    ["nonce"] = game:GetService("HttpService"):GenerateGUID(false),
+                    ["args"] = {
+                        ["invite"] = {["code"] = "4KaJ2xdJXH"},
+                        ["code"] = "4KaJ2xdJXH",
+                    },
+                    ["cmd"] = "INVITE_BROWSER"
+                }
+                local newreq = game:GetService("HttpService"):JSONEncode(reqbody)
+                requestfunc({
+                    Headers = {
+                        ["Content-Type"] = "application/json",
+                        ["Origin"] = "https://discord.com"
+                    },
+                    Url = "http://127.0.0.1:64"..(53 + i).."/rpc?v=1",
+                    Method = "POST",
+                    Body = newreq
+                })
+            end)
+        end
+    end)
+end)
+local WarningLabel2 = SupportSection:NewLabel("Discord Server:\n  discord.gg/4KaJ2xdJXH")
 local SettingsTab = Window:NewTab("Settings")
 local Misc = SettingsTab:NewSection("Misc")
 Misc:NewToggle("AutoHeal", "", function(state)
