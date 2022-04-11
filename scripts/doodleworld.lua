@@ -29,7 +29,7 @@ if getgenv().executed == true then
 end
 getgenv().executed = true
 
-if type(getgenv().autofarm_settings) ~="table" then getgenv().autofarm_settings = {} end
+if type(getgenv().autofarm_settings) ~= "table" then getgenv().autofarm_settings = {} end
 
 local function notify(title, text)
     local configTable = {
@@ -40,47 +40,56 @@ local function notify(title, text)
     game:GetService("StarterGui"):SetCore("SendNotification", configTable)
 end
 local function validatesettings()
-    if getgenv().autofarm_settings.catch_when_shiny == getgenv().autofarm_settings.kill_when_shiny and getgenv().autofarm_settings.kill_when_shiny == true then
+    --settings where catch and kill or kill and pause or catch and pause are both true (only people who run old script will possibly get this error)
+    --checks = {catch and kill, kill and pause, catch and pause}
+    if getgenv().autofarm_settings.kill_when_shiny == getgenv().autofarm_settings.catch_when_shiny and getgenv().autofarm_settings.kill_when_shiny == true or getgenv().autofarm_settings.kill_when_shiny == getgenv().autofarm_settings.pause_when_shiny and getgenv().autofarm_settings.kill_when_shiny == true or getgenv().autofarm_settings.pause_when_shiny == getgenv().autofarm_settings.catch_when_shiny and getgenv().autofarm_settings.pause_when_shiny == true then
         notify("Shiny Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_skin == getgenv().autofarm_settings.kill_when_skin and getgenv().autofarm_settings.kill_when_skin == true then
+    if getgenv().autofarm_settings.kill_when_skin == getgenv().autofarm_settings.catch_when_skin and getgenv().autofarm_settings.kill_when_skin == true or getgenv().autofarm_settings.kill_when_skin == getgenv().autofarm_settings.pause_when_skin and getgenv().autofarm_settings.kill_when_skin == true or getgenv().autofarm_settings.pause_when_skin == getgenv().autofarm_settings.catch_when_skin and getgenv().autofarm_settings.pause_when_skin == true then
         notify("Skin Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_tint == getgenv().autofarm_settings.kill_when_tint and getgenv().autofarm_settings.kill_when_tint == true then
+    if getgenv().autofarm_settings.kill_when_tint == getgenv().autofarm_settings.catch_when_tint and getgenv().autofarm_settings.kill_when_tint == true or getgenv().autofarm_settings.kill_when_tint == getgenv().autofarm_settings.pause_when_tint and getgenv().autofarm_settings.kill_when_tint == true or getgenv().autofarm_settings.pause_when_tint == getgenv().autofarm_settings.catch_when_tint and getgenv().autofarm_settings.pause_when_tint == true then
         notify("Tint Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_havent_caught_before == getgenv().autofarm_settings.kill_when_havent_caught_before and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+    if getgenv().autofarm_settings.kill_when_havent_caught_before == getgenv().autofarm_settings.catch_when_havent_caught_before and getgenv().autofarm_settings.kill_when_havent_caught_before == true or getgenv().autofarm_settings.kill_when_havent_caught_before == getgenv().autofarm_settings.pause_when_havent_caught_before and getgenv().autofarm_settings.kill_when_havent_caught_before == true or getgenv().autofarm_settings.pause_when_havent_caught_before == getgenv().autofarm_settings.catch_when_havent_caught_before and getgenv().autofarm_settings.pause_when_havent_caught_before == true then
         notify("Doodles Not Caught Before Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.catch_when_specific_doodle == getgenv().autofarm_settings.kill_when_specific_doodle and getgenv().autofarm_settings.kill_when_specific_doodle == true then
+    if getgenv().autofarm_settings.kill_when_specific_doodle == getgenv().autofarm_settings.catch_when_specific_doodle and getgenv().autofarm_settings.kill_when_specific_doodle == true or getgenv().autofarm_settings.kill_when_specific_doodle == getgenv().autofarm_settings.pause_when_specific_doodle and getgenv().autofarm_settings.kill_when_specific_doodle == true or getgenv().autofarm_settings.kill_when_specific_doodle == getgenv().autofarm_settings.pause_when_specific_doodle and getgenv().autofarm_settings.kill_when_specific_doodle == true then
         notify("Specific Doodle Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
-    if getgenv().autofarm_settings.kill_all == getgenv().autofarm_settings.catch_all and getgenv().autofarm_settings.kill_all == true then
+    if getgenv().autofarm_settings.kill_all == getgenv().autofarm_settings.catch_all and getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.kill_all == getgenv().autofarm_settings.pause_all and getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.pause_all == getgenv().autofarm_settings.catch_all and getgenv().autofarm_settings.pause_all == true then
         notify("Kill/Catch All Settings Invalid", "You can't have catch and kill set to true")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_shiny) ~= "boolean" then
+    if getgenv().autofarm_settings.kill_when_normal_doodle == getgenv().autofarm_settings.pause_when_normal_doodle and getgenv().autofarm_settings.kill_when_normal_doodle == true then
+        notify("Normal Doodle Settings Invalid", "You can't have catch and pause set to true")
+    end
+    --settings that haven't been set
+    if type(getgenv().autofarm_settings.kill_when_normal_doodle) ~= "boolean" or type(getgenv().autofarm_settings.pause_when_normal_doodle) ~= "boolean" then
+        notify("Invalid Normal Doodle Settings", "Setting hasn't been set")
+    end
+    if type(getgenv().autofarm_settings.catch_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_shiny) ~= "boolean" or type(getgenv().autofarm_settings.pause_when_shiny) ~= "boolean" then
         notify("Invalid Shiny Settings", "Setting hasn't been set")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_skin) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_skin) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_skin) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_skin) ~= "boolean" or type(getgenv().autofarm_settings.pause_when_skin) ~= "boolean" then
         notify("Invalid Skin Settings", "Setting hasn't been set")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_tint) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_tint) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_tint) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_tint) ~= "boolean" or type(getgenv().autofarm_settings.pause_when_tint) ~= "boolean" then
         notify("Invalid Tint Settings", "Setting hasn't been set")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_havent_caught_before) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_havent_caught_before) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_havent_caught_before) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_havent_caught_before) ~= "boolean" or type(getgenv().autofarm_settings.pause_when_havent_caught_before) ~= "boolean" then
         notify("Invalid Doodle that hasn't been caught before Settings", "Setting hasn't been set")
         return false
     end
-    if type(getgenv().autofarm_settings.catch_when_specific_doodle) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_specific_doodle) ~= "boolean" then
+    if type(getgenv().autofarm_settings.catch_when_specific_doodle) ~= "boolean" or type(getgenv().autofarm_settings.kill_when_specific_doodle) ~= "boolean" or type(getgenv().autofarm_settings.pause_when_specific_doodle) ~= "boolean" then
         notify("Invalid Specific Doodle Settings", "Setting hasn't been set")
         return false
     end
@@ -104,7 +113,6 @@ local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
-    validatesettings()
     local validsettings = validatesettings()
     if validsettings == true then
         if state == true then
@@ -119,20 +127,6 @@ local Enabled = MainSection:NewToggle("Enabled", "", function(state)
 end)
 local SettingsTab = Window:NewTab("Settings")
 local Misc = SettingsTab:NewSection("Misc")
-Misc:NewToggle("Kill All", "Bypasses every other kill setting", function(state)
-    if state == true then
-        getgenv().autofarm_settings.kill_all = true
-    else
-        getgenv().autofarm_settings.kill_all = false
-    end
-end)
-Misc:NewToggle("Catch All", "Bypasses every other kill setting", function(state)
-    if state == true then
-        getgenv().autofarm_settings.catch_all = true
-    else
-        getgenv().autofarm_settings.catch_all = false
-    end
-end)
 Misc:NewToggle("AutoHeal", "", function(state)
     if state == true then
         getgenv().autofarm_settings.autoheal = true
@@ -140,76 +134,133 @@ Misc:NewToggle("AutoHeal", "", function(state)
         getgenv().autofarm_settings.autoheal = false
     end
 end)
-Misc:NewToggle("Kill when Normal Doodle", "", function(state)
-    if state == true then
+local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting)")
+AllDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Pause"}, function(mode)
+    if mode == "Catch" then
+        getgenv().autofarm_settings.pause_all = false
+        getgenv().autofarm_settings.kill_all = false
+        getgenv().autofarm_settings.catch_all = true
+    elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_all = false
+        getgenv().autofarm_settings.catch_all = false
+        getgenv().autofarm_settings.kill_all = true
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_all = false
+        getgenv().autofarm_settings.kill_all = false
+        getgenv().autofarm_settings.pause_all = true
+    end
+end)
+local NormalDoodles = SettingsTab:NewSection("Normal Doodles")
+NormalDoodles:NewDropdown("Mode", "", {"Kill", "Run", "Pause"}, function(mode)
+    if mode == "Kill" then
+        getgenv().autofarm_settings.pause_when_normal_doodle = false
         getgenv().autofarm_settings.kill_when_normal_doodle = true
-    else
+    elseif mode == "Run" then
+        getgenv().autofarm_settings.pause_when_normal_doodle = false
         getgenv().autofarm_settings.kill_when_normal_doodle = false
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.kill_when_normal_doodle = false
+        getgenv().autofarm_settings.pause_when_normal_doodle = true
     end
 end)
 local Shiny = SettingsTab:NewSection("Shiny")
-Shiny:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
+Shiny:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
     if mode == "Catch" then
+        getgenv().autofarm_settings.pause_when_shiny = false
         getgenv().autofarm_settings.kill_when_shiny = false
         getgenv().autofarm_settings.catch_when_shiny = true
     elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_when_shiny = false
         getgenv().autofarm_settings.catch_when_shiny = false
         getgenv().autofarm_settings.kill_when_shiny = true
     elseif mode == "Run" then
+        getgenv().autofarm_settings.pause_when_shiny = false
         getgenv().autofarm_settings.catch_when_shiny = false
         getgenv().autofarm_settings.kill_when_shiny = false
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_when_shiny = false
+        getgenv().autofarm_settings.kill_when_shiny = false
+        getgenv().autofarm_settings.pause_when_shiny = true
     end
 end)
 local Skin = SettingsTab:NewSection("Skin")
-Skin:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
+Skin:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.kill_when_skin = false
+        getgenv().autofarm_settings.pause_when_skin = false
         getgenv().autofarm_settings.catch_when_skin = true
     elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_when_skin = false
         getgenv().autofarm_settings.catch_when_skin = false
         getgenv().autofarm_settings.kill_when_skin = true
     elseif mode == "Run" then
+        getgenv().autofarm_settings.pause_when_skin = false
         getgenv().autofarm_settings.catch_when_skin = false
         getgenv().autofarm_settings.kill_when_skin = false
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_when_skin = false
+        getgenv().autofarm_settings.kill_when_skin = false
+        getgenv().autofarm_settings.pause_when_skin = true
     end
 end)
 local Tint = SettingsTab:NewSection("Tint")
-Tint:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
+Tint:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
     if mode == "Catch" then
+        getgenv().autofarm_settings.pause_when_tint = false
         getgenv().autofarm_settings.kill_when_tint = false
         getgenv().autofarm_settings.catch_when_tint = true
     elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_when_tint = false
         getgenv().autofarm_settings.catch_when_tint = false
         getgenv().autofarm_settings.kill_when_tint = true
     elseif mode == "Run" then
+        getgenv().autofarm_settings.pause_when_tint = false
         getgenv().autofarm_settings.catch_when_tint = false
         getgenv().autofarm_settings.kill_when_tint = false
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_when_tint = false
+        getgenv().autofarm_settings.kill_when_tint = false
+        getgenv().autofarm_settings.pause_when_tint = true
     end
 end)
 local DoodlesThatHaventBeenCaughtBefore = SettingsTab:NewSection("Doodles that haven't been caught before")
-DoodlesThatHaventBeenCaughtBefore:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
+DoodlesThatHaventBeenCaughtBefore:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
     if mode == "Catch" then
+        getgenv().autofarm_settings.pause_when_havent_caught_before = false
         getgenv().autofarm_settings.kill_when_havent_caught_before = false
         getgenv().autofarm_settings.catch_when_havent_caught_before = true
     elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_when_havent_caught_before = false
         getgenv().autofarm_settings.catch_when_havent_caught_before = false
         getgenv().autofarm_settings.kill_when_havent_caught_before = true
     elseif mode == "Run" then
+        getgenv().autofarm_settings.pause_when_havent_caught_before = false
         getgenv().autofarm_settings.catch_when_havent_caught_before = false
         getgenv().autofarm_settings.kill_when_havent_caught_before = false
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_when_havent_caught_before = false
+        getgenv().autofarm_settings.kill_when_havent_caught_before = false
+        getgenv().autofarm_settings.pause_when_havent_caught_before = true
     end
 end)
 local SpecificDoodles = SettingsTab:NewSection("Specific Doodle")
-SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
+SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
     if mode == "Catch" then
+        getgenv().autofarm_settings.pause_when_specific_doodle = false
         getgenv().autofarm_settings.kill_when_specific_doodle = false
         getgenv().autofarm_settings.catch_when_specific_doodle = true
     elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_when_specific_doodle = false
         getgenv().autofarm_settings.catch_when_specific_doodle = false
         getgenv().autofarm_settings.kill_when_specific_doodle = true
     elseif mode == "Run" then
+        getgenv().autofarm_settings.pause_when_specific_doodle = false
         getgenv().autofarm_settings.catch_when_specific_doodle = false
         getgenv().autofarm_settings.kill_when_specific_doodle = false
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_when_specific_doodle = false
+        getgenv().autofarm_settings.kill_when_specific_doodle = false
+        getgenv().autofarm_settings.pause_when_specific_doodle = true
     end
 end)
 local AutoCatch = SettingsTab:NewSection("AutoCatch")
@@ -411,42 +462,42 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
         task.wait(1)
-        if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.catch_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.kill_when_shiny == true then
+        if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.pause_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.catch_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.kill_when_shiny == true then
             print("found shiny doodle")
             notify("AutoFarm Found:", "Shiny Doodle")
-            if getgenv().autofarm_settings.kill_when_shiny == true or getgenv().autofarm_settings.kill_all == true then
+            if getgenv().autofarm_settings.kill_when_shiny == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_when_shiny == true then
                 catch()
             end
-        elseif tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.catch_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.kill_when_skin == true then
+        elseif tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.pause_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.catch_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.kill_when_skin == true then
             print("found skin")
             notify("AutoFarm Found:", "Skin")
-            if getgenv().autofarm_settings.kill_when_skin == true or getgenv().autofarm_settings.kill_all == true then
+            if getgenv().autofarm_settings.kill_when_skin == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_when_skin == true then
                 catch()
             end
-        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.catch_when_tint == true or LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.kill_when_tint == true then
+        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.pause_when_tint == true or LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.catch_when_tint == true or LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.kill_when_tint == true then
             print("found tint")
             notify("AutoFarm Found:", "Tint")
-            if getgenv().autofarm_settings.kill_when_tint == true or getgenv().autofarm_settings.kill_all == true then
+            if getgenv().autofarm_settings.kill_when_tint == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_when_tint == true then
                 catch()
             end
-        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
             print("found doodle that hasnt been caught before")
             notify("AutoFarm Found:", "Doodle that hasn't been caught before")
-            if getgenv().autofarm_settings.kill_when_havent_caught_before == true or getgenv().autofarm_settings.kill_all == true then
+            if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_when_havent_caught_before == true then
                 catch()
             end
-        elseif table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
+        elseif table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
             print("found specific doodle")
             notify("AutoFarm Found:", "Specific Doodle")
-            if getgenv().autofarm_settings.kill_when_specific_doodle == true or getgenv().autofarm_settings.kill_all == true then
+            if getgenv().autofarm_settings.kill_when_specific_doodle == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_when_specific_doodle == true then
                 catch()
@@ -456,6 +507,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 kill()
             elseif getgenv().autofarm_settings.catch_all == true then
                 catch()
+            elseif getgenv().autofarm_settings.pause_all == true or getgenv().autofarm_settings.pause_when_normal_doodle == true then
+
             else
                 run()
             end
