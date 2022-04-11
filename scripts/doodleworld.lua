@@ -277,7 +277,7 @@ local function catch()
         if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
             Client.Network:post("BattleAction", {{
                 ActionType = "Item",
-                Action = "Basic Capsule",
+                Action = getgenv().autofarm_settings.autocatchcapsule,
                 User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
             }})
             Client.SelectedAction:Fire(true)
