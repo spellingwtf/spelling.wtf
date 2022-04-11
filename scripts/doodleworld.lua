@@ -140,6 +140,13 @@ Misc:NewToggle("AutoHeal", "", function(state)
         getgenv().autofarm_settings.autoheal = false
     end
 end)
+Misc:NewToggle("Kill when Normal Doodle", "", function(state)
+    if state == true then
+        getgenv().autofarm_settings.kill_when_normal_doodle = true
+    else
+        getgenv().autofarm_settings.kill_when_normal_doodle = false
+    end
+end)
 local Shiny = SettingsTab:NewSection("Shiny")
 Shiny:NewDropdown("Mode", "", {"Catch", "Kill", "Run"}, function(mode)
     if mode == "Catch" then
@@ -445,7 +452,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 catch()
             end
         else
-            if getgenv().autofarm_settings.kill_all == true then
+            if getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.kill_when_normal_doodle == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_all == true then
                 catch()
