@@ -316,9 +316,11 @@ local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player li
 end)
 local OpenShop = MainMiscSection:NewButton("Open Shop", "Opens the shop GUI", function()
     Client.NormalShop.new()
+    LocalPlayer.Character.Humanoid.WalkSpeed = 16
 end)
 local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function()
     Client.PC.new()
+    LocalPlayer.Character.Humanoid.WalkSpeed = 16
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
     Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
