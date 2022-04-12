@@ -99,10 +99,6 @@ local function validatesettings()
         notify("Invalid Capsule Setting", "Setting hasn't been set")
         return false
     end
-    if type(getgenv().autofarm_settings.autoheal) ~= "boolean" then
-        notify("Invalid AutoHeal Setting", "Setting hasn't been set")
-        return false
-    end
     if type(getgenv().autofarm_settings.specific_doodles) ~= "table" then
         notify("Invalid Specific Doodle Table", "Setting hasn't been set")
         return false
