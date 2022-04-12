@@ -197,7 +197,7 @@ NormalDoodles:NewDropdown("Mode", "", {"Kill", "Run", "Pause"}, function(mode)
         getgenv().autofarm_settings.pause_when_normal_doodle = true
     end
 end)
-local Shiny = SettingsTab:NewSection("Shiny")
+local Shiny = SettingsTab:NewSection("Shiny/Misprint")
 Shiny:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
     if mode == "Catch" then
         getgenv().autofarm_settings.pause_when_shiny = false
@@ -577,6 +577,7 @@ local function kill()
                     break
                 end
             end
+            --notify("AutoFarm Error", "Custom Move Not Found")
         end
         print("attacked")
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted")
@@ -624,8 +625,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
         task.wait(1)
         if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.pause_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.catch_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.kill_when_shiny == true then
-            print("found shiny doodle")
-            notify("AutoFarm Found:", "Shiny Doodle")
+            print("found shiny/misprint doodle")
+            notify("AutoFarm Found:", "Shiny/Misprint Doodle")
             if getgenv().autofarm_settings.sound_alerts == true then
                 local Sound = Instance.new("Sound")
                 Sound.Volume = 5
