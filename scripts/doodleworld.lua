@@ -99,9 +99,6 @@ local function validatesettings()
         notify("Invalid Kill Mode Move", "Setting hasn't been set")
         return false
     end
-    if type(getgenv().autofarm_settings.autocatch_use_glancing_blow) ~= "boolean" then
-        notify("Invalid Catch Mode Use Glancing Blow Setting", "Setting hasn't been set")
-    end
     if type(getgenv().autofarm_settings.autocatch_capsule) ~= "string" then
         notify("Invalid Capsule Setting", "Setting hasn't been set")
         return false
