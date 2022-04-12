@@ -480,6 +480,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         elseif FirstEncounter == false then
             print("first encounter false")
+            print("waiting for battle cooldown (5 seconds)")
             repeat task.wait()
                 if CurrentRoute.Name == "007_Lakewood" then
                     Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
