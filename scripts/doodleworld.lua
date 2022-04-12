@@ -404,6 +404,7 @@ local function run()
         task.wait(2)
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
+
 local function catch()
     local moves = {}
     local HPEquals1 = false
@@ -416,13 +417,12 @@ local function catch()
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                 if v.MoveName.Text == "Glancing Blow" then
                     getconnections(v.MouseButton1Click)[1]:Fire()
-                    break
                 end
             end
         elseif getgenv().autofarm_settings.autocatch_use_glancing_blow == true and not table.find(moves, "Glancing Blow") and LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Health.Clipping.TotalHealth.ImageColor3 ~= Color3.fromRGB(231, 76, 60) then
             notify("AutoFarm Error", "Use glancing blow is on but don't have the move")
         end
-        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") then
+        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Health.Clipping.TotalHealth.ImageColor3 == Color3.fromRGB(231, 76, 60) then
             HPEquals1 = true
         end
         if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and HPEquals1 == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil then
@@ -440,6 +440,7 @@ local function catch()
         task.wait()
     end
 end
+
 local function kill()
     local notsupereffectivemoves = {}
     local noteffectivemoves = {}
