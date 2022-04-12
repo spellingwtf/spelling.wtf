@@ -19,7 +19,7 @@ for i,v in pairs(workspace:GetChildren()) do
     end
 end
 
---// PREVENT REEXECUTES
+--// PREVENT REEXECUTESs
 if getgenv().executed == true then
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Already Executed",
@@ -316,10 +316,12 @@ local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player li
 end)
 local OpenShop = MainMiscSection:NewButton("Open Shop", "Opens the shop GUI", function()
     Client.NormalShop.new()
+    repeat wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
 end)
 local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function()
     Client.PC.new()
+    repeat wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
