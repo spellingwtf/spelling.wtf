@@ -181,7 +181,7 @@ Misc:NewToggle("Sound Alerts", "", function(state)
     if state == true then
         getgenv().autofarm_settings.sound_alerts = true
     elseif state == false then
-        getgenv().autofarm_settings.sound_alers = false
+        getgenv().autofarm_settings.sound_alerts = false
     end
 end)
 local NormalDoodles = SettingsTab:NewSection("Normal Doodles\n(doodles that didnt pass any of the checks)")
