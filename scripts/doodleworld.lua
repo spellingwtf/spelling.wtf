@@ -164,23 +164,7 @@ Misc:NewToggle("AutoHeal", "", function(state)
         getgenv().autofarm_settings.autoheal = false
     end
 end)
-local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting) (Optional)")
-AllDoodles:NewDropdown("Mode (Optional Setting)", "", {"Catch", "Kill", "Pause"}, function(mode)
-    if mode == "Catch" then
-        getgenv().autofarm_settings.pause_all = false
-        getgenv().autofarm_settings.kill_all = false
-        getgenv().autofarm_settings.catch_all = true
-    elseif mode == "Kill" then
-        getgenv().autofarm_settings.pause_all = false
-        getgenv().autofarm_settings.catch_all = false
-        getgenv().autofarm_settings.kill_all = true
-    elseif mode == "Pause" then
-        getgenv().autofarm_settings.catch_all = false
-        getgenv().autofarm_settings.kill_all = false
-        getgenv().autofarm_settings.pause_all = true
-    end
-end)
-local NormalDoodles = SettingsTab:NewSection("Normal Doodles")
+local NormalDoodles = SettingsTab:NewSection("Normal Doodles\n(doodles that didnt pass any of the checks)")
 NormalDoodles:NewDropdown("Mode", "", {"Kill", "Run", "Pause"}, function(mode)
     if mode == "Kill" then
         getgenv().autofarm_settings.pause_when_normal_doodle = false
@@ -293,6 +277,22 @@ SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, funct
         getgenv().autofarm_settings.pause_when_specific_doodle = true
     end
 end)
+local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting) (Optional)")
+AllDoodles:NewDropdown("Mode (Optional Setting)", "", {"Catch", "Kill", "Pause"}, function(mode)
+    if mode == "Catch" then
+        getgenv().autofarm_settings.pause_all = false
+        getgenv().autofarm_settings.kill_all = false
+        getgenv().autofarm_settings.catch_all = true
+    elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_all = false
+        getgenv().autofarm_settings.catch_all = false
+        getgenv().autofarm_settings.kill_all = true
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_all = false
+        getgenv().autofarm_settings.kill_all = false
+        getgenv().autofarm_settings.pause_all = true
+    end
+end)
 local AutoCatch = SettingsTab:NewSection("AutoCatch")
 local Capsules = {}
 for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
@@ -302,24 +302,6 @@ local CapsuleSelection = AutoCatch:NewDropdown("Capsule", "choose your capsule",
     getgenv().autofarm_settings.autocatchcapsule = capsule
 end)
 
-local GUISettings = Window:NewTab("GUI Settings")
-local GUISettingsSection = GUISettings:NewSection("Settings")
-local ToggleGUIConnection 
-local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
-    if Enum.KeyCode[txt] ~= nil then
-        KeyBind = txt
-    elseif Enum.KeyCode[txt:upper()] ~= nil then
-        KeyBind = txt:upper()
-    else
-        notify("Invalid KeyBind", "")
-    end
-    if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
-    ToggleGUIConnection = game:GetService("UserInputService").InputBegan:Connect(function(key)
-        if key.KeyCode == Enum.KeyCode[txt:upper()] or key.KeyCode == Enum.KeyCode[txt] then
-            Library:ToggleUI()
-        end
-    end)
-end)
 local MiscTab = Window:NewTab("Misc")
 local MainMiscSection = MiscTab:NewSection("Main")
 local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player list and overhead name GUI", function()
@@ -340,6 +322,25 @@ local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
     Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
+end)
+
+local GUISettings = Window:NewTab("GUI Settings")
+local GUISettingsSection = GUISettings:NewSection("Settings")
+local ToggleGUIConnection 
+local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
+    if Enum.KeyCode[txt] ~= nil then
+        KeyBind = txt
+    elseif Enum.KeyCode[txt:upper()] ~= nil then
+        KeyBind = txt:upper()
+    else
+        notify("Invalid KeyBind", "")
+    end
+    if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
+    ToggleGUIConnection = game:GetService("UserInputService").InputBegan:Connect(function(key)
+        if key.KeyCode == Enum.KeyCode[txt:upper()] or key.KeyCode == Enum.KeyCode[txt] then
+            Library:ToggleUI()
+        end
+    end)
 end)
 
 local function run()
