@@ -422,6 +422,8 @@ local function catch()
                     break
                 end
             end
+        elseif getgenv().autofarm_settings.autocatch_use_glancing_blow == true and not table.find(moves, "Glancing Blow") and LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Health.Clipping.TotalHealth.ImageColor3 ~= Color3.fromRGB(231, 76, 60) then
+            notify("AutoFarm Error", "Use glancing blow is on but don't have the move")
         end
         if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") then
             HPEquals1 = true
