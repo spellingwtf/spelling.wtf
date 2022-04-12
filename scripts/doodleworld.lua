@@ -5,6 +5,7 @@ local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Client = require(LocalPlayer.Packer.Client)
+local getasset = syn and getsynasset or getcustomasset
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
 local CurrentRoute
 local AutoFarmConnection
@@ -109,6 +110,18 @@ local function validatesettings()
     return true
 end
 
+local function getcustomassetfunc(path)
+    if not isfile(path) then
+        local req = requestfunc({
+            Url = "https://spelling.wtf/scripts/assets/"..path,
+            Method = "GET"
+        })
+        writefile(path, req.Body)
+        repeat wait() until isfile(path)
+    end
+    return getasset(path) 
+end
+
 local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
@@ -160,8 +173,15 @@ local Misc = SettingsTab:NewSection("Misc")
 Misc:NewToggle("AutoHeal", "", function(state)
     if state == true then
         getgenv().autofarm_settings.autoheal = true
-    else
+    elseif state == false then
         getgenv().autofarm_settings.autoheal = false
+    end
+end)
+Misc:NewToggle("Sound Alerts", "", function(state)
+    if state == true then
+        getgenv().autofarm_settings.sound_alerts = true
+    elseif state == false then
+        getgenv().autofarm_settings.sound_alers = false
     end
 end)
 local NormalDoodles = SettingsTab:NewSection("Normal Doodles\n(doodles that didnt pass any of the checks)")
@@ -501,6 +521,15 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.pause_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.catch_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.kill_when_shiny == true then
             print("found shiny doodle")
             notify("AutoFarm Found:", "Shiny Doodle")
+            if getgenv().autofarm_settings.sound_alerts == true then
+                local Sound = Instance.new("Sound")
+                Sound.Volume = 5
+                Sound.SoundId = getcustomassetfunc("SHINY_SOUND.mp3")
+                Sound.Parent = workspace
+                Sound:Play()
+                repeat wait() until Sound.Playing == false
+                Sound:Destroy()
+            end
             if getgenv().autofarm_settings.kill_when_shiny == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_when_shiny == true then
@@ -509,6 +538,15 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         elseif tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.pause_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.catch_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.kill_when_skin == true then
             print("found skin")
             notify("AutoFarm Found:", "Skin")
+            if getgenv().autofarm_settings.sound_alerts == true then
+                local Sound = Instance.new("Sound")
+                Sound.Volume = 5
+                Sound.SoundId = getcustomassetfunc("NANI.mp3")
+                Sound.Parent = workspace
+                Sound:Play()
+                repeat wait() until Sound.Playing == false
+                Sound:Destroy()
+            end
             if getgenv().autofarm_settings.kill_when_skin == true then
                 kill()
             elseif getgenv().autofarm_settings.catch_when_skin == true then
