@@ -445,7 +445,10 @@ local function catch()
 end
 local function kill()
     local notsupereffectivemoves = {}
+    local noteffectivemoves = {}
     local foundsupereffective = false
+    local foundstrongest = false
+    local foundnoteffective = false
     repeat
         repeat
             task.wait()
@@ -454,10 +457,14 @@ local function kill()
         if getgenv().autofarm_settings.autokill_use_strongest_move == true then
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                 getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
+                --super effective move
                 if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964185" then
                     getconnections(v.MouseButton1Click)[1]:Fire()
                     foundsupereffective = true
+                    foundstrongest = true
+                    foundnoteffective = true
                     break
+                --normal move
                 elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) then
                     if notsupereffectivemoves[v.MoveName.Text] == nil then
                         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
@@ -490,7 +497,7 @@ local function kill()
                     end
                 end
             end
-            if foundsupereffective == false then
+            if foundsupereffective == false and notsupereffectivemoves ~= {} then
                 local strongestmove 
                 local num = 0
                 for i,v in pairs(notsupereffectivemoves) do
@@ -499,6 +506,63 @@ local function kill()
                         strongestmove = i
                     end
                 end
+                foundstrongest = true
+                foundnoteffective = true
+                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
+                for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
+                    if v.MoveName.Text == strongestmove then
+                        getconnections(v.MouseButton1Click)[1]:Fire()
+                        break
+                    end
+                end
+            end
+            --not effective moves
+            if notsupereffectivemoves == {} and foundsupereffective == false and foundstrongest == false and foundnoteffective == false then
+                for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
+                    getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
+                    if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" then
+                        if noteffectivemoves[v.MoveName.Text] == nil then
+                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
+                            getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
+                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
+                            getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.Party1.Activated)[1]:Fire()
+                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
+                            getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Stats.MouseButton1Click)[1]:Fire()
+                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.Visible == true
+                            getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Tabs.Moves.MouseButton1Click)[1]:Fire()
+                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Visible == true
+                            local movebutton
+                            for i2,v2 in pairs(LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Holder:GetChildren()) do
+                                if v2:IsA("ImageButton") and v2:FindFirstChild("MoveName") and v2.MoveName.Text == v.MoveName.Text then
+                                    movebutton = v2
+                                    break
+                                end
+                            end
+                            repeat
+                                task.wait()
+                                VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
+                            until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
+                            local movepower = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.StatHolder.Power.Desc.Label.Text
+                            if movepower == "--" or movepower == "Varies" then movepower = 0 end
+                            movepower = tonumber(movepower)
+                            local movename = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text
+                            noteffectivemoves[movename] = movepower
+                            getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Close.MouseButton1Click)[1]:Fire()
+                            getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.CloseBar.Cancel.MouseButton1Click)[1]:Fire()
+                        end
+                    end
+                end
+            end
+            if notsupereffectivemoves ~= {} and foundsupereffective == false and foundstrongest == false and foundnoteffective == false then
+                local strongestmove 
+                local num = 0
+                for i,v in pairs(notsupereffectivemoves) do
+                    if v > num then
+                        num = v
+                        strongestmove = i
+                    end
+                end
+                foundnoteffective = true
                 getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.MoveName.Text == strongestmove then
