@@ -425,7 +425,7 @@ local function catch()
         if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") then
             HPEquals1 = true
         end
-        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and HPEquals1 == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false then
+        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and HPEquals1 == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil then
             if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
                 Client.Network:post("BattleAction", {{
                     ActionType = "Item",
