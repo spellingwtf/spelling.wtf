@@ -113,6 +113,7 @@ local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
+local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  battles")
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     local validsettings = validatesettings()
     if validsettings == true then
