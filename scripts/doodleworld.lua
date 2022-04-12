@@ -99,7 +99,10 @@ local function validatesettings()
         notify("Invalid Kill Mode Move", "Setting hasn't been set")
         return false
     end
-    if type(getgenv().autofarm_settings.autocatchcapsule) ~= "string" then
+    if type(getgenv().autofarm_settings.autocatch_use_glancing_blow) ~= "boolean" then
+        notify("Invalid Catch Mode Use Glancing Blow Setting", "Setting hasn't been set")
+    end
+    if type(getgenv().autofarm_settings.autocatch_capsule) ~= "string" then
         notify("Invalid Capsule Setting", "Setting hasn't been set")
         return false
     end
@@ -297,22 +300,6 @@ SpecificDoodles:NewDropdown("Mode", "", {"Catch", "Kill", "Run", "Pause"}, funct
         getgenv().autofarm_settings.pause_when_specific_doodle = true
     end
 end)
-local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting) (Optional)")
-AllDoodles:NewDropdown("Mode (Optional Setting)", "", {"Catch", "Kill", "Pause"}, function(mode)
-    if mode == "Catch" then
-        getgenv().autofarm_settings.pause_all = false
-        getgenv().autofarm_settings.kill_all = false
-        getgenv().autofarm_settings.catch_all = true
-    elseif mode == "Kill" then
-        getgenv().autofarm_settings.pause_all = false
-        getgenv().autofarm_settings.catch_all = false
-        getgenv().autofarm_settings.kill_all = true
-    elseif mode == "Pause" then
-        getgenv().autofarm_settings.catch_all = false
-        getgenv().autofarm_settings.kill_all = false
-        getgenv().autofarm_settings.pause_all = true
-    end
-end)
 
 local AutoCatch = SettingsTab:NewSection("Catch Mode")
 local Capsules = {}
@@ -320,7 +307,14 @@ for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
     table.insert(Capsules, i)
 end
 local CapsuleSelection = AutoCatch:NewDropdown("Capsule", "choose your capsule", Capsules, function(capsule)
-    getgenv().autofarm_settings.autocatchcapsule = capsule
+    getgenv().autofarm_settings.autocatch_capsule = capsule
+end)
+AutoCatch:NewToggle("Use Glancing Blow", "", function(state)
+    if state == true then
+        getgenv().autofarm_settings.autocatch_use_glancing_blow = true
+    elseif state == false then
+        getgenv().autofarm_settings.autocatch_use_glancing_blow = false
+    end
 end)
 
 local AutoKill = SettingsTab:NewSection("Kill Mode")
@@ -337,6 +331,23 @@ AutoKill:NewDropdown("Which move to use", "", {"Strongest Move", "Custom Move"},
         custommovedropdown = AutoKill:NewDropdown("Custom Move Choice", "", moves, function(move)
             getgenv().autofarm_settings.autokill_custom_move = move
         end)
+    end
+end)
+
+local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting) (Optional)")
+AllDoodles:NewDropdown("Mode (Optional Setting)", "", {"Catch", "Kill", "Pause"}, function(mode)
+    if mode == "Catch" then
+        getgenv().autofarm_settings.pause_all = false
+        getgenv().autofarm_settings.kill_all = false
+        getgenv().autofarm_settings.catch_all = true
+    elseif mode == "Kill" then
+        getgenv().autofarm_settings.pause_all = false
+        getgenv().autofarm_settings.catch_all = false
+        getgenv().autofarm_settings.kill_all = true
+    elseif mode == "Pause" then
+        getgenv().autofarm_settings.catch_all = false
+        getgenv().autofarm_settings.kill_all = false
+        getgenv().autofarm_settings.pause_all = true
     end
 end)
 
@@ -379,7 +390,7 @@ local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", fu
     end
     if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
     ToggleGUIConnection = game:GetService("UserInputService").InputBegan:Connect(function(key)
-        if key.KeyCode == Enum.KeyCode[txt:upper()] or key.KeyCode == Enum.KeyCode[txt] then
+        if key.KeyCode == Enum.KeyCode[KeyBind] then
             Library:ToggleUI()
         end
     end)
@@ -397,36 +408,38 @@ local function run()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
 local function catch()
+    local moves = {}
+    local HPEquals1 = false
+    for i,v in pairs(Client.Network:get("PlayerData", "GetParty")[1]["Moves"]) do
+        table.insert(moves, v.Name)
+    end
     while string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" do
-        if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
-            Client.Network:post("BattleAction", {{
-                ActionType = "Item",
-                Action = getgenv().autofarm_settings.autocatchcapsule,
-                User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
-            }})
-            Client.SelectedAction:Fire(true)
-            print("capsule thrown")
-            task.wait(1)
+        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Health.Clipping.TotalHealth.ImageColor3 ~= Color3.fromRGB(231, 76, 60) then
+            getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
+            for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
+                if v.MoveName.Text == "Glancing Blow" then
+                    getconnections(v.MouseButton1Click)[1]:Fire()
+                    break
+                end
+            end
+        end
+        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") then
+            HPEquals1 = true
+        end
+        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and HPEquals1 == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false then
+            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
+                Client.Network:post("BattleAction", {{
+                    ActionType = "Item",
+                    Action = getgenv().autofarm_settings.autocatch_capsule,
+                    User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
+                }})
+                Client.SelectedAction:Fire(true)
+                print("capsule thrown")
+                task.wait(1)
+            end
         end
         task.wait()
     end
-end
-local function catch2()
-    repeat 
-        repeat
-            task.wait()
-        until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" 
-        if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
-            Client.Network:post("BattleAction", {{
-                ActionType = "Item",
-                Action = getgenv().autofarm_settings.autocatchcapsule,
-                User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
-            }})
-            print("capsule thrown")
-            Client.SelectedAction:Fire(true)
-        end
-        task.wait(1)
-    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") == "was caught" 
 end
 local function kill()
     local notsupereffectivemoves = {}
