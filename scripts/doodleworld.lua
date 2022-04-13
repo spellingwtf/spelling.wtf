@@ -408,7 +408,7 @@ end
 local function catch()
     local moves = {}
     local HPEquals1 = false
-    for i,v in pairs(Client.Network:get("PlayerData", "GetParty")[1]["Moves"]) do
+    for i,v in pairs(Client.Battle.CurrentData.Out1[1].Moves) do
         table.insert(moves, v.Name)
     end
     while string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" do
@@ -430,7 +430,7 @@ local function catch()
                 Client.Network:post("BattleAction", {{
                     ActionType = "Item",
                     Action = getgenv().autofarm_settings.autocatch_capsule,
-                    User = Client.Network:get("PlayerData", "GetParty")[1]["ID"]
+                    User = Client.Battle.CurrentData.Out1[1].ID
                 }})
                 Client.SelectedAction:Fire(true)
                 print("capsule thrown")
@@ -456,6 +456,7 @@ local function kill()
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                 --super effective move
                 if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964185" then
+                    repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                     getconnections(v.MouseButton1Click)[1]:Fire()
                     foundsupereffective = true
                     foundstrongest = true
@@ -507,6 +508,7 @@ local function kill()
                 foundnoteffective = true
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.MoveName.Text == strongestmove then
+                        repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
                         break
                     end
@@ -560,6 +562,7 @@ local function kill()
                 foundnoteffective = true
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.MoveName.Text == strongestmove then
+                        repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
                         break
                     end
@@ -568,6 +571,7 @@ local function kill()
         elseif getgenv().autofarm_settings.autokill_use_strongest_move == false then
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                 if v.MoveName.Text == getgenv().autofarm_settings.autokill_custom_move then
+                    repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                     getconnections(v.MouseButton1Click)[1]:Fire()
                     break
                 end
