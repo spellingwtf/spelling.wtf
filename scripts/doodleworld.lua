@@ -407,7 +407,6 @@ end
 
 local function catch()
     local moves = {}
-    local HPEquals1 = false
     for i,v in pairs(Client.Battle.CurrentData.Out1[1].Moves) do
         table.insert(moves, v.Name)
     end
@@ -423,10 +422,7 @@ local function catch()
             elseif getgenv().autofarm_settings.autocatch_use_glancing_blow == true and not table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 then
                 notify("AutoFarm Error", "Use glancing blow is on but don't have the move")
             end
-            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp == 1 then
-                HPEquals1 = true
-            end
-            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and HPEquals1 == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil then
+            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp == 1 or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil then
                 Client.Network:post("BattleAction", {{
                     ActionType = "Item",
                     Action = getgenv().autofarm_settings.autocatch_capsule,
