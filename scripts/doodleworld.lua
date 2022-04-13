@@ -406,31 +406,62 @@ local function run()
 end
 
 local function catch()
+    local noglancingblow = false
+    local onehpbutglancingblowdoodledead = false
     local moves = {}
     for i,v in pairs(Client.Battle.CurrentData.Out1[1].Moves) do
         table.insert(moves, v.Name)
     end
     while string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" do
+        if Client.Battle.CurrentData.Out1[1].currenthp == 0 then
+            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
+            for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
+                if string.find(v.Name, "Party") and tonumber(string.split(v.Health.HealthNumber.Text, " ")[1]) ~= 0 then
+                    getconnections(v.Activated)[1]:Fire()
+                    repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
+                    getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Switch.MouseButton1Click)[1]:Fire()
+                    repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
+                    moves = {}
+                    for i,v in pairs(Client.Battle.CurrentData.Out1[1].Moves) do
+                        table.insert(moves, v.Name)
+                    end
+                    if Client.Battle.CurrentData.EnemyDoodle.currenthp == 1 then
+                        onehpbutglancingblowdoodledead = true
+                    end
+                    break
+                end
+            end
+        end
         if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
             if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 then
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.MoveName.Text == "Glancing Blow" then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
+                        print("used glancing blow")
                     end
                 end
             elseif getgenv().autofarm_settings.autocatch_use_glancing_blow == true and not table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 then
-                notify("AutoFarm Error", "Use glancing blow is on but don't have the move")
+                notify("AutoFarm Error", "Use glancing blow is on but don't have the move, throwing capsule")
+                noglancingblow = true
             end
-            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp == 1 or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil then
-                Client.Network:post("BattleAction", {{
-                    ActionType = "Item",
-                    Action = getgenv().autofarm_settings.autocatch_capsule,
-                    User = Client.Battle.CurrentData.Out1[1].ID
-                }})
-                Client.SelectedAction:Fire(true)
-                print("capsule thrown")
-                task.wait(1)
+            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp == 1 or noglancingblow == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil or onehpbutglancingblowdoodledead == true then
+                if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
+                    print("posting battle action")
+                    Client.SelectedAction:Fire({
+                        ActionType = "Item",
+                        Action = getgenv().autofarm_settings.autocatch_capsule,
+                        User = Client.Battle.CurrentData.Out1[1].ID
+                    })
+                    Client.Network:post("BattleAction", {{
+                        ActionType = "Item",
+                        Action = getgenv().autofarm_settings.autocatch_capsule,
+                        User = Client.Battle.CurrentData.Out1[1].ID
+                    }})
+                    --repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You used "..getgenv().autofarm_settings.autocatch_capsule)
+                    print("capsule thrown")
+                    task.wait(1)
+                end
             end
         end
         task.wait()
@@ -577,6 +608,26 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 end
             until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
             print("starting battle")
+            coroutine.wrap(function()
+                task.wait(4)
+                if LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then
+                    print("autocatch broke the script")
+                    repeat task.wait()
+                        if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
+                            LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
+                        else
+                            print("restarting battle because autocatch broke it")
+                            if CurrentRoute.Name == "007_Lakewood" then
+                                Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
+                            elseif CurrentRoute.Name == "011_Sewer" then
+                                Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+                            else
+                                Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+                            end
+                        end
+                    until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+                end
+            end)()
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true and string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will")
         if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
