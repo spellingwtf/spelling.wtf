@@ -461,33 +461,11 @@ local function kill()
                 --normal move
                 elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) then
                     if notsupereffectivemoves[v.MoveName.Text] == nil then
-                        repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
-                        getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
-                        repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
-                        getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.Party1.Activated)[1]:Fire()
-                        repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
-                        getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Stats.MouseButton1Click)[1]:Fire()
-                        repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.Visible == true
-                        getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Tabs.Moves.MouseButton1Click)[1]:Fire()
-                        repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Visible == true
-                        local movebutton
-                        for i2,v2 in pairs(LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Holder:GetChildren()) do
-                            if v2:IsA("ImageButton") and v2:FindFirstChild("MoveName") and v2.MoveName.Text == v.MoveName.Text then
-                                movebutton = v2
-                                break
-                            end
-                        end
-                        repeat
-                            task.wait()
-                            VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
-                        until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
-                        local movepower = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.StatHolder.Power.Desc.Label.Text
+                        local movepower = Client.Moves[v.MoveName.Text].Power
                         if movepower == "--" or movepower == "Varies" then movepower = 0 end
                         movepower = tonumber(movepower)
-                        local movename = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text
+                        local movename = v.MoveName.Text
                         notsupereffectivemoves[movename] = movepower
-                        getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Close.MouseButton1Click)[1]:Fire()
-                        getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.CloseBar.Cancel.MouseButton1Click)[1]:Fire()
                     end
                 end
             end
@@ -515,33 +493,11 @@ local function kill()
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" then
                         if noteffectivemoves[v.MoveName.Text] == nil then
-                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
-                            getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
-                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
-                            getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.Party1.Activated)[1]:Fire()
-                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
-                            getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Stats.MouseButton1Click)[1]:Fire()
-                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.Visible == true
-                            getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Tabs.Moves.MouseButton1Click)[1]:Fire()
-                            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Visible == true
-                            local movebutton
-                            for i2,v2 in pairs(LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.Holder:GetChildren()) do
-                                if v2:IsA("ImageButton") and v2:FindFirstChild("MoveName") and v2.MoveName.Text == v.MoveName.Text then
-                                    movebutton = v2
-                                    break
-                                end
-                            end
-                            repeat
-                                task.wait()
-                                VirtualInputManager:SendMouseMoveEvent(movebutton.AbsolutePosition.X + movebutton.AbsoluteSize.X / 2, movebutton.AbsolutePosition.Y + movebutton.AbsoluteSize.Y / 2, movebutton)
-                            until LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text == v.MoveName.Text
-                            local movepower = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.StatHolder.Power.Desc.Label.Text
+                            local movepower = Client.Moves[v.MoveName.Text].Power
                             if movepower == "--" or movepower == "Varies" then movepower = 0 end
                             movepower = tonumber(movepower)
-                            local movename = LocalPlayer.PlayerGui.MainGui.Stats.PaperFront.Moves.MoveDescription.MoveName.Label.Text
+                            local movename = v.MoveName.Text
                             noteffectivemoves[movename] = movepower
-                            getconnections(LocalPlayer.PlayerGui.MainGui.Stats.Close.MouseButton1Click)[1]:Fire()
-                            getconnections(LocalPlayer.PlayerGui.MainGui.PartyUI.CloseBar.Cancel.MouseButton1Click)[1]:Fire()
                         end
                     end
                 end
@@ -605,7 +561,6 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
             end
         elseif FirstEncounter == false then
-            print("first encounter false")
             print("waiting for battle cooldown (5 seconds)")
             repeat task.wait()
                 if CurrentRoute.Name == "007_Lakewood" then
