@@ -117,7 +117,7 @@ local function getcustomassetfunc(path)
             Method = "GET"
         })
         writefile(path, req.Body)
-        repeat wait() until isfile(path)
+        repeat task.wait() until isfile(path)
     end
     return getasset(path) 
 end
@@ -362,12 +362,12 @@ local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player li
 end)
 local OpenShop = MainMiscSection:NewButton("Open Shop", "Opens the shop GUI", function()
     Client.NormalShop.new()
-    repeat wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
+    repeat task.wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
 end)
 local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function()
     Client.PC.new()
-    repeat wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
+    repeat task.wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
@@ -412,21 +412,21 @@ local function catch()
         table.insert(moves, v.Name)
     end
     while string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" do
-        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Health.Clipping.TotalHealth.ImageColor3 ~= Color3.fromRGB(231, 76, 60) then
-            getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
-            for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
-                if v.MoveName.Text == "Glancing Blow" then
-                    getconnections(v.MouseButton1Click)[1]:Fire()
+        if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
+            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 then
+                for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
+                    if v.MoveName.Text == "Glancing Blow" then
+                        repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
+                        getconnections(v.MouseButton1Click)[1]:Fire()
+                    end
                 end
+            elseif getgenv().autofarm_settings.autocatch_use_glancing_blow == true and not table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 then
+                notify("AutoFarm Error", "Use glancing blow is on but don't have the move")
             end
-        elseif getgenv().autofarm_settings.autocatch_use_glancing_blow == true and not table.find(moves, "Glancing Blow") and LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Health.Clipping.TotalHealth.ImageColor3 ~= Color3.fromRGB(231, 76, 60) then
-            notify("AutoFarm Error", "Use glancing blow is on but don't have the move")
-        end
-        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Health.Clipping.TotalHealth.ImageColor3 == Color3.fromRGB(231, 76, 60) then
-            HPEquals1 = true
-        end
-        if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and HPEquals1 == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil then
-            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
+            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp == 1 then
+                HPEquals1 = true
+            end
+            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and HPEquals1 == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil then
                 Client.Network:post("BattleAction", {{
                     ActionType = "Item",
                     Action = getgenv().autofarm_settings.autocatch_capsule,
@@ -622,9 +622,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 end
             until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
         end
-        repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
-        task.wait(1)
-        if LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.pause_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.catch_when_shiny == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.Shiny.Visible == true and getgenv().autofarm_settings.kill_when_shiny == true then
+        repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true and string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will")
+        if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
             print("found shiny/misprint doodle")
             notify("AutoFarm Found:", "Shiny/Misprint Doodle")
             if getgenv().autofarm_settings.sound_alerts == true then
@@ -633,7 +632,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 Sound.SoundId = getcustomassetfunc("SHINY_SOUND.mp3")
                 Sound.Parent = workspace
                 Sound:Play()
-                repeat wait() until Sound.Playing == false
+                repeat task.wait() until Sound.Playing == false
                 Sound:Destroy()
             end
             if getgenv().autofarm_settings.kill_when_shiny == true then
@@ -641,7 +640,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             elseif getgenv().autofarm_settings.catch_when_shiny == true then
                 catch()
             end
-        elseif tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.pause_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.catch_when_skin == true or tostring(LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.UIGradient.Color.Keypoints[1]) ~= "0 1 1 1 0 " and getgenv().autofarm_settings.kill_when_skin == true then
+        elseif Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.pause_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.catch_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.kill_when_skin == true then
             print("found skin")
             notify("AutoFarm Found:", "Skin")
             if getgenv().autofarm_settings.sound_alerts == true then
@@ -650,7 +649,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 Sound.SoundId = getcustomassetfunc("NANI.mp3")
                 Sound.Parent = workspace
                 Sound:Play()
-                repeat wait() until Sound.Playing == false
+                repeat task.wait() until Sound.Playing == false
                 Sound:Destroy()
             end
             if getgenv().autofarm_settings.kill_when_skin == true then
@@ -658,7 +657,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             elseif getgenv().autofarm_settings.catch_when_skin == true then
                 catch()
             end
-        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.pause_when_tint == true or LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.catch_when_tint == true or LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite:FindFirstChild("ColorChanger") and getgenv().autofarm_settings.kill_when_tint == true then
+        elseif Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.pause_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.catch_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.kill_when_tint == true then
             print("found tint")
             notify("AutoFarm Found:", "Tint")
             if getgenv().autofarm_settings.kill_when_tint == true then
@@ -666,7 +665,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             elseif getgenv().autofarm_settings.catch_when_tint == true then
                 catch()
             end
-        elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+        elseif Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
             print("found doodle that hasnt been caught before")
             notify("AutoFarm Found:", "Doodle that hasn't been caught before")
             if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
@@ -674,7 +673,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             elseif getgenv().autofarm_settings.catch_when_havent_caught_before == true then
                 catch()
             end
-        elseif table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
+        elseif table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
             print("found specific doodle")
             notify("AutoFarm Found:", "Specific Doodle")
             if getgenv().autofarm_settings.kill_when_specific_doodle == true then
