@@ -454,7 +454,6 @@ local function kill()
         until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
         if getgenv().autofarm_settings.autokill_use_strongest_move == true then
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
-                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
                 --super effective move
                 if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964185" then
                     getconnections(v.MouseButton1Click)[1]:Fire()
@@ -506,7 +505,6 @@ local function kill()
                 end
                 foundstrongest = true
                 foundnoteffective = true
-                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.MoveName.Text == strongestmove then
                         getconnections(v.MouseButton1Click)[1]:Fire()
@@ -517,7 +515,6 @@ local function kill()
             --not effective moves
             if notsupereffectivemoves == {} and foundsupereffective == false and foundstrongest == false and foundnoteffective == false then
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
-                    getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
                     if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" then
                         if noteffectivemoves[v.MoveName.Text] == nil then
                             repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Visible == true
@@ -561,7 +558,6 @@ local function kill()
                     end
                 end
                 foundnoteffective = true
-                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.MoveName.Text == strongestmove then
                         getconnections(v.MouseButton1Click)[1]:Fire()
@@ -570,7 +566,6 @@ local function kill()
                 end
             end
         elseif getgenv().autofarm_settings.autokill_use_strongest_move == false then
-            getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                 if v.MoveName.Text == getgenv().autofarm_settings.autokill_custom_move then
                     getconnections(v.MouseButton1Click)[1]:Fire()
