@@ -550,9 +550,9 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             table.insert(Capsules, i)
         end
         CapsuleSelection:Refresh(Capsules)
-        print("starting battle")
         if FirstEncounter == true then
             print("first encounter true")
+            print("starting battle")
             if CurrentRoute.Name == "007_Lakewood" then
                 Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
             elseif CurrentRoute.Name == "011_Sewer" then
@@ -571,6 +571,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
                 end
             until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+            print("starting battle")
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true and string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will")
         if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
