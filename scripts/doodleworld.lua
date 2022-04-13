@@ -369,6 +369,7 @@ local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function
     Client.PC.new()
     repeat task.wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    Client.Controls:ToggleWalk(true)
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
     Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
@@ -413,6 +414,7 @@ local function catch()
         table.insert(moves, v.Name)
     end
     while string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "was caught") ~= "was caught" do
+        --if doodle dies
         if Client.Battle.CurrentData.Out1[1].currenthp == 0 then
             repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
@@ -433,7 +435,7 @@ local function catch()
             end
         end
         if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
-            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 then
+            if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 and type(Client.Battle.CurrentData) == "table" then
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                     if v.MoveName.Text == "Glancing Blow" then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
