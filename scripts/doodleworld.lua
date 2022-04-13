@@ -550,6 +550,11 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             table.insert(Capsules, i)
         end
         CapsuleSelection:Refresh(Capsules)
+        for i,v in pairs(workspace:GetChildren()) do
+            if v:IsA("Model") and string.find(v.Name, "_") and v ~= LocalPlayer.Character then
+                CurrentRoute = v
+            end
+        end
         if FirstEncounter == true then
             print("first encounter true")
             print("starting battle")
