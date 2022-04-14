@@ -464,8 +464,8 @@ local function panhandle()
     for i = 2, #Client.Network:get("PlayerData", "GetParty") do
         local Doodle = Client.Network:get("PlayerData", "GetParty")[i]
         for i,v in pairs(Doodle.Moves) do
-            if i == "Panhandle" then
-                print("doodle "..i.." has panhandle, switching")
+            if v.Name == "Panhandle" then
+                print("other doodle has panhandle, switching")
                 repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will"
                 getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
