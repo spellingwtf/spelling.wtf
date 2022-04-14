@@ -107,8 +107,13 @@ local function validatesettings()
         notify("Invalid Specific Doodle Table", "Setting hasn't been set")
         return false
     end
+    if type(getgenv().autofarm_settings.panhandle_mode) ~= "boolean" or type(getgenv().autofarm_settings.wild_mode) ~= "boolean" or type(getgenv().autofarm_settings.trainer_mode) ~= "boolean" then
+        notify("Invalid Autofarm Mode Settings", "Setting hasn't been set")
+        return false
+    end
     return true
 end
+
 
 local function getcustomassetfunc(path)
     if not isfile(path) then
@@ -127,8 +132,29 @@ local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  battles")
+MainSection:NewDropdown("AutoFarm Mode", "", {"Wild", "Panhandle", "Trainer"}, function(state)
+    local traineridslider
+    if state == "Wild" then
+        getgenv().autofarm_settings.trainer_mode = false
+        getgenv().autofarm_settings.panhandle_mode = false
+        getgenv().autofarm_settings.wild_mode = true
+    elseif state == "Panhandle" then
+        getgenv().autofarm_settings.trainer_mode = false
+        getgenv().autofarm_settings.wild_mode = false
+        getgenv().autofarm_settings.panhandle_mode = true
+    elseif state == "Trainer" then
+        getgenv().autofarm_settings.wild_mode = false
+        getgenv().autofarm_settings.panhandle_mode = false
+        getgenv().autofarm_settings.trainer_mode = true
+        traineridslider = MainSection:NewSlider("Trainer ID (1-39)", "", 39, 1, function(s)
+            getgenv().autofarm_settings.trainer_ID = s
+        end)
+    end
+end)
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
+    print("toggled")
     local validsettings = validatesettings()
+
     if validsettings == true then
         if state == true then
             getgenv().autofarm_settings.enabled = true
@@ -137,6 +163,7 @@ local Enabled = MainSection:NewToggle("Enabled", "", function(state)
             getgenv().autofarm_settings.enabled = false
         end
     else
+        print(validsettings)
         notify("unable to enable", "invalid settings")
     end
 end)
@@ -406,6 +433,83 @@ local function run()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
 
+local function panhandle()
+    local moneygot = 0
+    --1st doodle
+    repeat
+        local breakrepeat = false
+        repeat
+            task.wait()
+            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." used Panhandle!") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $") then
+                if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $") then
+                    local amountgot = LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text:split(" ")[3]
+                    moneygot = moneygot + tonumber( string.sub( amountgot, 2, -1 ) )
+                end
+                breakrepeat = true
+                break
+            end
+        until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
+        if breakrepeat == true then break end
+        for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
+            if tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and v.MoveName.Text == "Panhandle" then
+                repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
+                getconnections(v.MouseButton1Click)[1]:Fire()
+                print("panhandled: doodle".."1")
+                break
+            end
+        end
+    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $")
+    repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
+    --all the other doodles
+    for i = 2, #Client.Network:get("PlayerData", "GetParty") do
+        local Doodle = Client.Network:get("PlayerData", "GetParty")[i]
+        for i,v in pairs(Doodle.Moves) do
+            if i == "Panhandle" then
+                print("doodle "..i.." has panhandle, switching")
+                repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will"
+                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
+                for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
+                    if string.find(v.Name, "Party") and tonumber(string.split(v.Health.HealthNumber.Text, " ")[1]) ~= 0 then
+                        getconnections(v.Activated)[1]:Fire()
+                        repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
+                        getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Switch.MouseButton1Click)[1]:Fire()
+                        repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
+                        repeat
+                            local breakrepeat = false
+                            repeat
+                                task.wait()
+                                if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." used Panhandle!") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $") then
+                                    if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $") then
+                                        local amountgot = LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text:split(" ")[3]
+                                        moneygot = moneygot + tonumber( string.sub( amountgot, 2, -1 ) )
+                                    end
+                                    breakrepeat = true
+                                    break
+                                end
+                            until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
+                            if breakrepeat == true then break end
+                                for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
+                                    if tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and v.MoveName.Text == "Panhandle" then
+                                        repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
+                                        getconnections(v.MouseButton1Click)[1]:Fire()
+                                        print("panhandled: doodle"..i)
+                                        break
+                                    end
+                                end
+                        until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $")
+                        break
+                    end
+                end
+                break
+            end
+        end
+    end
+    repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
+    run()
+    --notify("Panhandle AutoFarm", "GOT: $"..moneygot)
+    --print("got: $"..moneygot)
+end
+
 local function catch()
     local noglancingblow = false
     local onehpbutglancingblowdoodledead = false
@@ -480,19 +584,38 @@ local function kill()
         repeat
             task.wait()
             if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") then return end
-        until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
+        until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil or Client.Battle.CurrentData.Out1[1].currenthp == 0
+        --if doodle dies
+        if Client.Battle.CurrentData.Out1[1].currenthp == 0 then
+            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
+            for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
+                if string.find(v.Name, "Party") and tonumber(string.split(v.Health.HealthNumber.Text, " ")[1]) ~= 0 then
+                    getconnections(v.Activated)[1]:Fire()
+                    repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
+                    getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Switch.MouseButton1Click)[1]:Fire()
+                    notsupereffectivemoves = {}
+                    noteffectivemoves = {}
+                    foundsupereffective = false
+                    foundstrongest = false
+                    foundnoteffective = false
+                    repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
+                    break
+                end
+            end
+        end
         if getgenv().autofarm_settings.autokill_use_strongest_move == true then
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
                 --super effective move
-                if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964185" then
+                if v.Effective.Visible == true and v.MoveName.Text ~= "Glancing Blow" and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964185" then
                     repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                     getconnections(v.MouseButton1Click)[1]:Fire()
+                    print("attacked")
                     foundsupereffective = true
                     foundstrongest = true
                     foundnoteffective = true
                     break
                 --normal move
-                elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) then
+                elseif v.Effective.Visible == false and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.MoveName.Text ~= "Glancing Blow" then
                     if notsupereffectivemoves[v.MoveName.Text] == nil then
                         local movepower = Client.Moves[v.MoveName.Text].Power
                         if movepower == "--" or movepower == "Varies" then movepower = 0 end
@@ -517,6 +640,7 @@ local function kill()
                     if v.MoveName.Text == strongestmove then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
+                        print("attacked")
                         break
                     end
                 end
@@ -524,7 +648,7 @@ local function kill()
             --not effective moves
             if notsupereffectivemoves == {} and foundsupereffective == false and foundstrongest == false and foundnoteffective == false then
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
-                    if v.Effective.Visible == true and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" then
+                    if v.Effective.Visible == true and v.MoveName.Text ~= "Glancing Blow" and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" then
                         if noteffectivemoves[v.MoveName.Text] == nil then
                             local movepower = Client.Moves[v.MoveName.Text].Power
                             if movepower == "--" or movepower == "Varies" then movepower = 0 end
@@ -549,6 +673,7 @@ local function kill()
                     if v.MoveName.Text == strongestmove then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
+                        print("attacked")
                         break
                     end
                 end
@@ -558,13 +683,12 @@ local function kill()
                 if v.MoveName.Text == getgenv().autofarm_settings.autokill_custom_move then
                     repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                     getconnections(v.MouseButton1Click)[1]:Fire()
+                    print("attacked")
                     break
                 end
             end
-            --notify("AutoFarm Error", "Custom Move Not Found")
         end
-        print("attacked")
-    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted")
+    until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The opposing "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted")
 end
 
 notify("AutoFarm Loaded", "Press comma to uninject")
@@ -590,115 +714,140 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         end
         if FirstEncounter == true then
             print("first encounter true")
-            print("starting battle")
-            if CurrentRoute.Name == "007_Lakewood" then
-                Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
-            elseif CurrentRoute.Name == "011_Sewer" then
-                Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
-            else
-                Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
+            if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
+                print("starting wild battle")
+                if CurrentRoute.Name == "007_Lakewood" then
+                    Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
+                elseif CurrentRoute.Name == "011_Sewer" then
+                    Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
+                else
+                    Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
+                end
+            elseif getgenv().autofarm_settings.trainer_mode == true then
+                print("starting trainer battle")
+                Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())])
             end
         elseif FirstEncounter == false then
-            print("waiting for battle cooldown (5 seconds)")
-            repeat task.wait()
-                if CurrentRoute.Name == "007_Lakewood" then
-                    Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
-                elseif CurrentRoute.Name == "011_Sewer" then
-                    Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
-                else
-                    Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
-                end
-            until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
-            print("starting battle")
-            coroutine.wrap(function()
-                task.wait(4)
-                if LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then
-                    print("autocatch broke the script")
-                    repeat task.wait()
-                        if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
-                            LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
-                        else
-                            print("restarting battle because autocatch broke it")
-                            if CurrentRoute.Name == "007_Lakewood" then
-                                Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
-                            elseif CurrentRoute.Name == "011_Sewer" then
-                                Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+            if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
+                print("waiting for battle cooldown (5 seconds)")
+                repeat task.wait()
+                    if CurrentRoute.Name == "007_Lakewood" then
+                        Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
+                    elseif CurrentRoute.Name == "011_Sewer" then
+                        Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+                    else
+                        Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+                    end
+                until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+                print("starting wild battle")
+            elseif getgenv().autofarm_settings.trainer_mode == true then
+                print("starting trainer battle")
+                Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())])
+            end
+            if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
+                coroutine.wrap(function()
+                    task.wait(4)
+                    if LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then
+                        print("FailSafe Activated")
+                        repeat task.wait()
+                            if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
+                                LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
                             else
-                                Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+                                print("FailSafe Activated: restarting battle because something broke")
+                                if CurrentRoute.Name == "007_Lakewood" then
+                                    Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
+                                elseif CurrentRoute.Name == "011_Sewer" then
+                                    Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+                                else
+                                    Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+                                end
                             end
-                        end
-                    until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
-                end
-            end)()
+                        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+                    end
+                end)()
+            end
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true and string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will")
-        if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
-            print("found shiny/misprint doodle")
-            notify("AutoFarm Found:", "Shiny/Misprint Doodle")
-            if getgenv().autofarm_settings.sound_alerts == true then
-                local Sound = Instance.new("Sound")
-                Sound.Volume = 5
-                Sound.SoundId = getcustomassetfunc("SHINY_SOUND.mp3")
-                Sound.Parent = workspace
-                Sound:Play()
-                repeat task.wait() until Sound.Playing == false
-                Sound:Destroy()
-            end
-            if getgenv().autofarm_settings.kill_when_shiny == true then
-                kill()
-            elseif getgenv().autofarm_settings.catch_when_shiny == true then
-                catch()
-            end
-        elseif Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.pause_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.catch_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.kill_when_skin == true then
-            print("found skin")
-            notify("AutoFarm Found:", "Skin")
-            if getgenv().autofarm_settings.sound_alerts == true then
-                local Sound = Instance.new("Sound")
-                Sound.Volume = 5
-                Sound.SoundId = getcustomassetfunc("NANI.mp3")
-                Sound.Parent = workspace
-                Sound:Play()
-                repeat task.wait() until Sound.Playing == false
-                Sound:Destroy()
-            end
-            if getgenv().autofarm_settings.kill_when_skin == true then
-                kill()
-            elseif getgenv().autofarm_settings.catch_when_skin == true then
-                catch()
-            end
-        elseif Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.pause_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.catch_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.kill_when_tint == true then
-            print("found tint")
-            notify("AutoFarm Found:", "Tint")
-            if getgenv().autofarm_settings.kill_when_tint == true then
-                kill()
-            elseif getgenv().autofarm_settings.catch_when_tint == true then
-                catch()
-            end
-        elseif Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
-            print("found doodle that hasnt been caught before")
-            notify("AutoFarm Found:", "Doodle that hasn't been caught before")
-            if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
-                kill()
-            elseif getgenv().autofarm_settings.catch_when_havent_caught_before == true then
-                catch()
-            end
-        elseif table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
-            print("found specific doodle")
-            notify("AutoFarm Found:", "Specific Doodle")
-            if getgenv().autofarm_settings.kill_when_specific_doodle == true then
-                kill()
-            elseif getgenv().autofarm_settings.catch_when_specific_doodle == true then
-                catch()
-            end
-        else
-            if getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.kill_when_normal_doodle == true then
-                kill()
-            elseif getgenv().autofarm_settings.catch_all == true then
-                catch()
-            elseif getgenv().autofarm_settings.pause_all == true or getgenv().autofarm_settings.pause_when_normal_doodle == true then
-
+        if getgenv().autofarm_settings.wild_mode == true then
+            if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
+                print("found shiny/misprint doodle")
+                notify("AutoFarm Found:", "Shiny/Misprint Doodle")
+                if getgenv().autofarm_settings.sound_alerts == true then
+                    local Sound = Instance.new("Sound")
+                    Sound.Volume = 5
+                    Sound.SoundId = getcustomassetfunc("SHINY_SOUND.mp3")
+                    Sound.Parent = workspace
+                    Sound:Play()
+                    repeat task.wait() until Sound.Playing == false
+                    Sound:Destroy()
+                end
+                if getgenv().autofarm_settings.kill_when_shiny == true then
+                    kill()
+                elseif getgenv().autofarm_settings.catch_when_shiny == true then
+                    catch()
+                end
+            elseif Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.pause_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.catch_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.kill_when_skin == true then
+                print("found skin")
+                notify("AutoFarm Found:", "Skin")
+                if getgenv().autofarm_settings.sound_alerts == true then
+                    local Sound = Instance.new("Sound")
+                    Sound.Volume = 5
+                    Sound.SoundId = getcustomassetfunc("NANI.mp3")
+                    Sound.Parent = workspace
+                    Sound:Play()
+                    repeat task.wait() until Sound.Playing == false
+                    Sound:Destroy()
+                end
+                if getgenv().autofarm_settings.kill_when_skin == true then
+                    kill()
+                elseif getgenv().autofarm_settings.catch_when_skin == true then
+                    catch()
+                end
+            elseif Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.pause_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.catch_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.kill_when_tint == true then
+                print("found tint")
+                notify("AutoFarm Found:", "Tint")
+                if getgenv().autofarm_settings.kill_when_tint == true then
+                    kill()
+                elseif getgenv().autofarm_settings.catch_when_tint == true then
+                    catch()
+                end
+            elseif Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+                print("found doodle that hasnt been caught before")
+                notify("AutoFarm Found:", "Doodle that hasn't been caught before")
+                if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+                    kill()
+                elseif getgenv().autofarm_settings.catch_when_havent_caught_before == true then
+                    catch()
+                end
+            elseif table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
+                print("found specific doodle")
+                notify("AutoFarm Found:", "Specific Doodle")
+                if getgenv().autofarm_settings.kill_when_specific_doodle == true then
+                    kill()
+                elseif getgenv().autofarm_settings.catch_when_specific_doodle == true then
+                    catch()
+                end
             else
-                run()
+                if getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.kill_when_normal_doodle == true then
+                    kill()
+                elseif getgenv().autofarm_settings.catch_all == true then
+                    catch()
+                elseif getgenv().autofarm_settings.pause_all == true or getgenv().autofarm_settings.pause_when_normal_doodle == true then
+
+                else
+                    run()
+                end
+            end
+        elseif getgenv().autofarm_settings.panhandle_mode == true then
+            print("starting panhandle sequence")
+            panhandle()
+        elseif getgenv().autofarm_settings.trainer_mode == true then
+            for i = 1, #Client.Battle.CurrentData.Player2Party do
+                print("killing doodle "..i)
+                kill()
+                if i ~= #Client.Battle.CurrentData.Player2Party then
+                    repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
+                end
             end
         end
         print("waiting till battle gui gone")
