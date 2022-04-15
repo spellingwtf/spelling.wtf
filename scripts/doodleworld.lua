@@ -134,7 +134,7 @@ local WarningLabel = MainSection:NewLabel("Don't forget to set your settings bef
 local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  battles")
 MainSection:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle", "Trainer"}, function(state)
     local traineridslider
-    if state == "Wild" then
+    if state == "Wild Battle" then
         getgenv().autofarm_settings.trainer_mode = false
         getgenv().autofarm_settings.panhandle_mode = false
         getgenv().autofarm_settings.wild_mode = true
