@@ -132,7 +132,7 @@ local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  battles")
-MainSection:NewDropdown("AutoFarm Mode", "", {"Wild", "Panhandle", "Trainer"}, function(state)
+MainSection:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle", "Trainer"}, function(state)
     local traineridslider
     if state == "Wild" then
         getgenv().autofarm_settings.trainer_mode = false
@@ -693,6 +693,8 @@ end
 notify("AutoFarm Loaded", "Press comma to uninject")
 
 getgenv().autofarm_settings.enabled = false
+Client.Network:post("ToggleSettings", "TextSpeed", "Fast")
+Client.Network:post("ToggleSettings", "SkipLevelUp", true)
 
 AutoFarmConnection = RunService.RenderStepped:Connect(function()
     if InABattle == true or getgenv().autofarm_settings.enabled == false then return end
