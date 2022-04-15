@@ -194,7 +194,7 @@ local function removeNonUniversalSettings()
     end
 end
 
-local Window = Library.CreateLib("Doodle World AutoFarm", "DarkTheme")
+local Window = Library.CreateLib("Doodoo World AutoFarm", "DarkTheme")
 for i,v in pairs(game:GetService("CoreGui"):GetChildren()) do
     if v.Name == tostring(tonumber(v.Name)) then
         UI = v
@@ -524,6 +524,16 @@ local FreeMagnifyingGlass = MainMiscSection:NewButton("Free Magnifying Glass", "
             LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.MagnifyingGlass.Visible = true
         end
     end)
+end)
+local RainbowName = MainMiscSection:NewButton("Rainbow Name", "makes your name rainbow", function()
+    while task.wait() do
+        for i = 1, 9 do
+            Client.Network:get("ChangeNameColor", i)
+            if i == 9 then
+                Client.Network:get("ChangeNameColor", 68)
+            end
+        end
+    end
 end)
 
 local OpenSection = MiscTab:NewSection("Open UIs")
