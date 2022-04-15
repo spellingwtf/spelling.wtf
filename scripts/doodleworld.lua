@@ -263,6 +263,10 @@ local Capsules = {}
 local CapsuleSelection
 MainSettings:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle", "Trainer"}, function(state)
     if state == "Wild Battle" then
+        if getgenv().autofarm_settings.enabled == true then
+            getgenv().autofarm_settings.enabled = false
+            notify("AutoFarm", "Disabled")
+        end
         getgenv().autofarm_settings.trainer_mode = false
         getgenv().autofarm_settings.panhandle_mode = false
         getgenv().autofarm_settings.wild_mode = true
@@ -435,11 +439,19 @@ MainSettings:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle", "Trai
             end
         end)
     elseif state == "Panhandle" then
+        if getgenv().autofarm_settings.enabled == true then
+            getgenv().autofarm_settings.enabled = false
+            notify("AutoFarm", "Disabled")
+        end
         getgenv().autofarm_settings.trainer_mode = false
         getgenv().autofarm_settings.wild_mode = false
         getgenv().autofarm_settings.panhandle_mode = true
         removeNonUniversalSettings()
     elseif state == "Trainer" then
+        if getgenv().autofarm_settings.enabled == true then
+            getgenv().autofarm_settings.enabled = false
+            notify("AutoFarm", "Disabled")
+        end
         getgenv().autofarm_settings.wild_mode = false
         getgenv().autofarm_settings.panhandle_mode = false
         getgenv().autofarm_settings.trainer_mode = true
