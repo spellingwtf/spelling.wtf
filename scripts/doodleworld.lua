@@ -205,7 +205,7 @@ local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  wild battles")
 
-local Enabled = MainSection:NewToggle("Enabled", "", function(state)
+local Enabled = MainSection:NewToggle("Enabled", "Enable/Disable the AutoFarm", function(state)
     print("toggled")
     local validsettings = validatesettings()
 
@@ -222,7 +222,7 @@ local Enabled = MainSection:NewToggle("Enabled", "", function(state)
     end
 end)
 local SupportSection = MainTab:NewSection("Support")
-SupportSection:NewButton("Click to join discord server", "", function()
+SupportSection:NewButton("Click to join discord server", "joins the discord server when u click", function()
     task.spawn(function()
         for i = 1, 14 do
             spawn(function()
@@ -254,7 +254,7 @@ local MainSettings = SettingsTab:NewSection("Main")
 
 local TeleportTab = Window:NewTab("Teleports")
 local MainTeleportTabSection = TeleportTab:NewSection("Teleport")
-MainTeleportTabSection:NewDropdown("Teleport to Location", "", {"The Crossroads", "Graphite Lodge", "Route 4", "Lakewood Sewer", "Route 3", "Lakewood Town", "Route 2", "Route 1", "Sketchvale"}, function(location)
+MainTeleportTabSection:NewDropdown("Teleport to Location", "Teleports to chosen location", {"The Crossroads", "Graphite Lodge", "Route 4", "Lakewood Sewer", "Route 3", "Lakewood Town", "Route 2", "Route 1", "Sketchvale"}, function(location)
     local LocationsTable = {
         ["The Crossroads"] = "017_Crossroads",
         ["Graphite Lodge"] = "014_GraphiteLodge",
@@ -270,11 +270,12 @@ MainTeleportTabSection:NewDropdown("Teleport to Location", "", {"The Crossroads"
         Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", true, true)
     end)
     task.wait(0.6)
+    --Client.LoadedGeometry:Wait();
     LocalPlayer.Character.HumanoidRootPart.Anchored = false
 end)
 
 local Misc = SettingsTab:NewSection("Misc")
-Misc:NewToggle("AutoHeal", "", function(state)
+Misc:NewToggle("AutoHeal", "Automatically heal before battles start", function(state)
     if state == true then
         getgenv().autofarm_settings.autoheal = true
     elseif state == false then
@@ -283,7 +284,7 @@ Misc:NewToggle("AutoHeal", "", function(state)
 end)
 local Capsules = {}
 local CapsuleSelection
-MainSettings:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle Money Farm", "Trainer Farm"}, function(state)
+MainSettings:NewDropdown("AutoFarm Mode", "Choose the AutoFarm Mode", {"Wild Battle", "Panhandle Money Farm", "Trainer Farm"}, function(state)
     if state == "Wild Battle" then
         if getgenv().autofarm_settings.enabled == true then
             getgenv().autofarm_settings.enabled = false
@@ -513,6 +514,16 @@ local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player li
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
     Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
+end)
+local FreeMagnifyingGlass = MainMiscSection:NewButton("Free Magnifying Glass", "gets magnifying glass free", function()
+    if LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.MagnifyingGlass.Visible == false then
+        LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.MagnifyingGlass.Visible = true
+    end
+    LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.MagnifyingGlass:GetPropertyChangedSignal("Visible"):Connect(function()
+        if LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.MagnifyingGlass.Visible == false then
+            LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.MagnifyingGlass.Visible = true
+        end
+    end)
 end)
 
 local OpenSection = MiscTab:NewSection("Open UIs")
