@@ -249,8 +249,30 @@ SupportSection:NewButton("Click to join discord server", "", function()
     end)
 end)
 local WarningLabel2 = SupportSection:NewLabel("Discord Server:\n  discord.gg/4KaJ2xdJXH")
-local SettingsTab = Window:NewTab("Settings")
+local SettingsTab = Window:NewTab("AutoFarm Settings")
 local MainSettings = SettingsTab:NewSection("Main")
+
+local TeleportTab = Window:NewTab("Teleports")
+local MainTeleportTabSection = TeleportTab:NewSection("Teleport")
+MainTeleportTabSection:NewDropdown("Teleport to Location", "", {"The Crossroads", "Graphite Lodge", "Route 4", "Lakewood Sewer", "Route 3", "Lakewood Town", "Route 2", "Route 1", "Sketchvale"}, function(location)
+    local LocationsTable = {
+        ["The Crossroads"] = "017_Crossroads",
+        ["Graphite Lodge"] = "014_GraphiteLodge",
+        ["Route 4"] = "013_Route4",
+        ["Lakewood Sewer"] = "011_RealSewer",
+        ["Route 3"] = "010_Route3",
+        ["Lakewood Town"] = "007_Lakewood",
+        ["Route 2"] = "006_Route2",
+        ["Route 1"] = "Route_1",
+        ["Sketchvale"] = "001_Chunk"
+    }
+    pcall(function()
+        Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", true, true)
+    end)
+    task.wait(0.6)
+    LocalPlayer.Character.HumanoidRootPart.Anchored = false
+end)
+
 local Misc = SettingsTab:NewSection("Misc")
 Misc:NewToggle("AutoHeal", "", function(state)
     if state == true then
@@ -489,41 +511,23 @@ local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player li
     LocalPlayer.PlayerGui.MainGui.PlayerList.Visible = false
     LocalPlayer.Character.Head.Nametag.Username.Visible = false
 end)
-local OpenShop = MainMiscSection:NewButton("Open Shop", "Opens the shop GUI", function()
+local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
+    Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
+end)
+
+local OpenSection = MiscTab:NewSection("Open UIs")
+local OpenShop = OpenSection:NewButton("Open Shop", "Opens the shop GUI", function()
     Client.NormalShop.new()
     repeat task.wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
 end)
-local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function()
+local OpenPC = OpenSection:NewButton("Open PC", "Opens the PC GUI", function()
     Client.PC.new()
     repeat task.wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
     Client.Controls:ToggleWalk(true)
 end)
-local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
-    Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
-end)
 
-local TeleportTab = Window:NewTab("Teleports")
-local MainTeleportTabSection = TeleportTab:NewSection("Teleport")
-MainTeleportTabSection:NewDropdown("Teleport to Location", "", {"The Crossroads", "Graphite Lodge", "Route 4", "Lakewood Sewer", "Route 3", "Lakewood Town", "Route 2", "Route 1", "Sketchvale"}, function(location)
-    local LocationsTable = {
-        ["The Crossroads"] = "017_Crossroads",
-        ["Graphite Lodge"] = "014_GraphiteLodge",
-        ["Route 4"] = "013_Route4",
-        ["Lakewood Sewer"] = "011_RealSewer",
-        ["Route 3"] = "010_Route3",
-        ["Lakewood Town"] = "007_Lakewood",
-        ["Route 2"] = "006_Route2",
-        ["Route 1"] = "Route_1",
-        ["Sketchvale"] = "001_Chunk"
-    }
-    pcall(function()
-        Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", true, true)
-    end)
-    task.wait(0.6)
-    LocalPlayer.Character.HumanoidRootPart.Anchored = false
-end)
 
 local GUISettings = Window:NewTab("GUI Settings")
 local GUISettingsSection = GUISettings:NewSection("Settings")
