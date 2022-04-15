@@ -451,7 +451,7 @@ local function panhandle()
         until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
         if breakrepeat == true then break end
         for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
-            if tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and v.MoveName.Text == "Panhandle" then
+            if v.MoveName.Text == "Panhandle" then
                 repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                 getconnections(v.MouseButton1Click)[1]:Fire()
                 print("panhandled: doodle".."1")
@@ -461,19 +461,18 @@ local function panhandle()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $")
     repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
     --all the other doodles
-    for i = 2, #Client.Network:get("PlayerData", "GetParty") do
-        local Doodle = Client.Network:get("PlayerData", "GetParty")[i]
+    for doodlenumber = 2, #Client.Network:get("PlayerData", "GetParty") do
+        local Doodle = Client.Network:get("PlayerData", "GetParty")[doodlenumber]
         for i,v in pairs(Doodle.Moves) do
             if v.Name == "Panhandle" then
                 print("other doodle has panhandle, switching")
-                repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will"
-                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1]:Fire()
+                repeat task.wait() until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1] ~= nil
+                getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
-                    if string.find(v.Name, "Party") and tonumber(string.split(v.Health.HealthNumber.Text, " ")[1]) ~= 0 then
+                    if string.find(v.Name, "Party") and tonumber(string.split(v.Health.HealthNumber.Text, " ")[1]) ~= 0 and v.DoodleName.Label.Text == Doodle.Name then
                         getconnections(v.Activated)[1]:Fire()
                         repeat task.wait() until LocalPlayer.PlayerGui.MainGui:FindFirstChild("PartyChoice")
                         getconnections(LocalPlayer.PlayerGui.MainGui.PartyChoice.Switch.MouseButton1Click)[1]:Fire()
-                        repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
                         repeat
                             local breakrepeat = false
                             repeat
@@ -488,14 +487,14 @@ local function panhandle()
                                 end
                             until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
                             if breakrepeat == true then break end
-                                for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
-                                    if tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and v.MoveName.Text == "Panhandle" then
-                                        repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
-                                        getconnections(v.MouseButton1Click)[1]:Fire()
-                                        print("panhandled: doodle"..i)
-                                        break
-                                    end
+                            for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
+                                if v.MoveName.Text == "Panhandle" then
+                                    repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
+                                    getconnections(v.MouseButton1Click)[1]:Fire()
+                                    print("panhandled: doodle"..doodlenumber)
+                                    break
                                 end
+                            end
                         until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, Client.Battle.CurrentData.Out1[1].Name.." got $")
                         break
                     end
@@ -583,7 +582,7 @@ local function kill()
     repeat
         repeat
             task.wait()
-            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") then return end
+            if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The opposing "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") then return end
         until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil or Client.Battle.CurrentData.Out1[1].currenthp == 0
         --if doodle dies
         if Client.Battle.CurrentData.Out1[1].currenthp == 0 then
