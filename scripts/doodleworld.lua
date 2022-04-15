@@ -527,6 +527,11 @@ local OpenPC = OpenSection:NewButton("Open PC", "Opens the PC GUI", function()
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
     Client.Controls:ToggleWalk(true)
 end)
+local OpenHelpCenter = OpenSection:NewButton("Open Help Center", "Opens the help center GUI", function()
+    Client.HelpCenter.new({
+        Location = "GraphiteLodge"
+    })
+end)
 
 
 local GUISettings = Window:NewTab("GUI Settings")
