@@ -202,7 +202,7 @@ for i,v in pairs(game:GetService("CoreGui"):GetChildren()) do
 end
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
-local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling (everything is off by default)")
+local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  wild battles")
 
 local Enabled = MainSection:NewToggle("Enabled", "", function(state)
@@ -261,7 +261,7 @@ Misc:NewToggle("AutoHeal", "", function(state)
 end)
 local Capsules = {}
 local CapsuleSelection
-MainSettings:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle", "Trainer"}, function(state)
+MainSettings:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle Money Farm", "Trainer Farm"}, function(state)
     if state == "Wild Battle" then
         if getgenv().autofarm_settings.enabled == true then
             getgenv().autofarm_settings.enabled = false
@@ -438,7 +438,7 @@ MainSettings:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle", "Trai
                 getgenv().autofarm_settings.sound_alerts = false
             end
         end)
-    elseif state == "Panhandle" then
+    elseif state == "Panhandle Money Farm" then
         if getgenv().autofarm_settings.enabled == true then
             getgenv().autofarm_settings.enabled = false
             notify("AutoFarm", "Disabled")
@@ -447,7 +447,7 @@ MainSettings:NewDropdown("AutoFarm Mode", "", {"Wild Battle", "Panhandle", "Trai
         getgenv().autofarm_settings.wild_mode = false
         getgenv().autofarm_settings.panhandle_mode = true
         removeNonUniversalSettings()
-    elseif state == "Trainer" then
+    elseif state == "Trainer Farm" then
         if getgenv().autofarm_settings.enabled == true then
             getgenv().autofarm_settings.enabled = false
             notify("AutoFarm", "Disabled")
@@ -502,6 +502,27 @@ local OpenPC = MainMiscSection:NewButton("Open PC", "Opens the PC GUI", function
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
     Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
+end)
+
+local TeleportTab = Window:NewTab("Teleports")
+local MainTeleportTabSection = TeleportTab:NewSection("Teleport")
+MainTeleportTabSection:NewDropdown("Teleport to Location", "", {"The Crossroads", "Graphite Lodge", "Route 4", "Lakewood Sewer", "Route 3", "Lakewood Town", "Route 2", "Route 1", "Sketchvale"}, function(location)
+    local LocationsTable = {
+        ["The Crossroads"] = "017_Crossroads",
+        ["Graphite Lodge"] = "014_GraphiteLodge",
+        ["Route 4"] = "013_Route4",
+        ["Lakewood Sewer"] = "011_RealSewer",
+        ["Route 3"] = "010_Route3",
+        ["Lakewood Town"] = "007_Lakewood",
+        ["Route 2"] = "006_Route2",
+        ["Route 1"] = "Route_1",
+        ["Sketchvale"] = "001_Chunk"
+    }
+    pcall(function()
+        Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", true, true)
+    end)
+    task.wait(0.6)
+    LocalPlayer.Character.HumanoidRootPart.Anchored = false
 end)
 
 local GUISettings = Window:NewTab("GUI Settings")
