@@ -552,6 +552,8 @@ MainSettings:NewButton("Load Settings", "", function()
                     end
                 end)
                 updateUIThing("Toggle", "Sound Alerts", getgenv().autofarm_settings.sound_alerts)
+                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.sound_alerts)
+                updateUIThing("Dropdown", "AutoFarm Mode", "Wild Battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 MainSettings:NewSlider("Trainer ID (1-39)", "", 39, 1, function(s)
                     getgenv().autofarm_settings.trainer_ID = s
@@ -578,8 +580,11 @@ MainSettings:NewButton("Load Settings", "", function()
                     updateUIThing("Dropdown", "Which move to use", "Custom Move")
                     updateUIThing("Dropdown", "Custom Move Choice", getgenv().autofarm_settings.autokill_custom_move)
                 end
+                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.sound_alerts)
+                updateUIThing("Dropdown", "AutoFarm Mode", "Trainer Farm")
             elseif getgenv().autofarm_settings.panhandle_mode == true then
-
+                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.sound_alerts)
+                updateUIThing("Dropdown", "AutoFarm Mode", "Panhandle Money Farm")
             end
         end
     else
