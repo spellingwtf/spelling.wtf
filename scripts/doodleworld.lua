@@ -4,6 +4,9 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
+local StarterGui = game:GetService("StarterGui")
+local CoreGui = game:GetService("CoreGui")
 local Client = require(LocalPlayer.Packer.Client)
 local getasset = syn and getsynasset or getcustomasset
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
@@ -23,7 +26,7 @@ end
 
 --// PREVENT REEXECUTESs
 if getgenv().executed == true then
-    game:GetService("StarterGui"):SetCore("SendNotification", {
+    StarterGui:SetCore("SendNotification", {
         Title = "Already Executed",
         Text = "Uninject first by pressing comma!",
         Duration = 3,
@@ -40,7 +43,7 @@ local function notify(title, text)
         Text = text,
         Duration = 3,
     }
-    game:GetService("StarterGui"):SetCore("SendNotification", configTable)
+    StarterGui:SetCore("SendNotification", configTable)
 end
 local function validatesettings()
     if type(getgenv().autofarm_settings.panhandle_mode) ~= "boolean" or type(getgenv().autofarm_settings.wild_mode) ~= "boolean" or type(getgenv().autofarm_settings.trainer_mode) ~= "boolean" then
@@ -194,8 +197,43 @@ local function removeNonUniversalSettings()
     end
 end
 
+local function updateUIThing(type, name, value)
+    if type == "Toggle" then
+        for i,v in pairs(UI:GetDescendants()) do
+            if (v:IsA("TextButton")) and v.Name == "toggleElement" and v.togName.Text == name then
+                if value == true and v.toggleEnabled.ImageTransparency == 1 then
+                    getconnections(v.MouseEnter)[1]:Fire()
+                    getconnections(v.MouseButton1Click)[1]:Fire()
+                    getconnections(v.MouseLeave)[1]:Fire()
+                elseif value == false and v.toggleEnabled.ImageTransparency == 0 then
+                    getconnections(v.MouseEnter)[1]:Fire()
+                    getconnections(v.MouseButton1Click)[1]:Fire()
+                    getconnections(v.MouseLeave)[1]:Fire()
+                end
+                return v
+            end
+        end
+    elseif type == "Slider" then
+        for i,v in pairs(UI:GetDescendants()) do
+            if (v:IsA("TextButton")) and v.Name == "sliderElement" and v.togName.Text == name then
+                v.val.Text = value
+                v.sliderBtn.sliderDrag.Visible = true
+                v.sliderBtn.sliderDrag.Size = UDim2.new(0, tonumber(value)*2.8, 0, 6)
+                return v
+            end
+        end
+    elseif type == "Dropdown" then
+        for i,v in pairs(UI:GetDescendants()) do
+            if (v:IsA("Frame")) and v.Name == "dropFrame" and v.dropOpen.itemTextbox.Text == name then
+                v.dropOpen.itemTextbox.Text = value
+                return v
+            end
+        end
+    end
+end
+
 local Window = Library.CreateLib("Doodoo World AutoFarm", "DarkTheme")
-for i,v in pairs(game:GetService("CoreGui"):GetChildren()) do
+for i,v in pairs(CoreGui:GetChildren()) do
     if v.Name == tostring(tonumber(v.Name)) then
         UI = v
     end
@@ -227,14 +265,14 @@ SupportSection:NewButton("Click to join discord server", "joins the discord serv
         for i = 1, 14 do
             spawn(function()
                 local reqbody = {
-                    ["nonce"] = game:GetService("HttpService"):GenerateGUID(false),
+                    ["nonce"] = HttpService:GenerateGUID(false),
                     ["args"] = {
-                        ["invite"] = {["code"] = "4KaJ2xdJXH"},
-                        ["code"] = "4KaJ2xdJXH",
+                        ["invite"] = {["code"] = "d5Ethfjpj6"},
+                        ["code"] = "d5Ethfjpj6",
                     },
                     ["cmd"] = "INVITE_BROWSER"
                 }
-                local newreq = game:GetService("HttpService"):JSONEncode(reqbody)
+                local newreq = HttpService:JSONEncode(reqbody)
                 requestfunc({
                     Headers = {
                         ["Content-Type"] = "application/json",
@@ -248,9 +286,306 @@ SupportSection:NewButton("Click to join discord server", "joins the discord serv
         end
     end)
 end)
-local WarningLabel2 = SupportSection:NewLabel("Discord Server:\n  discord.gg/4KaJ2xdJXH")
+local WarningLabel2 = SupportSection:NewLabel("Discord Server:\n  discord.gg/d5Ethfjpj6")
 local SettingsTab = Window:NewTab("AutoFarm Settings")
 local MainSettings = SettingsTab:NewSection("Main")
+
+MainSettings:NewButton("Save Settings", "", function()
+    writefile("DoodleWorldAutoFarmSettings.json", HttpService:JSONEncode(getgenv().autofarm_settings))
+    repeat task.wait() until isfile("DoodleWorldAutoFarmSettings.json")
+    notify("Save Settings", "Succes")
+end)
+
+local Misc = SettingsTab:NewSection("Misc")
+Misc:NewToggle("AutoHeal", "Automatically heal before battles start", function(state)
+    if state == true then
+        getgenv().autofarm_settings.autoheal = true
+    elseif state == false then
+        getgenv().autofarm_settings.autoheal = false
+    end
+end)
+local Capsules = {}
+local CapsuleSelection
+
+MainSettings:NewButton("Load Settings", "", function()
+    if isfile("DoodleWorldAutoFarmSettings.json") then
+        local SettingsFile = readfile("DoodleWorldAutoFarmSettings.json")
+        getgenv().autofarm_settings = HttpService:JSONDecode(SettingsFile)
+        notify("Load Settings", "Success")
+        local validsettings = validatesettings()
+        if validsettings == true then
+            removeNonUniversalSettings()
+            if getgenv().autofarm_settings.wild_mode == true then
+                local NormalDoodles = SettingsTab:NewSection("Normal Doodles\n(doodles that didnt pass any of the checks)")
+                NormalDoodles:NewDropdown("Normal Doodle Mode", "", {"Kill", "Run", "Pause"}, function(mode)
+                    if mode == "Kill" then
+                        getgenv().autofarm_settings.pause_when_normal_doodle = false
+                        getgenv().autofarm_settings.kill_when_normal_doodle = true
+                    elseif mode == "Run" then
+                        getgenv().autofarm_settings.pause_when_normal_doodle = false
+                        getgenv().autofarm_settings.kill_when_normal_doodle = false
+                    elseif mode == "Pause" then
+                        getgenv().autofarm_settings.kill_when_normal_doodle = false
+                        getgenv().autofarm_settings.pause_when_normal_doodle = true
+                    end
+                end)
+                if getgenv().autofarm_settings.kill_when_normal_doodle == false and getgenv().autofarm_settings.kill_when_normal_doodle == true then
+                    updateUIThing("Dropdown", "Normal Doodle Mode", "Kill")
+                elseif getgenv().autofarm_settings.pause_when_normal_doodle == false and getgenv().autofarm_settings.kill_when_normal_doodle == false then
+                    updateUIThing("Dropdown", "Normal Doodle Mode", "Run")
+                elseif getgenv().autofarm_settings.kill_when_normal_doodle == false and getgenv().autofarm_settings.pause_when_normal_doodle == true then
+                    updateUIThing("Dropdown", "Normal Doodle Mode", "Pause")
+                end
+                local Shiny = SettingsTab:NewSection("Shiny/Misprint")
+                Shiny:NewDropdown("Shiny/Misprint Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
+                    if mode == "Catch" then
+                        getgenv().autofarm_settings.pause_when_shiny = false
+                        getgenv().autofarm_settings.kill_when_shiny = false
+                        getgenv().autofarm_settings.catch_when_shiny = true
+                    elseif mode == "Kill" then
+                        getgenv().autofarm_settings.pause_when_shiny = false
+                        getgenv().autofarm_settings.catch_when_shiny = false
+                        getgenv().autofarm_settings.kill_when_shiny = true
+                    elseif mode == "Run" then
+                        getgenv().autofarm_settings.pause_when_shiny = false
+                        getgenv().autofarm_settings.catch_when_shiny = false
+                        getgenv().autofarm_settings.kill_when_shiny = false
+                    elseif mode == "Pause" then
+                        getgenv().autofarm_settings.catch_when_shiny = false
+                        getgenv().autofarm_settings.kill_when_shiny = false
+                        getgenv().autofarm_settings.pause_when_shiny = true
+                    end
+                end)
+                if getgenv().autofarm_settings.pause_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == false and getgenv().autofarm_settings.catch_when_shiny == true then
+                    updateUIThing("Dropdown", "Normal Doodle Mode", "Catch")
+                elseif getgenv().autofarm_settings.pause_when_shiny == false and getgenv().autofarm_settings.catch_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == true then
+                    updateUIThing("Dropdown", "Normal Doodle Mode", "Kill")
+                elseif getgenv().autofarm_settings.pause_when_shiny == false and getgenv().autofarm_settings.catch_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == false then
+                    updateUIThing("Dropdown", "Normal Doodle Mode", "Run")
+                elseif getgenv().autofarm_settings.pause_when_shiny == true and getgenv().autofarm_settings.catch_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == false then
+                    updateUIThing("Dropdown", "Normal Doodle Mode", "Pause")
+                end
+                local Skin = SettingsTab:NewSection("Skin")
+                Skin:NewDropdown("Skin Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
+                    if mode == "Catch" then
+                        getgenv().autofarm_settings.kill_when_skin = false
+                        getgenv().autofarm_settings.pause_when_skin = false
+                        getgenv().autofarm_settings.catch_when_skin = true
+                    elseif mode == "Kill" then
+                        getgenv().autofarm_settings.pause_when_skin = false
+                        getgenv().autofarm_settings.catch_when_skin = false
+                        getgenv().autofarm_settings.kill_when_skin = true
+                    elseif mode == "Run" then
+                        getgenv().autofarm_settings.pause_when_skin = false
+                        getgenv().autofarm_settings.catch_when_skin = false
+                        getgenv().autofarm_settings.kill_when_skin = false
+                    elseif mode == "Pause" then
+                        getgenv().autofarm_settings.catch_when_skin = false
+                        getgenv().autofarm_settings.kill_when_skin = false
+                        getgenv().autofarm_settings.pause_when_skin = true
+                    end
+                end)
+                if getgenv().autofarm_settings.pause_when_skin == false and getgenv().autofarm_settings.kill_when_skin == false and getgenv().autofarm_settings.catch_when_skin == true then
+                    updateUIThing("Dropdown", "Skin Mode", "Catch")
+                elseif getgenv().autofarm_settings.pause_when_skin == false and getgenv().autofarm_settings.catch_when_skin == false and getgenv().autofarm_settings.kill_when_skin == true then
+                    updateUIThing("Dropdown", "Skin Mode", "Kill")
+                elseif getgenv().autofarm_settings.pause_when_skin == false and getgenv().autofarm_settings.catch_when_skin == false and getgenv().autofarm_settings.kill_when_skin == false then
+                    updateUIThing("Dropdown", "Skin Mode", "Run")
+                elseif getgenv().autofarm_settings.pause_when_skin == true and getgenv().autofarm_settings.catch_when_skin == false and getgenv().autofarm_settings.kill_when_skin == false then
+                    updateUIThing("Dropdown", "Skin Mode", "Pause")
+                end
+                local Tint = SettingsTab:NewSection("Tint")
+                Tint:NewDropdown("Tint Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
+                    if mode == "Catch" then
+                        getgenv().autofarm_settings.pause_when_tint = false
+                        getgenv().autofarm_settings.kill_when_tint = false
+                        getgenv().autofarm_settings.catch_when_tint = true
+                    elseif mode == "Kill" then
+                        getgenv().autofarm_settings.pause_when_tint = false
+                        getgenv().autofarm_settings.catch_when_tint = false
+                        getgenv().autofarm_settings.kill_when_tint = true
+                    elseif mode == "Run" then
+                        getgenv().autofarm_settings.pause_when_tint = false
+                        getgenv().autofarm_settings.catch_when_tint = false
+                        getgenv().autofarm_settings.kill_when_tint = false
+                    elseif mode == "Pause" then
+                        getgenv().autofarm_settings.catch_when_tint = false
+                        getgenv().autofarm_settings.kill_when_tint = false
+                        getgenv().autofarm_settings.pause_when_tint = true
+                    end
+                end)
+                if getgenv().autofarm_settings.pause_when_tint == false and getgenv().autofarm_settings.kill_when_tint == false and getgenv().autofarm_settings.catch_when_tint == true then
+                    updateUIThing("Dropdown", "Tint Mode", "Catch")
+                elseif getgenv().autofarm_settings.pause_when_tint == false and getgenv().autofarm_settings.catch_when_tint == false and getgenv().autofarm_settings.kill_when_tint == true then
+                    updateUIThing("Dropdown", "Tint Mode", "Kill")
+                elseif getgenv().autofarm_settings.pause_when_tint == false and getgenv().autofarm_settings.catch_when_tint == false and getgenv().autofarm_settings.kill_when_tint == false then
+                    updateUIThing("Dropdown", "Tint Mode", "Run")
+                elseif getgenv().autofarm_settings.pause_when_tint == true and getgenv().autofarm_settings.catch_when_tint == false and getgenv().autofarm_settings.kill_when_tint == false then
+                    updateUIThing("Dropdown", "Tint Mode", "Pause")
+                end
+                local DoodlesThatHaventBeenCaughtBefore = SettingsTab:NewSection("Doodles that haven't been caught before")
+                DoodlesThatHaventBeenCaughtBefore:NewDropdown("Not AlreadyCaught Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
+                    if mode == "Catch" then
+                        getgenv().autofarm_settings.pause_when_havent_caught_before = false
+                        getgenv().autofarm_settings.kill_when_havent_caught_before = false
+                        getgenv().autofarm_settings.catch_when_havent_caught_before = true
+                    elseif mode == "Kill" then
+                        getgenv().autofarm_settings.pause_when_havent_caught_before = false
+                        getgenv().autofarm_settings.catch_when_havent_caught_before = false
+                        getgenv().autofarm_settings.kill_when_havent_caught_before = true
+                    elseif mode == "Run" then
+                        getgenv().autofarm_settings.pause_when_havent_caught_before = false
+                        getgenv().autofarm_settings.catch_when_havent_caught_before = false
+                        getgenv().autofarm_settings.kill_when_havent_caught_before = false
+                    elseif mode == "Pause" then
+                        getgenv().autofarm_settings.catch_when_havent_caught_before = false
+                        getgenv().autofarm_settings.kill_when_havent_caught_before = false
+                        getgenv().autofarm_settings.pause_when_havent_caught_before = true
+                    end
+                end)
+                if getgenv().autofarm_settings.pause_when_havent_caught_before == false and getgenv().autofarm_settings.kill_when_havent_caught_before == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true then
+                    updateUIThing("Dropdown", "Not AlreadyCaught Mode", "Catch")
+                elseif getgenv().autofarm_settings.pause_when_havent_caught_before == false and getgenv().autofarm_settings.catch_when_havent_caught_before == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+                    updateUIThing("Dropdown", "Not AlreadyCaught Mode", "Kill")
+                elseif getgenv().autofarm_settings.pause_when_havent_caught_before == false and getgenv().autofarm_settings.catch_when_havent_caught_before == false and getgenv().autofarm_settings.kill_when_havent_caught_before == false then
+                    updateUIThing("Dropdown", "Not AlreadyCaught Mode", "Run")
+                elseif getgenv().autofarm_settings.pause_when_havent_caught_before == true and getgenv().autofarm_settings.catch_when_havent_caught_before == false and getgenv().autofarm_settings.kill_when_havent_caught_before == false then
+                    updateUIThing("Dropdown", "Not Not AlreadyCaught Mode", "Pause")
+                end
+                local SpecificDoodles = SettingsTab:NewSection("Specific Doodle")
+                SpecificDoodles:NewDropdown("Specific Doodle Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
+                    if mode == "Catch" then
+                        getgenv().autofarm_settings.pause_when_specific_doodle = false
+                        getgenv().autofarm_settings.kill_when_specific_doodle = false
+                        getgenv().autofarm_settings.catch_when_specific_doodle = true
+                    elseif mode == "Kill" then
+                        getgenv().autofarm_settings.pause_when_specific_doodle = false
+                        getgenv().autofarm_settings.catch_when_specific_doodle = false
+                        getgenv().autofarm_settings.kill_when_specific_doodle = true
+                    elseif mode == "Run" then
+                        getgenv().autofarm_settings.pause_when_specific_doodle = false
+                        getgenv().autofarm_settings.catch_when_specific_doodle = false
+                        getgenv().autofarm_settings.kill_when_specific_doodle = false
+                    elseif mode == "Pause" then
+                        getgenv().autofarm_settings.catch_when_specific_doodle = false
+                        getgenv().autofarm_settings.kill_when_specific_doodle = false
+                        getgenv().autofarm_settings.pause_when_specific_doodle = true
+                    end
+                end)
+                if getgenv().autofarm_settings.pause_when_specific_doodle == false and getgenv().autofarm_settings.kill_when_specific_doodle == false and getgenv().autofarm_settings.catch_when_specific_doodle == true then
+                    updateUIThing("Dropdown", "Specific Doodle Mode", "Catch")
+                elseif getgenv().autofarm_settings.pause_when_specific_doodle == false and getgenv().autofarm_settings.catch_when_specific_doodle == false and getgenv().autofarm_settings.kill_when_specific_doodle == true then
+                    updateUIThing("Dropdown", "Specific Doodle Mode", "Kill")
+                elseif getgenv().autofarm_settings.pause_when_specific_doodle == false and getgenv().autofarm_settings.catch_when_specific_doodle == false and getgenv().autofarm_settings.kill_when_specific_doodle == false then
+                    updateUIThing("Dropdown", "Specific Doodle Mode", "Run")
+                elseif getgenv().autofarm_settings.pause_when_specific_doodle == true and getgenv().autofarm_settings.catch_when_specific_doodle == false and getgenv().autofarm_settings.kill_when_havent_specific_doodle == false then
+                    updateUIThing("Dropdown", "Specific Doodle Mode", "Pause")
+                end
+                local AutoCatch = SettingsTab:NewSection("Catch Mode")
+                for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
+                    table.insert(Capsules, i)
+                end
+                CapsuleSelection = AutoCatch:NewDropdown("Capsule", "choose your capsule", Capsules, function(capsule)
+                    getgenv().autofarm_settings.autocatch_capsule = capsule
+                end)
+                updateUIThing("Dropdown", "Capsule", getgenv().autofarm_settings.autocatch_capsule)
+                AutoCatch:NewToggle("Use Glancing Blow", "", function(state)
+                    if state == true then
+                        getgenv().autofarm_settings.autocatch_use_glancing_blow = true
+                    elseif state == false then
+                        getgenv().autofarm_settings.autocatch_use_glancing_blow = false
+                    end
+                end)
+                updateUIThing("Toggle", "Use Glancing Blow", getgenv().autofarm_settings.autocatch_use_glancing_blow)
+                local AutoKill = SettingsTab:NewSection("Kill Mode")
+                AutoKill:NewDropdown("Which move to use", "", {"Strongest Move", "Custom Move"}, function(mode)
+                    local custommovedropdown
+                    if mode == "Strongest Move" then
+                        getgenv().autofarm_settings.autokill_use_strongest_move = true
+                    elseif mode == "Custom Move" then
+                        getgenv().autofarm_settings.autokill_use_strongest_move = false
+                        local moves = {}
+                        for i,v in pairs(Client.Network:get("PlayerData", "GetParty")[1]["Moves"]) do
+                            table.insert(moves, v.Name)
+                        end
+                        custommovedropdown = AutoKill:NewDropdown("Custom Move Choice", "", moves, function(move)
+                            getgenv().autofarm_settings.autokill_custom_move = move
+                        end)
+                    end
+                end)
+                if getgenv().autofarm_settings.autokill_use_strongest_move == true then
+                    updateUIThing("Dropdown", "Which move to use", "Strongest Move")
+                elseif getgenv().autofarm_settings.autokill_use_strongest_move == false then
+                    updateUIThing("Dropdown", "Which move to use", "Custom Move")
+                    updateUIThing("Dropdown", "Custom Move Choice", getgenv().autofarm_settings.autokill_custom_move)
+                end
+                local AllDoodles = SettingsTab:NewSection("All Doodles (Bypasses every other setting) (Optional)")
+                AllDoodles:NewDropdown("Mode (Optional Setting)", "", {"Catch", "Kill", "Pause"}, function(mode)
+                    if mode == "Catch" then
+                        getgenv().autofarm_settings.pause_all = false
+                        getgenv().autofarm_settings.kill_all = false
+                        getgenv().autofarm_settings.catch_all = true
+                    elseif mode == "Kill" then
+                        getgenv().autofarm_settings.pause_all = false
+                        getgenv().autofarm_settings.catch_all = false
+                        getgenv().autofarm_settings.kill_all = true
+                    elseif mode == "Pause" then
+                        getgenv().autofarm_settings.catch_all = false
+                        getgenv().autofarm_settings.kill_all = false
+                        getgenv().autofarm_settings.pause_all = true
+                    end
+                end)
+                if getgenv().autofarm_settings.pause_all == false and getgenv().autofarm_settings.kill_all == false and getgenv().autofarm_settings.catch_all == true then
+                    updateUIThing("Dropdown", "Mode (Optional Setting)", "Catch")
+                elseif getgenv().autofarm_settings.pause_all == false and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_all == true then
+                    updateUIThing("Dropdown", "Mode (Optional Setting)", "Kill")
+                elseif getgenv().autofarm_settings.pause_all == false and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_all == false then
+                    updateUIThing("Dropdown", "Mode (Optional Setting)", "Run")
+                elseif getgenv().autofarm_settings.pause_all == true and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_when_havent_specific_doodle == false then
+                    updateUIThing("Dropdown", "Mode (Optional Setting)", "Pause")
+                end
+                Misc:NewToggle("Sound Alerts", "", function(state)
+                    if state == true then
+                        getgenv().autofarm_settings.sound_alerts = true
+                    elseif state == false then
+                        getgenv().autofarm_settings.sound_alerts = false
+                    end
+                end)
+                updateUIThing("Toggle", "Sound Alerts", getgenv().autofarm_settings.sound_alerts)
+            elseif getgenv().autofarm_settings.trainer_mode == true then
+                MainSettings:NewSlider("Trainer ID (1-39)", "", 39, 1, function(s)
+                    getgenv().autofarm_settings.trainer_ID = s
+                end)
+                updateUIThing("Slider", "Trainer ID (1-39)", getgenv().autofarm_settings.trainer_ID)
+                local AutoKill = SettingsTab:NewSection("Kill Mode")
+                AutoKill:NewDropdown("Which move to use", "", {"Strongest Move", "Custom Move"}, function(mode)
+                    if mode == "Strongest Move" then
+                        getgenv().autofarm_settings.autokill_use_strongest_move = true
+                    elseif mode == "Custom Move" then
+                        getgenv().autofarm_settings.autokill_use_strongest_move = false
+                        local moves = {}
+                        for i,v in pairs(Client.Network:get("PlayerData", "GetParty")[1]["Moves"]) do
+                            table.insert(moves, v.Name)
+                        end
+                        AutoKill:NewDropdown("Custom Move Choice", "", moves, function(move)
+                            getgenv().autofarm_settings.autokill_custom_move = move
+                        end)
+                    end
+                end)
+                if getgenv().autofarm_settings.autokill_use_strongest_move == true then
+                    updateUIThing("Dropdown", "Which move to use", "Strongest Move")
+                elseif getgenv().autofarm_settings.autokill_use_strongest_move == false then
+                    updateUIThing("Dropdown", "Which move to use", "Custom Move")
+                    updateUIThing("Dropdown", "Custom Move Choice", getgenv().autofarm_settings.autokill_custom_move)
+                end
+            elseif getgenv().autofarm_settings.panhandle_mode == true then
+
+            end
+        end
+    else
+        notify("Load Settings", "Settings Not Found")
+    end
+end)
 
 local TeleportTab = Window:NewTab("Teleports")
 local MainTeleportTabSection = TeleportTab:NewSection("Teleport")
@@ -274,16 +609,7 @@ MainTeleportTabSection:NewDropdown("Teleport to Location", "Teleports to chosen 
     LocalPlayer.Character.HumanoidRootPart.Anchored = false
 end)
 
-local Misc = SettingsTab:NewSection("Misc")
-Misc:NewToggle("AutoHeal", "Automatically heal before battles start", function(state)
-    if state == true then
-        getgenv().autofarm_settings.autoheal = true
-    elseif state == false then
-        getgenv().autofarm_settings.autoheal = false
-    end
-end)
-local Capsules = {}
-local CapsuleSelection
+
 MainSettings:NewDropdown("AutoFarm Mode", "Choose the AutoFarm Mode", {"Wild Battle", "Panhandle Money Farm", "Trainer Farm"}, function(state)
     if state == "Wild Battle" then
         if getgenv().autofarm_settings.enabled == true then
@@ -567,7 +893,7 @@ local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", fu
         notify("Invalid KeyBind", "")
     end
     if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
-    ToggleGUIConnection = game:GetService("UserInputService").InputBegan:Connect(function(key)
+    ToggleGUIConnection = UserInputService.InputBegan:Connect(function(key)
         if key.KeyCode == Enum.KeyCode[KeyBind] then
             Library:ToggleUI()
         end
@@ -924,7 +1250,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         end
         repeat task.wait() until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true and string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will")
-        if getgenv().autofarm_settings.wild_mode == true then
+        if getgenv().autofarm_settings.wild_mode == true and not table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
             if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
                 print("found shiny/misprint doodle")
                 notify("AutoFarm Found:", "Shiny/Misprint Doodle")
@@ -994,6 +1320,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     run()
                 end
             end
+        elseif getgenv().autofarm_settings.wild_mode == true and table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
+            run()
         elseif getgenv().autofarm_settings.panhandle_mode == true then
             print("starting panhandle sequence")
             panhandle()
@@ -1032,7 +1360,7 @@ UninjectConnection = UserInputService.InputBegan:Connect(function(key)
                 return false
             end
         end
-        for i,v in pairs(game:GetService("CoreGui"):GetChildren()) do
+        for i,v in pairs(CoreGui:GetChildren()) do
             if isNumeric(v.Name) then
                 v:Destroy()
             end
