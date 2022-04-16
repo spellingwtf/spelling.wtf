@@ -124,7 +124,7 @@ local function validatesettings()
             notify("Invalid Specific Doodle Table", "Setting hasn't been set")
             return false
         end
-        if type(getgenv().autofarm_settings.blacklist_doodle) ~= "table" then
+        if type(getgenv().autofarm_settings.blacklist_doodles) ~= "table" then
             notify("Invalid Blacklist Doodle Table", "get the new script")
             return false
         end
