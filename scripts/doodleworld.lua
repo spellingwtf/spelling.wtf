@@ -126,7 +126,7 @@ local function validatesettings()
         end
         if type(getgenv().autofarm_settings.blacklist_doodles) ~= "table" then
             notify("Invalid Blacklist Doodle Table", "get the new script")
-            return false
+            
         end
     end
     if getgenv().autofarm_settings.trainer_mode == true then
