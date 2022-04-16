@@ -360,13 +360,13 @@ MainSettings:NewButton("Load Settings", "", function()
                     end
                 end)
                 if getgenv().autofarm_settings.pause_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == false and getgenv().autofarm_settings.catch_when_shiny == true then
-                    updateUIThing("Dropdown", "Normal Doodle Mode", "Catch")
+                    updateUIThing("Dropdown", "Shiny/Misprint Mode", "Catch")
                 elseif getgenv().autofarm_settings.pause_when_shiny == false and getgenv().autofarm_settings.catch_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == true then
-                    updateUIThing("Dropdown", "Normal Doodle Mode", "Kill")
+                    updateUIThing("Dropdown", "Shiny/Misprint Mode", "Kill")
                 elseif getgenv().autofarm_settings.pause_when_shiny == false and getgenv().autofarm_settings.catch_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == false then
-                    updateUIThing("Dropdown", "Normal Doodle Mode", "Run")
+                    updateUIThing("Dropdown", "Shiny/Misprint Mode", "Run")
                 elseif getgenv().autofarm_settings.pause_when_shiny == true and getgenv().autofarm_settings.catch_when_shiny == false and getgenv().autofarm_settings.kill_when_shiny == false then
-                    updateUIThing("Dropdown", "Normal Doodle Mode", "Pause")
+                    updateUIThing("Dropdown", "Shiny/Misprint Mode", "Pause")
                 end
                 local Skin = SettingsTab:NewSection("Skin")
                 Skin:NewDropdown("Skin Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
