@@ -126,7 +126,6 @@ local function validatesettings()
         end
         if type(getgenv().autofarm_settings.blacklist_doodles) ~= "table" then
             notify("Invalid Blacklist Doodle Table", "get the new script")
-            
         end
     end
     if getgenv().autofarm_settings.trainer_mode == true then
@@ -454,7 +453,7 @@ MainSettings:NewButton("Load Settings", "", function()
                 elseif getgenv().autofarm_settings.pause_when_havent_caught_before == false and getgenv().autofarm_settings.catch_when_havent_caught_before == false and getgenv().autofarm_settings.kill_when_havent_caught_before == false then
                     updateUIThing("Dropdown", "Not AlreadyCaught Mode", "Run")
                 elseif getgenv().autofarm_settings.pause_when_havent_caught_before == true and getgenv().autofarm_settings.catch_when_havent_caught_before == false and getgenv().autofarm_settings.kill_when_havent_caught_before == false then
-                    updateUIThing("Dropdown", "Not Not AlreadyCaught Mode", "Pause")
+                    updateUIThing("Dropdown", "Not AlreadyCaught Mode", "Pause")
                 end
                 local SpecificDoodles = SettingsTab:NewSection("Specific Doodle")
                 SpecificDoodles:NewDropdown("Specific Doodle Mode", "", {"Catch", "Kill", "Run", "Pause"}, function(mode)
