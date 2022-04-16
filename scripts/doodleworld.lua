@@ -124,6 +124,10 @@ local function validatesettings()
             notify("Invalid Specific Doodle Table", "Setting hasn't been set")
             return false
         end
+        if type(getgenv().autofarm_settings.blacklist_doodle) ~= "table" then
+            notify("Invalid Blacklist Doodle Table", "Setting hasn't been set")
+            return false
+        end
     end
     if getgenv().autofarm_settings.trainer_mode == true then
         if type(getgenv().autofarm_settings.autokill_use_strongest_move) ~= "boolean" then
