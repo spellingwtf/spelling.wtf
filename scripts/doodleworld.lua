@@ -909,18 +909,24 @@ local GUISettings = Window:NewTab("GUI Settings")
 local GUISettingsSection = GUISettings:NewSection("Settings")
 local ToggleGUIConnection 
 local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
+
     local success, result = pcall(function()
         if Enum.KeyCode[txt] ~= nil then
             KeyBind = txt
         end
     end)
-    if success then
-        KeyBind = txt
-    elseif not success and Enum.KeyCode[txt:upper()] ~= nil then
-        KeyBind = txt:upper()
-    else
-        notify("Invalid KeyBind", "")
+
+    if not success then
+        local success2, result2 = pcall(function()
+            if Enum.KeyCode[txt:upper()] ~= nil then
+                KeyBind = txt:upper()
+            end
+        end)
+        if not success2 then
+            notify("Invalid Keybind", "")
+        end
     end
+
     if ToggleGUIConnection ~= nil then ToggleGUIConnection:Disconnect() end
     ToggleGUIConnection = UserInputService.InputBegan:Connect(function(key)
         if key.KeyCode == Enum.KeyCode[KeyBind] then
