@@ -392,6 +392,7 @@ Misc:NewToggle("Webhooks", "enables webhooks", function(state)
         getgenv().autofarm_settings.webhooks = true
         Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
             getgenv().autofarm_settings.webhook_url = url
+            notify("Webhook", "Webhook URL Set")
         end)
     elseif state == false then
         getgenv().autofarm_settings.webhooks = false
