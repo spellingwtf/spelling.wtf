@@ -170,7 +170,7 @@ local function wildbattlewebhook(check, battletime, action)
     requestfunc({
         Url = getgenv().autofarm_settings.webhook_url,
         Body = game:GetService("HttpService"):JSONEncode({
-            ["content"] = "",
+            ["content"] = action == "Paused" and "@everyone ",
             ["embeds"] = {
                 {
                   ["type"] = "rich",
