@@ -1242,6 +1242,10 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 end
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 print("starting trainer battle")
+                local RandomNPC
+                repeat
+                    RandomNPC = CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())]
+                until RandomNPC:FindFirstChild("Head")
                 Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())])
             end
         elseif FirstEncounter == false then
