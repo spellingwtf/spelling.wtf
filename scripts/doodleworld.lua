@@ -160,7 +160,7 @@ end
 
 local function AssetIdToThumbnail(assetid)
     local req = HttpService:JSONDecode(requestfunc({
-        Url = "https://thumbnails.roblox.com/v1/assets?assetIds="..assetid.."&size=110x110&format=Png&isCircular=false",
+        Url = "https://thumbnails.roblox.com/v1/assets?assetIds="..assetid.."&size=250x250&format=Png&isCircular=false",
         Method = "GET"
     }).Body)
     return req.data[1].imageUrl
