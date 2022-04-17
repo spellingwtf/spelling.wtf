@@ -188,11 +188,11 @@ local function wildbattlewebhook(check, battletime, action)
                     },
                     {
                       ["name"] = "BATTLE TIME",
-                      ["value"] = "`"..tick()-battletime.."`"
+                      ["value"] = "`"..tick()-battletime.."s`"
                     },
                     {
                       ["name"] = "CHAIN",
-                      ["value"] = "`"..Client.Network:get("PlayerData", "GetChain", false).Name.." = "..Client.Network:get("PlayerData", "GetChain", false).Number.."`"
+                      ["value"] = "`"..Client.Network:get("PlayerData", "GetChain", false).Name..": "..Client.Network:get("PlayerData", "GetChain", false).Number.."`"
                     },
                     {
                       ["name"] = "ACTION",
