@@ -48,6 +48,10 @@ local function validatesettings()
         notify("Invalid Autofarm Mode Settings", "Setting hasn't been set")
         return false
     end
+    if getgenv().autofarm_settings.webhooks == true and type(getgenv().autofarm_settings.webhook_url) ~= "string" then
+        notify("Invalid Webhook URL", "Setting hasn't been set")
+        return false
+    end
     --settings where catch and kill or kill and pause or catch and pause are both true (only people who run old script will possibly get this error)
     --checks = {catch and kill, kill and pause, catch and pause}
     if getgenv().autofarm_settings.wild_mode == true then
@@ -143,7 +147,7 @@ local function validatesettings()
     return true
 end
 
-local function Format(num, digits)
+local function format(num, digits)
     return string.format("%0" .. digits .. "i", num)
 end
 
@@ -160,6 +164,57 @@ local function AssetIdToThumbnail(assetid)
         Method = "GET"
     }).Body)
     return req.data[1].imageUrl
+end
+
+local function wildbattlewebhook(check, battletime, action)
+    requestfunc({
+        Url = getgenv().autofarm_settings.webhook_url,
+        Body = game:GetService("HttpService"):JSONEncode({
+            ["content"] = "",
+            ["embeds"] = {
+                {
+                  ["type"] = "rich",
+                  ["title"] = "Doodoo World AutoFarm",
+                  ["description"] = "```"..check..Client.Battle.CurrentData.EnemyDoodle.RealName.."```",
+                  ["color"] = tonumber(0xe90e0e),
+                  ["fields"] = {
+                    {
+                      ["name"] = "⭐STARS⭐",
+                      ["value"] = "`"..tostring(Client.Battle.CurrentData.EnemyDoodle.Star).."`"
+                    },
+                    {
+                      ["name"] = "HIDDEN TRAIT",
+                      ["value"] = "`"..tostring(Client.Battle.CurrentData.EnemyDoodle.Ability == Client.Battle.CurrentData.EnemyDoodle.Info.HiddenAbility).."`"
+                    },
+                    {
+                      ["name"] = "BATTLE TIME",
+                      ["value"] = "`"..tick()-battletime.."`"
+                    },
+                    {
+                      ["name"] = "CHAIN",
+                      ["value"] = "`"..Client.Network:get("PlayerData", "GetChain", false).Name.." = "..Client.Network:get("PlayerData", "GetChain", false).Number.."`"
+                    },
+                    {
+                      ["name"] = "ACTION",
+                      ["value"] = "`"..action.."`"
+                    }
+                  },
+                  ["timestamp"] = ParseDateTime(),
+                  ["image"] = {
+                    ["url"] = AssetIdToThumbnail(string.split(LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite.Image, "=")[2]),
+                    ["height"] = 0,
+                    ["width"] = 0
+                  },
+                  ["footer"] = {
+                    ["text"] = "Made By SPELLING#4664"
+                  },
+                  ["url"] = "https://discord.gg/d5Ethfjpj6"
+                }
+            }
+        }),
+        Method = "POST",
+        Headers = {["content-type"] = "application/json"}
+    })
 end
 
 local function getcustomassetfunc(path)
@@ -332,13 +387,33 @@ Misc:NewToggle("AutoHeal", "Automatically heal before battles start", function(s
         getgenv().autofarm_settings.autoheal = false
     end
 end)
+Misc:NewToggle("Webhooks", "enables webhooks", function(state)
+    if state == true then
+        getgenv().autofarm_settings.webhooks = true
+        Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
+            getgenv().autofarm_settings.webhook_url = url
+        end)
+    elseif state == false then
+        getgenv().autofarm_settings.webhooks = false
+    end
+end)
 local Capsules = {}
 local CapsuleSelection
 
 MainSettings:NewButton("Load Settings", "", function()
     if isfile("DoodleWorldAutoFarmSettings.json") then
         local SettingsFile = readfile("DoodleWorldAutoFarmSettings.json")
+        local SpecificDoodleTable
+        local BlacklistTable
+        if type(getgenv().autofarm_settings.specific_doodles) == "table" then
+            SpecificDoodleTable = getgenv().autofarm_settings.specific_doodles
+        end
+        if type(getgenv().autofarm_settings.blacklist_doodles) == "table" then
+            BlacklistTable = getgenv().autofarm_settings.blacklist_doodles
+        end
         getgenv().autofarm_settings = HttpService:JSONDecode(SettingsFile)
+        if SpecificDoodleTable ~= nil then getgenv().autofarm_settings.specific_doodles = SpecificDoodleTable end
+        if BlacklistTable ~= nil then getgenv().autofarm_settings.blacklist_doodles = BlacklistTable end
         print("Loaded AutoFarm Settings: ")
         for i,v in pairs(getgenv().autofarm_settings) do
             print("    "..i, v)
@@ -591,6 +666,12 @@ MainSettings:NewButton("Load Settings", "", function()
                 end)
                 updateUIThing("Toggle", "Sound Alerts", getgenv().autofarm_settings.sound_alerts)
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
+                updateUIThing("Toggle", "Webhooks", getgenv().autofarm_settings.webhooks)
+                if getgenv().autofarm_settings.webhooks == true then
+                    Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
+                        getgenv().autofarm_settings.webhook_url = url
+                    end)
+                end
                 updateUIThing("Dropdown", "AutoFarm Mode", "Wild Battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 MainSettings:NewSlider("Trainer ID (1-39)", "", 39, 1, function(s)
@@ -620,9 +701,21 @@ MainSettings:NewButton("Load Settings", "", function()
                 end
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Dropdown", "AutoFarm Mode", "Trainer Farm")
+                updateUIThing("Toggle", "Webhooks", getgenv().autofarm_settings.webhooks)
+                if getgenv().autofarm_settings.webhooks == true then
+                    Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
+                        getgenv().autofarm_settings.webhook_url = url
+                    end)
+                end
             elseif getgenv().autofarm_settings.panhandle_mode == true then
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Dropdown", "AutoFarm Mode", "Panhandle Money Farm")
+                updateUIThing("Toggle", "Webhooks", getgenv().autofarm_settings.webhooks)
+                if getgenv().autofarm_settings.webhooks == true then
+                    Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
+                        getgenv().autofarm_settings.webhook_url = url
+                    end)
+                end
             end
         end
     else
@@ -1338,9 +1431,15 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     Sound:Destroy()
                 end
                 if getgenv().autofarm_settings.kill_when_shiny == true then
+                    local battletime = tick()
                     kill()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Shiny", battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_shiny == true then
+                    local battletime = tick()
                     catch()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Shiny", battletime, "Caught") end
+                elseif getgenv().autofarm_settings.pause_when_shiny == true then
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Shiny", tick(), "Paused") end
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.pause_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.catch_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.kill_when_skin == true then
                 print("found skin")
@@ -1355,41 +1454,69 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     Sound:Destroy()
                 end
                 if getgenv().autofarm_settings.kill_when_skin == true then
+                    local battletime = tick()
                     kill()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Skin", battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_skin == true then
+                    local battletime = tick()
                     catch()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Skin", battletime, "Caught") end
+                elseif getgenv().autofarm_settings.pause_when_skin == true then
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Skin", tick(), "Paused") end
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.pause_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.catch_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.kill_when_tint == true then
                 print("found tint")
                 notify("AutoFarm Found:", "Tint")
                 if getgenv().autofarm_settings.kill_when_tint == true then
+                    local battletime = tick()
                     kill()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint", battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_tint == true then
+                    local battletime = tick()
                     catch()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint", battletime, "Caught") end
+                elseif getgenv().autofarm_settings.pause_when_tint == true then
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint", tick(), "Paused") end
                 end
             elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
                 print("found doodle that hasnt been caught before")
                 notify("AutoFarm Found:", "Doodle that hasn't been caught before")
                 if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+                    local battletime = tick()
                     kill()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Not AlreadyCaught", battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_havent_caught_before == true then
+                    local battletime = tick()
                     catch()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Not AlreadyCaught", battletime, "Caught") end
+                elseif getgenv().autofarm_settings.pause_when_havent_caught_before == true then
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Not AlreadyCaught", tick(), "Paused") end
                 end
             elseif table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
                 print("found specific doodle")
                 notify("AutoFarm Found:", "Specific Doodle")
                 if getgenv().autofarm_settings.kill_when_specific_doodle == true then
+                    local battletime = tick()
                     kill()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Specific Doodle", battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_specific_doodle == true then
+                    local battletime = tick()
                     catch()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Specific Doodle", battletime, "Caught") end
+                elseif getgenv().autofarm_settings.pause_when_specific_doodle == true then
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Specific Doodle", tick(), "Paused") end
                 end
             else
                 if getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.kill_when_normal_doodle == true then
+                    local battletime = tick()
                     kill()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("", battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_all == true then
+                    local battletime = tick()
                     catch()
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("", battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_all == true or getgenv().autofarm_settings.pause_when_normal_doodle == true then
-
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("", tick(), "Paused") end
                 else
                     run()
                 end
