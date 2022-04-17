@@ -1,11 +1,9 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local VirtualInputManager = game:GetService("VirtualInputManager")
 local StarterGui = game:GetService("StarterGui")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
-local StarterGui = game:GetService("StarterGui")
 local CoreGui = game:GetService("CoreGui")
 local Client = require(LocalPlayer.Packer.Client)
 local getasset = syn and getsynasset or getcustomasset
@@ -39,12 +37,11 @@ getgenv().executed = true
 if type(getgenv().autofarm_settings) ~= "table" then getgenv().autofarm_settings = {} end
 
 local function notify(title, text)
-    local configTable = {
+    StarterGui:SetCore("SendNotification", {
         Title = title,
         Text = text,
         Duration = 3,
-    }
-    StarterGui:SetCore("SendNotification", configTable)
+    })
 end
 local function validatesettings()
     if type(getgenv().autofarm_settings.panhandle_mode) ~= "boolean" or type(getgenv().autofarm_settings.wild_mode) ~= "boolean" or type(getgenv().autofarm_settings.trainer_mode) ~= "boolean" then
@@ -146,6 +143,24 @@ local function validatesettings()
     return true
 end
 
+local function Format(num, digits)
+    return string.format("%0" .. digits .. "i", num)
+end
+
+local function ParseDateTime()
+    local osDate = os.date("!*t")
+    local year, mon, day = osDate["year"], osDate["month"], osDate["day"]
+    local hour, min, sec = osDate["hour"], osDate["min"], osDate["sec"]
+    return year .. "-" .. format(mon, 2) .. "-" .. format(day, 2) .. "T" .. format(hour, 2) .. ":" .. format(min, 2) .. ":" .. format(sec, 2) .. "Z"
+end
+
+local function AssetIdToThumbnail(assetid)
+    local req = HttpService:JSONDecode(requestfunc({
+        Url = "https://thumbnails.roblox.com/v1/assets?assetIds="..assetid.."&size=110x110&format=Png&isCircular=false",
+        Method = "GET"
+    }).Body)
+    return req.data[1].imageUrl
+end
 
 local function getcustomassetfunc(path)
     if not isfile(path) then
@@ -306,7 +321,7 @@ MainSettings:NewButton("Save Settings", "", function()
         end
     end
     repeat task.wait() until isfile("DoodleWorldAutoFarmSettings.json")
-    notify("Save Settings", "Succes")
+    notify("Save Settings", "Success")
 end)
 
 local Misc = SettingsTab:NewSection("Misc")
@@ -575,7 +590,7 @@ MainSettings:NewButton("Load Settings", "", function()
                     end
                 end)
                 updateUIThing("Toggle", "Sound Alerts", getgenv().autofarm_settings.sound_alerts)
-                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.sound_alerts)
+                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Dropdown", "AutoFarm Mode", "Wild Battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 MainSettings:NewSlider("Trainer ID (1-39)", "", 39, 1, function(s)
@@ -603,10 +618,10 @@ MainSettings:NewButton("Load Settings", "", function()
                     updateUIThing("Dropdown", "Which move to use", "Custom Move")
                     updateUIThing("Dropdown", "Custom Move Choice", getgenv().autofarm_settings.autokill_custom_move)
                 end
-                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.sound_alerts)
+                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Dropdown", "AutoFarm Mode", "Trainer Farm")
             elseif getgenv().autofarm_settings.panhandle_mode == true then
-                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.sound_alerts)
+                updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Dropdown", "AutoFarm Mode", "Panhandle Money Farm")
             end
         end
@@ -905,6 +920,7 @@ local OpenShop = OpenSection:NewButton("Open Shop", "Opens the shop GUI", functi
     Client.NormalShop.new()
     repeat task.wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
     LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    Client.Controls:ToggleWalk(true)
 end)
 local OpenPC = OpenSection:NewButton("Open PC", "Opens the PC GUI", function()
     Client.PC.new()
@@ -916,6 +932,9 @@ local OpenHelpCenter = OpenSection:NewButton("Open Help Center", "Opens the help
     Client.HelpCenter.new({
         Location = "GraphiteLodge"
     })
+    repeat task.wait() until LocalPlayer.Character.Humanoid.WalkSpeed == 0
+    LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    Client.Controls:ToggleWalk(true)
 end)
 
 
@@ -1404,23 +1423,19 @@ end)
 --// UNINJECT
 UninjectConnection = UserInputService.InputBegan:Connect(function(key)
     if key.KeyCode == Enum.KeyCode.Comma then
+        getgenv().autofarm_settings.enabled = false
         notify("AutoFarm", "Uninjecting...")
-        getgenv().executed = false
-        notify("AutoFarm", "Uninjected") 
-        AutoFarmConnection:Disconnect()  
-        local function isNumeric(value)
-            if value == tostring(tonumber(value)) then
-                return true
-            else
-                return false
-            end
+        AutoFarmConnection:Disconnect()
+        if ToggleGUIConnection ~= nil then
+            ToggleGUIConnection:Disconnect()
         end
         for i,v in pairs(CoreGui:GetChildren()) do
-            if isNumeric(v.Name) then
+            if v.Name == tostring(tonumber(v.Name)) then
                 v:Destroy()
             end
         end
-        getgenv().autofarm_settings.enabled = false
+        getgenv().executed = false
+        notify("AutoFarm", "Uninjected") 
         UninjectConnection:Disconnect()
     end
 end)
