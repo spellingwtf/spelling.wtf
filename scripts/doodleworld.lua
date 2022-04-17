@@ -1348,7 +1348,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 elseif getgenv().autofarm_settings.catch_when_tint == true then
                     catch()
                 end
-            elseif Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+            elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
                 print("found doodle that hasnt been caught before")
                 notify("AutoFarm Found:", "Doodle that hasn't been caught before")
                 if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
