@@ -297,14 +297,14 @@ local MainSettings = SettingsTab:NewSection("Main")
 MainSettings:NewButton("Save Settings", "", function()
     writefile("DoodleWorldAutoFarmSettings.json", HttpService:JSONEncode(getgenv().autofarm_settings))
     print("Saved AutoFarm Settings: ")
-        for i,v in pairs(getgenv().autofarm_settings) do
-            print("    "..i, v)
-            if typeof(v) == "table" then
-                for i2, v2 in pairs(v) do
-                    print("        "..i2, v2)
-                end
+    for i,v in pairs(getgenv().autofarm_settings) do
+        print("    "..i, v)
+        if typeof(v) == "table" then
+            for i2, v2 in pairs(v) do
+                print("        "..i2, v2)
             end
         end
+    end
     repeat task.wait() until isfile("DoodleWorldAutoFarmSettings.json")
     notify("Save Settings", "Succes")
 end)
@@ -504,6 +504,7 @@ MainSettings:NewButton("Load Settings", "", function()
                     updateUIThing("Dropdown", "Specific Doodle Mode", "Pause")
                 end
                 local AutoCatch = SettingsTab:NewSection("Catch Mode")
+                Capsules = {}
                 for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
                     table.insert(Capsules, i)
                 end
@@ -769,6 +770,7 @@ MainSettings:NewDropdown("AutoFarm Mode", "Choose the AutoFarm Mode", {"Wild Bat
         end)
 
         local AutoCatch = SettingsTab:NewSection("Catch Mode")
+        Capsules = {}
         for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
             table.insert(Capsules, i)
         end
@@ -1231,6 +1233,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             Client.Network:post("PlayerData", "Heal")
         end
         if getgenv().autofarm_settings.wild_mode == true then
+            Capsules = {}
             for i,v in pairs(Client.Network:get("PlayerData", "GetItems")["Capsules"]) do
                 table.insert(Capsules, i)
             end
