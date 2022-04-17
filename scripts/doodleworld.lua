@@ -10,6 +10,7 @@ local CoreGui = game:GetService("CoreGui")
 local Client = require(LocalPlayer.Packer.Client)
 local getasset = syn and getsynasset or getcustomasset
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
+local setthreadidentityfunc = syn and syn.set_thread_identity or setthreadcontext or set_thread_context or setthreadidentity or set_thread_identity or context_set or syn_context_set
 local CurrentRoute
 local UI
 local AutoFarmConnection
@@ -618,10 +619,10 @@ MainTeleportTabSection:NewDropdown("Teleport to Location", "Teleports to chosen 
         ["Route 1"] = "Route_1",
         ["Sketchvale"] = "001_Chunk"
     }
-    if syn then
-        syn.set_thread_identity(2)
+    if setthreadidentityfunc ~= nil then
+        setthreadidentityfunc(2)
         Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", nil, nil)
-        syn.set_thread_identity(7)
+        setthreadidentityfunc(7)
     else
         notify("Not using synapse", "npcs and doors will be glitched")
         pcall(function()
