@@ -639,6 +639,7 @@ MainSettings:NewDropdown("AutoFarm Mode", "Choose the AutoFarm Mode", {"Wild Bat
         if getgenv().autofarm_settings.enabled == true then
             getgenv().autofarm_settings.enabled = false
             notify("AutoFarm", "Disabled")
+            updateUIThing("Toggle", "Enabled", false)
         end
         getgenv().autofarm_settings.trainer_mode = false
         getgenv().autofarm_settings.panhandle_mode = false
@@ -815,6 +816,7 @@ MainSettings:NewDropdown("AutoFarm Mode", "Choose the AutoFarm Mode", {"Wild Bat
         if getgenv().autofarm_settings.enabled == true then
             getgenv().autofarm_settings.enabled = false
             notify("AutoFarm", "Disabled")
+            updateUIThing("Toggle", "Enabled", false)
         end
         getgenv().autofarm_settings.trainer_mode = false
         getgenv().autofarm_settings.wild_mode = false
@@ -824,6 +826,7 @@ MainSettings:NewDropdown("AutoFarm Mode", "Choose the AutoFarm Mode", {"Wild Bat
         if getgenv().autofarm_settings.enabled == true then
             getgenv().autofarm_settings.enabled = false
             notify("AutoFarm", "Disabled")
+            updateUIThing("Toggle", "Enabled", false)
         end
         getgenv().autofarm_settings.wild_mode = false
         getgenv().autofarm_settings.panhandle_mode = false
