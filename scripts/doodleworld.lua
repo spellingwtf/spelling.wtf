@@ -624,7 +624,7 @@ MainTeleportTabSection:NewDropdown("Teleport to Location", "Teleports to chosen 
         Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", nil, nil)
         setthreadidentityfunc(7)
     else
-        notify("Not using synapse", "npcs and doors will be glitched")
+        notify("no set thread identity", "npcs and doors will be glitched")
         pcall(function()
             Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", true, true)
         end)
