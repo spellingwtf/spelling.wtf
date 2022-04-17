@@ -618,12 +618,18 @@ MainTeleportTabSection:NewDropdown("Teleport to Location", "Teleports to chosen 
         ["Route 1"] = "Route_1",
         ["Sketchvale"] = "001_Chunk"
     }
-    pcall(function()
-        Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", true, true)
-    end)
-    task.wait(0.6)
-    --Client.LoadedGeometry:Wait();
-    LocalPlayer.Character.HumanoidRootPart.Anchored = false
+    if syn then
+        syn.set_thread_identity(2)
+        Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", nil, nil)
+        syn.set_thread_identity(7)
+    else
+        notify("Not using synapse", "npcs and doors will be glitched")
+        pcall(function()
+            Client.DataManager.Chunk.new(Client, LocationsTable[location], "Entrance", true, true)
+        end)
+        task.wait(0.6)
+        LocalPlayer.Character.HumanoidRootPart.Anchored = false
+    end
 end)
 
 
@@ -1241,6 +1247,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 print("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 print("starting trainer battle")
+                Client.Music:PlaySong("battlefield5")
                 Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())])
             end
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
