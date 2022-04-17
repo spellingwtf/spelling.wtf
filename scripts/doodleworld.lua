@@ -490,7 +490,7 @@ MainSettings:NewButton("Load Settings", "", function()
                     updateUIThing("Dropdown", "Specific Doodle Mode", "Kill")
                 elseif getgenv().autofarm_settings.pause_when_specific_doodle == false and getgenv().autofarm_settings.catch_when_specific_doodle == false and getgenv().autofarm_settings.kill_when_specific_doodle == false then
                     updateUIThing("Dropdown", "Specific Doodle Mode", "Run")
-                elseif getgenv().autofarm_settings.pause_when_specific_doodle == true and getgenv().autofarm_settings.catch_when_specific_doodle == false and getgenv().autofarm_settings.kill_when_havent_specific_doodle == false then
+                elseif getgenv().autofarm_settings.pause_when_specific_doodle == true and getgenv().autofarm_settings.catch_when_specific_doodle == false and getgenv().autofarm_settings.kill_when_specific_doodle == false then
                     updateUIThing("Dropdown", "Specific Doodle Mode", "Pause")
                 end
                 local AutoCatch = SettingsTab:NewSection("Catch Mode")
