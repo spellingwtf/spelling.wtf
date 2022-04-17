@@ -314,6 +314,15 @@ MainSettings:NewButton("Load Settings", "", function()
     if isfile("DoodleWorldAutoFarmSettings.json") then
         local SettingsFile = readfile("DoodleWorldAutoFarmSettings.json")
         getgenv().autofarm_settings = HttpService:JSONDecode(SettingsFile)
+        print("AutoFarm Settings: ")
+        for i,v in pairs(getgenv().autofarm_settings) do
+            print("    "..i, v)
+            if typeof(v) == "table" then
+                for i2, v2 in pairs(v) do
+                    print("        "..i2, v2)
+                end
+            end
+        end
         notify("Load Settings", "Success")
         local validsettings = validatesettings()
         if validsettings == true then
@@ -544,7 +553,7 @@ MainSettings:NewButton("Load Settings", "", function()
                     updateUIThing("Dropdown", "Mode (Optional Setting)", "Kill")
                 elseif getgenv().autofarm_settings.pause_all == false and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_all == false then
                     updateUIThing("Dropdown", "Mode (Optional Setting)", "Run")
-                elseif getgenv().autofarm_settings.pause_all == true and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_when_havent_specific_doodle == false then
+                elseif getgenv().autofarm_settings.pause_all == true and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_all == false then
                     updateUIThing("Dropdown", "Mode (Optional Setting)", "Pause")
                 end
                 Misc:NewToggle("Sound Alerts", "", function(state)
