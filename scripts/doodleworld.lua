@@ -296,6 +296,15 @@ local MainSettings = SettingsTab:NewSection("Main")
 
 MainSettings:NewButton("Save Settings", "", function()
     writefile("DoodleWorldAutoFarmSettings.json", HttpService:JSONEncode(getgenv().autofarm_settings))
+    print("Saved AutoFarm Settings: ")
+        for i,v in pairs(getgenv().autofarm_settings) do
+            print("    "..i, v)
+            if typeof(v) == "table" then
+                for i2, v2 in pairs(v) do
+                    print("        "..i2, v2)
+                end
+            end
+        end
     repeat task.wait() until isfile("DoodleWorldAutoFarmSettings.json")
     notify("Save Settings", "Succes")
 end)
@@ -315,7 +324,7 @@ MainSettings:NewButton("Load Settings", "", function()
     if isfile("DoodleWorldAutoFarmSettings.json") then
         local SettingsFile = readfile("DoodleWorldAutoFarmSettings.json")
         getgenv().autofarm_settings = HttpService:JSONDecode(SettingsFile)
-        print("AutoFarm Settings: ")
+        print("Loaded AutoFarm Settings: ")
         for i,v in pairs(getgenv().autofarm_settings) do
             print("    "..i, v)
             if typeof(v) == "table" then
