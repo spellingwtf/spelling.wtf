@@ -175,7 +175,7 @@ local function wildbattlewebhook(check, battletime, action)
                 {
                   ["type"] = "rich",
                   ["title"] = "Doodoo World AutoFarm",
-                  ["description"] = "```"..check..Client.Battle.CurrentData.EnemyDoodle.RealName.."```",
+                  ["description"] = "```"..check.." "..Client.Battle.CurrentData.EnemyDoodle.RealName.."```",
                   ["color"] = tonumber(0xe90e0e),
                   ["fields"] = {
                     {
