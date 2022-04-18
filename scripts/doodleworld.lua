@@ -248,7 +248,6 @@ local function removeNonUniversalSettings()
     }
     
     local Non_Universal_Slider_Names = {
-        [1] = "Trainer ID (1-39)"
     }
 
     for i,v in pairs(UI.Main.pages.Pages:GetChildren()) do
@@ -675,10 +674,7 @@ MainSettings:NewButton("Load Settings", "", function()
                 end
                 updateUIThing("Dropdown", "AutoFarm Mode", "Wild Battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
-                MainSettings:NewSlider("Trainer ID (1-39)", "", 39, 1, function(s)
-                    getgenv().autofarm_settings.trainer_ID = s
-                end)
-                updateUIThing("Slider", "Trainer ID (1-39)", getgenv().autofarm_settings.trainer_ID)
+                getgenv().autofarm_settings.trainer_ID = 39
                 local AutoKill = SettingsTab:NewSection("Kill Mode")
                 AutoKill:NewDropdown("Which move to use", "", {"Strongest Move", "Custom Move"}, function(mode)
                     if mode == "Strongest Move" then
@@ -952,9 +948,7 @@ MainSettings:NewDropdown("AutoFarm Mode", "Choose the AutoFarm Mode", {"Wild Bat
         getgenv().autofarm_settings.panhandle_mode = false
         getgenv().autofarm_settings.trainer_mode = true
         removeNonUniversalSettings()
-        MainSettings:NewSlider("Trainer ID (1-39)", "", 39, 1, function(s)
-            getgenv().autofarm_settings.trainer_ID = s
-        end)
+        getgenv().autofarm_settings.trainer_ID = 39
         local AutoKill = SettingsTab:NewSection("Kill Mode")
         AutoKill:NewDropdown("Which move to use", "", {"Strongest Move", "Custom Move"}, function(mode)
             if mode == "Strongest Move" then
@@ -1035,7 +1029,7 @@ end)
 local GUISettings = Window:NewTab("GUI Settings")
 local GUISettingsSection = GUISettings:NewSection("Settings")
 local ToggleGUIConnection 
-local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
+GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
 
     local success, result = pcall(function()
         if Enum.KeyCode[txt] ~= nil then
@@ -1060,6 +1054,20 @@ local KeybindChoose = GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", fu
             Library:ToggleUI()
         end
     end)
+end)
+
+local DebugTab = Window:NewTab("Debug")
+local DebugTabSection = DebugTab:NewSection("Main")
+DebugTabSection:NewButton("Print Current Settings", "", function()
+    print("AutoFarm Settings: ")
+    for i,v in pairs(getgenv().autofarm_settings) do
+        print("    "..i, v)
+        if typeof(v) == "table" then
+            for i2, v2 in pairs(v) do
+                print("        "..i2, v2)
+            end
+        end
+    end
 end)
 
 local function run()
@@ -1238,7 +1246,7 @@ local function kill()
                     foundsupereffective = false
                     foundstrongest = false
                     foundnoteffective = false
-                    repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
+                    repeat task.wait() until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
                     break
                 end
             end
