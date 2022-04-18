@@ -1452,6 +1452,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         end
         repeat task.wait() until type(Client.Battle.CurrentData) == "table"
+        wait(1)
         if getgenv().autofarm_settings.wild_mode == true and not table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
             if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
                 print("found shiny/misprint doodle")
@@ -1576,7 +1577,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
                 LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
             end
-        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true
+        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true 
+        
     end
     FirstEncounter = false
     InABattle = false
