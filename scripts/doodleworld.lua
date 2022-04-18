@@ -193,7 +193,7 @@ local function wildbattlewebhook(battletime, action)
                     },
                     {
                       ["name"] = "BATTLE TIME",
-                      ["value"] = "`"..tick()-battletime.."s`"
+                      ["value"] = "`"..math.round(tick()-battletime).."s`"
                     },
                     {
                       ["name"] = "CHAIN",
