@@ -181,12 +181,14 @@ local function wildbattlewebhook(battletime, action)
         {
           ["name"] = "⭐STARS⭐",
           ["value"] = "`"..tostring(Client.Battle.CurrentData.EnemyDoodle.Star).."`"
-        },
-        {
-          ["name"] = "⌛BATTLE TIME⌛",
-          ["value"] = "`"..math.round(tick()-battletime).."s`"
         }
       }
+    if action ~= "Paused" then
+        table.insert(fields, {
+            ["name"] = "⌛BATTLE TIME⌛",
+            ["value"] = "`"..math.round(tick()-battletime).."s`"
+        })
+    end
     if Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 then
         table.insert(fields, {
             ["name"] = "SKIN",
