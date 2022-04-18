@@ -209,7 +209,7 @@ local function wildbattlewebhook(battletime, action)
     end
     table.insert(fields, {
         ["name"] = "⛓️CHAIN⛓️",
-        ["value"] = "`"..Client.Network:get("PlayerData", "GetChain", false).Name..": "..Client.Network:get("PlayerData", "GetChain", false).Number.."`"
+        ["value"] = Client.Network:get("PlayerData", "GetChain", false).Name ~= nil and "`"..Client.Network:get("PlayerData", "GetChain", false).Name..": "..Client.Network:get("PlayerData", "GetChain", false).Number.."`" or "`0`"
     })
     table.insert(fields, {
         ["name"] = "ACTION",
