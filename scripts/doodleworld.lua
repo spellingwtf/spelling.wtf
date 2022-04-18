@@ -174,7 +174,7 @@ local function wildbattlewebhook(battletime, action)
         Skin = Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and "Skin " or "",
         HiddenTrait = Client.Battle.CurrentData.EnemyDoodle.Ability == Client.Battle.CurrentData.EnemyDoodle.Info.HiddenAbility and "Hidden Trait " or "",
         Tint = Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and "Tint " or "",
-        NotAlreadyCaught = LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and "Not AlreadyCaught " or "",
+        NotAlreadyCaught = Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and "Not AlreadyCaught " or "",
         SpecificDoodle = table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and "Specific Doodle " or ""
     }
     local fields = {
@@ -1261,7 +1261,10 @@ local function kill()
         until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil or Client.Battle.CurrentData.Out1[1].currenthp == 0
         --if doodle dies
         if Client.Battle.CurrentData.Out1[1].currenthp == 0 then
-            repeat task.wait() until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
+            repeat
+                task.wait()
+                if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The opposing "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") then return end
+            until LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == true
             for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
                 if string.find(v.Name, "Party") and tonumber(string.split(v.Health.HealthNumber.Text, " ")[1]) ~= 0 then
                     getconnections(v.Activated)[1]:Fire()
@@ -1272,7 +1275,10 @@ local function kill()
                     foundsupereffective = false
                     foundstrongest = false
                     foundnoteffective = false
-                    repeat task.wait() until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
+                    repeat
+                        task.wait()
+                        if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The opposing "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") then return end
+                    until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Fight.MouseButton1Click)[1] ~= nil
                     break
                 end
             end
@@ -1514,7 +1520,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 elseif getgenv().autofarm_settings.pause_when_tint == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
                 end
-            elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
+            elseif Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.pause_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.catch_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
                 print("found doodle that hasnt been caught before")
                 notify("AutoFarm Found:", "Doodle that hasn't been caught before")
                 if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
