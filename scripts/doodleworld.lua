@@ -6,6 +6,7 @@ local UserInputService = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
 local CoreGui = game:GetService("CoreGui")
 local Client = require(LocalPlayer.Packer.Client)
+local Skins = require(LocalPlayer.Packer.Database.Skins).Sprites
 local getasset = syn and getsynasset or getcustomasset
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
 local setthreadidentityfunc = syn and syn.set_thread_identity or setthreadcontext or set_thread_context or setthreadidentity or set_thread_identity or context_set or syn_context_set
@@ -653,7 +654,7 @@ MainSettings:NewButton("Load Settings", "", function()
                 elseif getgenv().autofarm_settings.pause_all == false and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_all == true then
                     updateUIThing("Dropdown", "Mode (Optional Setting)", "Kill")
                 elseif getgenv().autofarm_settings.pause_all == false and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_all == false then
-                    updateUIThing("Dropdown", "Mode (Optional Setting)", "Run")
+                    updateUIThing("Dropdown", "Mode (Optional Setting)", "Mode (Optional Setting)")
                 elseif getgenv().autofarm_settings.pause_all == true and getgenv().autofarm_settings.catch_all == false and getgenv().autofarm_settings.kill_all == false then
                     updateUIThing("Dropdown", "Mode (Optional Setting)", "Pause")
                 end
@@ -1207,6 +1208,7 @@ local function catch()
                         Action = getgenv().autofarm_settings.autocatch_capsule,
                         User = Client.Battle.CurrentData.Out1[1].ID
                     })
+                    task.wait(0.1)
                     Client.Network:post("BattleAction", {{
                         ActionType = "Item",
                         Action = getgenv().autofarm_settings.autocatch_capsule,
@@ -1442,13 +1444,13 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 if getgenv().autofarm_settings.kill_when_shiny == true then
                     local battletime = tick()
                     kill()
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Shiny", battletime, "Killed") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Misprint", battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_shiny == true then
                     local battletime = tick()
                     catch()
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Shiny", battletime, "Caught") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Misprint", battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_shiny == true then
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Shiny", tick(), "Paused") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Misprint", tick(), "Paused") end
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.pause_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.catch_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.kill_when_skin == true then
                 print("found skin")
@@ -1465,13 +1467,13 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 if getgenv().autofarm_settings.kill_when_skin == true then
                     local battletime = tick()
                     kill()
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Skin", battletime, "Killed") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(Skins[Client.Battle.CurrentData.EnemyDoodle.RealName][Client.Battle.CurrentData.EnemyDoodle.Skin].Name, battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_skin == true then
                     local battletime = tick()
                     catch()
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Skin", battletime, "Caught") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(Skins[Client.Battle.CurrentData.EnemyDoodle.RealName][Client.Battle.CurrentData.EnemyDoodle.Skin].Name, battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_skin == true then
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Skin", tick(), "Paused") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(Skins[Client.Battle.CurrentData.EnemyDoodle.RealName][Client.Battle.CurrentData.EnemyDoodle.Skin].Name, tick(), "Paused") end
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.pause_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.catch_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.kill_when_tint == true then
                 print("found tint")
@@ -1479,13 +1481,13 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 if getgenv().autofarm_settings.kill_when_tint == true then
                     local battletime = tick()
                     kill()
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint", battletime, "Killed") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint "..Client.Battle.CurrentData.EnemyDoodle.Tint, battletime, "Killed") end
                 elseif getgenv().autofarm_settings.catch_when_tint == true then
                     local battletime = tick()
                     catch()
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint", battletime, "Caught") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint"..Client.Battle.CurrentData.EnemyDoodle.Tint, battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_tint == true then
-                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint", tick(), "Paused") end
+                    if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook("Tint"..Client.Battle.CurrentData.EnemyDoodle.Tint, tick(), "Paused") end
                 end
             elseif LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.pause_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.catch_when_havent_caught_before == true or LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
                 print("found doodle that hasnt been caught before")
