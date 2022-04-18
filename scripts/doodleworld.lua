@@ -1587,7 +1587,6 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
             end
         until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true and LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == false
-        task.wait(1)
     end
     FirstEncounter = false
     InABattle = false
