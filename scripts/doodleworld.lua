@@ -170,40 +170,59 @@ end
 local function wildbattlewebhook(battletime, action)
     local ChecksTable = {
         Misprint = Client.Battle.CurrentData.EnemyDoodle.Shiny == true and "Misprint " or "",
-        Skin = Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and Skins[Client.Battle.CurrentData.EnemyDoodle.RealName][Client.Battle.CurrentData.EnemyDoodle.Skin].Name.." " or "",
+        Skin = Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and "Skin " or "",
         HiddenTrait = Client.Battle.CurrentData.EnemyDoodle.Ability == Client.Battle.CurrentData.EnemyDoodle.Info.HiddenAbility and "Hidden Trait " or "",
-        Tint = Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and "Tint "..Client.Battle.CurrentData.EnemyDoodle.Tint.." " or "",
+        Tint = Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and "Tint " or "",
         NotAlreadyCaught = LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.AlreadyCaught.Visible == false and "Not AlreadyCaught " or "",
         SpecificDoodle = table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and "Specific Doodle " or ""
     }
+    local fields = {
+        {
+          ["name"] = "⭐STARS⭐",
+          ["value"] = "`"..tostring(Client.Battle.CurrentData.EnemyDoodle.Star).."`"
+        },
+        {
+          ["name"] = "BATTLE TIME",
+          ["value"] = "`"..math.round(tick()-battletime).."s`"
+        }
+      }
+    if Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 then
+        table.insert(fields, {
+            ["name"] = "SKIN",
+            ["value"] = "`"..Skins[Client.Battle.CurrentData.EnemyDoodle.RealName][Client.Battle.CurrentData.EnemyDoodle.Skin].Name.."`"
+        })
+    end
+    if Client.Battle.CurrentData.EnemyDoodle.Ability == Client.Battle.CurrentData.EnemyDoodle.Info.HiddenAbility then
+        table.insert(fields, {
+            ["name"] = "HIDDEN TRAIT",
+            ["value"] = "`"..Client.Battle.CurrentData.EnemyDoodle.Info.HiddenAbility.."`"
+        })
+    end
+    if Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 then
+        table.insert(fields, {
+            ["name"] = "TINT",
+            ["value"] = "`"..Client.Battle.CurrentData.EnemyDoodle.Tint.."`"
+        })
+    end
+    table.insert(fields, {
+        ["name"] = "CHAIN",
+        ["value"] = "`"..Client.Network:get("PlayerData", "GetChain", false).Name..": "..Client.Network:get("PlayerData", "GetChain", false).Number.."`"
+    })
+    table.insert(fields, {
+        ["name"] = "ACTION",
+        ["value"] = "`"..action.."`"
+    })
     requestfunc({
         Url = getgenv().autofarm_settings.webhook_url,
         Body = game:GetService("HttpService"):JSONEncode({
-            ["content"] = action == "Paused" and "@everyone " or action ~= "Paused" and "",
+            ["content"] = action == "Paused" and "@everyone " or "",
             ["embeds"] = {
                 {
                   ["type"] = "rich",
                   ["title"] = "Doodoo World AutoFarm",
                   ["description"] = "```"..ChecksTable["Misprint"]..ChecksTable["HiddenTrait"]..ChecksTable["Skin"]..ChecksTable["Tint"]..ChecksTable["NotAlreadyCaught"]..ChecksTable["SpecificDoodle"]..Client.Battle.CurrentData.EnemyDoodle.RealName.."```",
                   ["color"] = tonumber(0xe90e0e),
-                  ["fields"] = {
-                    {
-                      ["name"] = "⭐STARS⭐",
-                      ["value"] = "`"..tostring(Client.Battle.CurrentData.EnemyDoodle.Star).."`"
-                    },
-                    {
-                      ["name"] = "BATTLE TIME",
-                      ["value"] = "`"..math.round(tick()-battletime).."s`"
-                    },
-                    {
-                      ["name"] = "CHAIN",
-                      ["value"] = "`"..Client.Network:get("PlayerData", "GetChain", false).Name..": "..Client.Network:get("PlayerData", "GetChain", false).Number.."`"
-                    },
-                    {
-                      ["name"] = "ACTION",
-                      ["value"] = "`"..action.."`"
-                    }
-                  },
+                  ["fields"] = fields,
                   ["timestamp"] = ParseDateTime(),
                   ["image"] = {
                     ["url"] = AssetIdToThumbnail(string.split(LocalPlayer.PlayerGui.MainGui.MainBattle.DoodleFront.NewSprite.Image, "=")[2]),
