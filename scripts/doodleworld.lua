@@ -1464,6 +1464,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         end
         repeat task.wait() until type(Client.Battle.CurrentData) == "table"
+        Client.Network:post(LocalPlayer.Name .. "InitialReady")
         if getgenv().autofarm_settings.wild_mode == true and not table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
             if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
                 print("found shiny/misprint doodle")
@@ -1565,12 +1566,10 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 elseif getgenv().autofarm_settings.pause_all == true or getgenv().autofarm_settings.pause_when_normal_doodle == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
                 else
-                    Client.Network:post(LocalPlayer.Name .. "InitialReady")
                     run()
                 end
             end
         elseif getgenv().autofarm_settings.wild_mode == true and table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
-            Client.Network:post(LocalPlayer.Name .. "InitialReady")
             run()
         elseif getgenv().autofarm_settings.panhandle_mode == true then
             print("starting panhandle sequence")
