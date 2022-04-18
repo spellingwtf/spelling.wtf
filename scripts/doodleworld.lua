@@ -1430,6 +1430,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                         Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
                     end
                 until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+                Client.Music:PlaySong("battlefield5")
                 print("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 print("starting trainer battle")
@@ -1585,7 +1586,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
                 LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
             end
-        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true 
+        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true and LocalPlayer.PlayerGui.MainGui.PartyUI.Visible == false
         task.wait(1)
     end
     FirstEncounter = false
