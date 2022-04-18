@@ -1101,19 +1101,7 @@ local function run()
             task.wait()
             if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r") then return end
         until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Run.MouseButton1Click)[1] ~= nil
-        Client.SelectedAction:Fire({
-            ActionType = "Run",
-            Target = "RunAway",
-            User = Client.Battle.CurrentData.Out1[1].ID,
-        })
-        wait(0.05)
-        Client.Network:post("BattleAction", {
-            {
-                ActionType = "Run",
-                Target = "RunAway",
-                User = Client.Battle.CurrentData.Out1[1].ID,
-            }
-        })
+        getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Run.MouseButton1Click)[1]:Fire()
         print("ran")
         task.wait(2)
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
@@ -1464,7 +1452,6 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         end
         repeat task.wait() until type(Client.Battle.CurrentData) == "table"
-        Client.Network:post(LocalPlayer.Name .. "InitialReady")
         if getgenv().autofarm_settings.wild_mode == true and not table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
             if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
                 print("found shiny/misprint doodle")
