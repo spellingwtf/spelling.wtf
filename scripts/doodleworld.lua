@@ -162,7 +162,7 @@ end
 
 local function AssetIdToThumbnail(assetid)
     local req = HttpService:JSONDecode(requestfunc({
-        Url = "https://thumbnails.roblox.com/v1/assets?assetIds="..assetid.."&size=250x250&format=Png&isCircular=false",
+        Url = "https://thumbnails.roblox.com/v1/assets?assetIds="..assetid.."&size=700x700&format=Png&isCircular=false",
         Method = "GET"
     }).Body)
     return req.data[1].imageUrl
@@ -183,7 +183,7 @@ local function wildbattlewebhook(battletime, action)
           ["value"] = "`"..tostring(Client.Battle.CurrentData.EnemyDoodle.Star).."`"
         },
         {
-          ["name"] = "BATTLE TIME",
+          ["name"] = "⌛BATTLE TIME⌛",
           ["value"] = "`"..math.round(tick()-battletime).."s`"
         }
       }
@@ -206,7 +206,7 @@ local function wildbattlewebhook(battletime, action)
         })
     end
     table.insert(fields, {
-        ["name"] = "CHAIN",
+        ["name"] = "⛓️CHAIN⛓️",
         ["value"] = "`"..Client.Network:get("PlayerData", "GetChain", false).Name..": "..Client.Network:get("PlayerData", "GetChain", false).Number.."`"
     })
     table.insert(fields, {
