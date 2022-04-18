@@ -7,6 +7,7 @@ local HttpService = game:GetService("HttpService")
 local CoreGui = game:GetService("CoreGui")
 local Client = require(LocalPlayer.Packer.Client)
 local Skins = require(LocalPlayer.Packer.Database.Skins).Sprites
+local Tints = require(LocalPlayer.Packer.Database.MiscDB).Tints
 local getasset = syn and getsynasset or getcustomasset
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
 local setthreadidentityfunc = syn and syn.set_thread_identity or setthreadcontext or set_thread_context or setthreadidentity or set_thread_identity or context_set or syn_context_set
@@ -201,7 +202,7 @@ local function wildbattlewebhook(battletime, action)
     if Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 then
         table.insert(fields, {
             ["name"] = "TINT",
-            ["value"] = "`"..Client.Battle.CurrentData.EnemyDoodle.Tint.."`"
+            ["value"] = "`"..Tints[Client.Battle.CurrentData.EnemyDoodle.Tint].Name.."`"
         })
     end
     table.insert(fields, {
