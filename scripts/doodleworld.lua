@@ -205,7 +205,7 @@ local function wildbattlewebhook(battletime, action)
         for i,v in pairs(Client.Battle.CurrentData.EnemyDoodle.Tint) do
             table.insert(fields, {
                 ["name"] = "TINT "..i,
-                ["value"] = "`".."Tint "..i..": "..Tints[Client.Battle.CurrentData.EnemyDoodle.Tint[i]].Name"`"
+                ["value"] = "`".."Tint "..i..": "..Tints[Client.Battle.CurrentData.EnemyDoodle.Tint[i]].Name.."`"
             })
         end
     end
