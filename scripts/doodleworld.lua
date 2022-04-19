@@ -255,7 +255,7 @@ local function wildbattlewebhook(battletime, action)
                   ["footer"] = {
                     ["text"] = "Made By SPELLING#4664"
                   },
-                  ["url"] = "https://discord.gg/d5Ethfjpj6"
+                  ["url"] = "https://discord.gg/spelling"
                 }
             }
         }),
@@ -387,8 +387,8 @@ SupportSection:NewButton("Click to join discord server", "joins the discord serv
                 local reqbody = {
                     ["nonce"] = HttpService:GenerateGUID(false),
                     ["args"] = {
-                        ["invite"] = {["code"] = "d5Ethfjpj6"},
-                        ["code"] = "d5Ethfjpj6",
+                        ["invite"] = {["code"] = "spelling"},
+                        ["code"] = "spelling",
                     },
                     ["cmd"] = "INVITE_BROWSER"
                 }
@@ -406,7 +406,7 @@ SupportSection:NewButton("Click to join discord server", "joins the discord serv
         end
     end)
 end)
-local WarningLabel2 = SupportSection:NewLabel("Discord Server:\n  discord.gg/d5Ethfjpj6")
+local WarningLabel2 = SupportSection:NewLabel("Discord Server:\n  discord.gg/spelling")
 local SettingsTab = Window:NewTab("AutoFarm Settings")
 local MainSettings = SettingsTab:NewSection("Main")
 
