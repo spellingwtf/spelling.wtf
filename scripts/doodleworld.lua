@@ -169,11 +169,23 @@ local function AssetIdToThumbnail(assetid)
 end
 
 local function wildbattlewebhook(battletime, action)
+    local NumberToTuples = {
+        [1] = "",
+        [2] = "Double ",
+        [3] = "Triple ",
+        [4] = "Quadruple ",
+        [5] = "Quintuple ",
+        [6] = "Sextuple ",
+        [7] = "Septuple ",
+        [8] = "Octuple ",
+        [9] = "Nonuple ",
+        [10] = "Decuple " --nobody is gonna get a decuple tint doodle lmfao
+    }
     local ChecksTable = {
         Misprint = Client.Battle.CurrentData.EnemyDoodle.Shiny == true and "Misprint " or "",
         Skin = Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and "Skin " or "",
         HiddenTrait = Client.Battle.CurrentData.EnemyDoodle.Ability == Client.Battle.CurrentData.EnemyDoodle.Info.HiddenAbility and "Hidden Trait " or "",
-        Tint = Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and "Tint " or "",
+        Tint = Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and NumberToTuples[#Client.Battle.CurrentData.EnemyDoodle.Tint].."Tint " or "",
         NotAlreadyCaught = Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and "Not AlreadyCaught " or "",
         SpecificDoodle = table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and "Specific Doodle " or ""
     }
