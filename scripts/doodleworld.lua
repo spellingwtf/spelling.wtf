@@ -202,15 +202,10 @@ local function wildbattlewebhook(battletime, action)
         })
     end
     if Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 then
-        if Client.Battle.CurrentData.EnemyDoodle.Tint[2] ~= nil then
+        for i,v in pairs(Client.Battle.CurrentData.EnemyDoodle.Tint) do
             table.insert(fields, {
-                ["name"] = "TINT",
-                ["value"] = "`".."Tint 1:"..Tints[Client.Battle.CurrentData.EnemyDoodle.Tint[1]].Name..", Tint 2:"..Tints[Client.Battle.CurrentData.EnemyDoodle.Tint[2]].Name.."`"
-            })
-        else
-            table.insert(fields, {
-                ["name"] = "TINT",
-                ["value"] = "`"..Tints[Client.Battle.CurrentData.EnemyDoodle.Tint[1]].Name.."`"
+                ["name"] = "TINT "..i,
+                ["value"] = "`".."Tint "..i..": "..Tints[Client.Battle.CurrentData.EnemyDoodle.Tint[i]].Name"`"
             })
         end
     end
