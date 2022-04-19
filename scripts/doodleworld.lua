@@ -179,7 +179,11 @@ local function wildbattlewebhook(battletime, action)
         [7] = "Septuple ",
         [8] = "Octuple ",
         [9] = "Nonuple ",
-        [10] = "Decuple " --nobody is gonna get a decuple tint doodle lmfao
+        [10] = "Decuple ",
+        [11] = "Undecuple ",
+        [12] = "Duodecuple ",
+        [13] = "Tredecuple ",
+        [14] = "Quattuordecuple " -- the max number of tints 
     }
     local ChecksTable = {
         Misprint = Client.Battle.CurrentData.EnemyDoodle.Shiny == true and "Misprint " or "",
