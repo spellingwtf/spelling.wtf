@@ -1510,9 +1510,6 @@ local function pause()
         end)
         local websocketconnection; websocketconnection = WebSocket.OnMessage:Connect(function(Msg)
             local Message = HttpService:JSONDecode(Msg)
-            for i,v in pairs(Message) do
-                print(i, v)
-            end
             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
                 print("got message")
                 foundmessage = true
