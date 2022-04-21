@@ -11,6 +11,7 @@ local Tints = require(LocalPlayer.Packer.Database.MiscDB).Tints
 local getasset = syn and getsynasset or getcustomasset
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
 local setthreadidentityfunc = syn and syn.set_thread_identity or setthreadcontext or set_thread_context or setthreadidentity or set_thread_identity or context_set or syn_context_set
+local websocketfunc = syn and syn.websocket.connect or Krnl and Krnl.WebSocket.connect or WebSocket and WebSocket.connect or websocket and websocket.connect
 local CurrentRoute
 local UI
 local AutoFarmConnection
@@ -53,6 +54,13 @@ local function validatesettings()
     if getgenv().autofarm_settings.webhooks == true and type(getgenv().autofarm_settings.webhook_url) ~= "string" then
         notify("Invalid Webhook URL", "Setting hasn't been set")
         return false
+    end
+    if getgenv().autofarm_settings.remote_control == true and type(getgenv().autofarm_settings.discord_ID) ~= "string" then
+        notify("Invalid Discord ID", "Setting hasn't been set")
+        return false
+    end
+    if string.find(getgenv().autofarm_settings.discord_ID, "#") then
+        notify("Put your discord ID not username", "Invalid")
     end
     --settings where catch and kill or kill and pause or catch and pause are both true (only people who run old script will possibly get this error)
     --checks = {catch and kill, kill and pause, catch and pause}
@@ -238,7 +246,7 @@ local function wildbattlewebhook(battletime, action)
     requestfunc({
         Url = getgenv().autofarm_settings.webhook_url,
         Body = game:GetService("HttpService"):JSONEncode({
-            ["content"] = action == "Paused" and "@everyone " or "",
+            ["content"] = action == "Paused" and getgenv().autofarm_settings.remote_control == false and "@everyone " or action == "Paused" and getgenv().autofarm_settings.remote_control == true and "@everyone DM <@966088801904631858> a choice: use ;kill or ;catch or ;run" or "",
             ["embeds"] = {
                 {
                   ["type"] = "rich",
@@ -352,6 +360,38 @@ local function updateUIThing(type, name, value)
     end
 end
 
+local function checkUIExistence(type, name)
+    if type == "Toggle" then
+        for i,v in pairs(UI:GetDescendants()) do
+            if (v:IsA("TextButton")) and v.Name == "toggleElement" and v.togName.Text == name then
+                return true
+            end
+        end
+        return false
+    elseif type == "Slider" then
+        for i,v in pairs(UI:GetDescendants()) do
+            if (v:IsA("TextButton")) and v.Name == "sliderElement" and v.togName.Text == name then
+                return true
+            end
+        end
+        return false
+    elseif type == "Dropdown" then
+        for i,v in pairs(UI:GetDescendants()) do
+            if (v:IsA("Frame")) and v.Name == "dropFrame" and v.dropOpen.itemTextbox.Text == name then
+                return true
+            end
+        end
+        return false
+    elseif type == "TextBox" then
+        for i,v in pairs(UI:GetDescendants()) do
+            if (v:IsA("TextButton")) and v.Name == "textboxElement" and v.togName.Text == name then
+                return true
+            end
+        end
+        return false
+    end
+end
+
 local Window = Library.CreateLib("Doodoo World AutoFarm", "DarkTheme")
 for i,v in pairs(CoreGui:GetChildren()) do
     if v.Name == tostring(tonumber(v.Name)) then
@@ -363,6 +403,8 @@ local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  wild battles")
 
+local AutoFarmingSince = MainSection:NewLabel("AutoFarming Since: 0 hours 0 minutes 0 seconds")
+
 local Enabled = MainSection:NewToggle("Enabled", "Enable/Disable the AutoFarm", function(state)
     print("toggled")
     local validsettings = validatesettings()
@@ -370,6 +412,22 @@ local Enabled = MainSection:NewToggle("Enabled", "Enable/Disable the AutoFarm", 
     if validsettings == true then
         if state == true then
             getgenv().autofarm_settings.enabled = true
+            local Seconds = 0
+            local Minutes = 0
+            local Hours = 0
+            while getgenv().autofarm_settings.enabled == true do
+                Seconds = Seconds + 1
+                if Seconds == 60 then
+                    Seconds = 0
+                    Minutes = Minutes + 1
+                end
+                if Minutes == 60 then
+                    Minutes = 0
+                    Hours = Hours + 1
+                end
+                AutoFarmingSince:UpdateLabel("AutoFarming Since: "..Hours.." hours "..Minutes.." minutes "..Seconds.." seconds")
+                wait(1)
+            end
             FirstEncounter = true
         elseif state == false then
             getgenv().autofarm_settings.enabled = false
@@ -436,10 +494,22 @@ end)
 Misc:NewToggle("Webhooks", "enables webhooks", function(state)
     if state == true then
         getgenv().autofarm_settings.webhooks = true
-        Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
-            getgenv().autofarm_settings.webhook_url = url
-            notify("Webhook", "Webhook URL Set")
-        end)
+        if checkUIExistence("TextBox", "Webhook URL") == false then
+            Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
+                getgenv().autofarm_settings.webhook_url = url
+                notify("Webhook", "Webhook URL Set")
+            end)
+        end
+        if checkUIExistence("Toggle", "Remote Control") == false then
+            Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
+                getgenv().autofarm_settings.remote_control = state
+                if checkUIExistence("TextBox", "Discord ID") == false then
+                    Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+                        getgenv().autofarm_settings.discord_ID = ID
+                    end)
+                end
+            end)
+        end
     elseif state == false then
         getgenv().autofarm_settings.webhooks = false
     end
@@ -715,9 +785,26 @@ MainSettings:NewButton("Load Settings", "", function()
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Toggle", "Webhooks", getgenv().autofarm_settings.webhooks)
                 if getgenv().autofarm_settings.webhooks == true then
-                    Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
-                        getgenv().autofarm_settings.webhook_url = url
-                    end)
+                    if checkUIExistence("TextBox", "Webhook URL") == false then
+                        Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
+                            getgenv().autofarm_settings.webhook_url = url
+                        end)
+                    end
+                    if checkUIExistence("Toggle", "Remote Control") == false then
+                        Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
+                            getgenv().autofarm_settings.remote_control = state
+                        end)
+                    end
+                    if getgenv().autofarm_settings.remote_control == true then
+                        updateUIThing("Toggle", "Remote Control", true)
+                        if checkUIExistence("TextBox", "Discord ID") == false then
+                            Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+                                getgenv().autofarm_settings.discord_ID = ID
+                            end)
+                        end
+                    else
+                        updateUIThing("Toggle", "Remote Control", false)
+                    end
                 end
                 updateUIThing("Dropdown", "AutoFarm Mode", "Wild Battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
@@ -750,6 +837,17 @@ MainSettings:NewButton("Load Settings", "", function()
                     Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
                         getgenv().autofarm_settings.webhook_url = url
                     end)
+                    Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
+                        getgenv().autofarm_settings.remote_control = state
+                    end)
+                    if getgenv().autofarm_settings.remote_control == true then
+                        updateUIThing("Toggle", "Remote Control", true)
+                        Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+                            getgenv().autofarm_settings.discord_ID = ID
+                        end)
+                    else
+                        updateUIThing("Toggle", "Remote Control", false)
+                    end
                 end
             elseif getgenv().autofarm_settings.panhandle_mode == true then
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
@@ -1393,6 +1491,53 @@ local function kill()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The opposing "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted")
 end
 
+local function hashfunction(str)
+    local shalib = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/shalib.lua"))()
+    return shalib.sha512(tostring(str).."SelfReport")
+end
+
+local function pause()
+    print("paused")
+    if getgenv().autofarm_settings.remote_control == true then
+        local PORT = 5000
+        print("connecting to webhook")
+        local WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
+        print("connected to webhook")
+        local foundmessage = false
+        local websocketpreventdisconnect; websocketpreventdisconnect = WebSocket.OnClose:Connect(function()
+            WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
+            print("reconnected")
+        end)
+        local websocketconnection; websocketconnection = WebSocket.OnMessage:Connect(function(Msg)
+            local Message = HttpService:JSONDecode(Msg)
+            for i,v in pairs(Message) do
+                print(i, v)
+            end
+            if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
+                print("got message")
+                foundmessage = true
+                if Message.Action == "kill" then
+                    websocketpreventdisconnect:Disconnect()
+                    websocketconnection:Disconnect()
+                    WebSocket:Close()
+                    kill()
+                elseif Message.Action == "catch" then
+                    websocketpreventdisconnect:Disconnect()
+                    WebSocket:Close()
+                    websocketconnection:Disconnect()
+                    catch()
+                elseif Message.Action == "run" then
+                    websocketpreventdisconnect:Disconnect()
+                    WebSocket:Close()
+                    websocketconnection:Disconnect()
+                    run()
+                end
+            end
+        end)
+        repeat task.wait() until foundmessage == true
+    end
+end
+
 notify("AutoFarm Loaded", "Press comma to uninject")
 
 getgenv().autofarm_settings.enabled = false
@@ -1505,6 +1650,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_shiny == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
+                    pause()
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.pause_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.catch_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.kill_when_skin == true then
                 print("found skin")
@@ -1528,6 +1674,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_skin == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
+                    pause()
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.pause_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.catch_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.kill_when_tint == true then
                 print("found tint")
@@ -1542,6 +1689,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_tint == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
+                    pause()
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.pause_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.catch_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
                 print("found doodle that hasnt been caught before")
@@ -1556,6 +1704,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_havent_caught_before == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
+                    pause()
                 end
             elseif table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
                 print("found specific doodle")
@@ -1570,6 +1719,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_when_specific_doodle == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
+                    pause()
                 end
             else
                 if getgenv().autofarm_settings.kill_all == true or getgenv().autofarm_settings.kill_when_normal_doodle == true then
@@ -1582,6 +1732,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(battletime, "Caught") end
                 elseif getgenv().autofarm_settings.pause_all == true or getgenv().autofarm_settings.pause_when_normal_doodle == true then
                     if getgenv().autofarm_settings.webhooks == true then wildbattlewebhook(tick(), "Paused") end
+                    pause()
                 else
                     run()
                 end
