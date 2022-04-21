@@ -59,7 +59,7 @@ local function validatesettings()
         notify("Invalid Discord ID", "Setting hasn't been set")
         return false
     end
-    if string.find(getgenv().autofarm_settings.discord_ID, "#") then
+    if type(getgenv().autofarm_settings.discord_ID) == "string" and string.find(getgenv().autofarm_settings.discord_ID, "#") then
         notify("Put your discord ID not username", "Invalid")
     end
     --settings where catch and kill or kill and pause or catch and pause are both true (only people who run old script will possibly get this error)
