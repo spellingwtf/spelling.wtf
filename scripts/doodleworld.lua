@@ -9,9 +9,9 @@ local Client = require(LocalPlayer.Packer.Client)
 local Skins = require(LocalPlayer.Packer.Database.Skins).Sprites
 local Tints = require(LocalPlayer.Packer.Database.MiscDB).Tints
 local getasset = syn and getsynasset or getcustomasset
-local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request
-local setthreadidentityfunc = syn and syn.set_thread_identity or setthreadcontext or set_thread_context or setthreadidentity or set_thread_identity or context_set or syn_context_set
-local websocketfunc = syn and syn.websocket.connect or Krnl and Krnl.WebSocket.connect or WebSocket and WebSocket.connect or websocket and websocket.connect
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
+local setthreadidentityfunc = syn and syn.set_thread_identity or setthreadcontext or set_thread_context or setthreadidentity or set_thread_identity or context_set or syn_context_set or nil
+local websocketfunc = syn and syn.websocket.connect or Krnl and Krnl.WebSocket.connect or WebSocket and WebSocket.connect or websocket and websocket.connect or nil
 local CurrentRoute
 local UI
 local AutoFarmConnection
