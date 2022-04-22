@@ -1498,7 +1498,7 @@ end
 
 local function pause()
     print("paused")
-    if getgenv().autofarm_settings.remote_control == true then
+    if getgenv().autofarm_settings.remote_control == true and websocketfunc ~= nil then
         local PORT = 5000
         print("connecting to webhook")
         local WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
@@ -1537,6 +1537,8 @@ local function pause()
             end
         end)
         repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won")
+    elseif getgenv().autofarm_settings.remote_control == true and websocketfunc == nil then
+        notify("Unsupported Exploit", "No Websockets")
     end
 end
 
