@@ -1504,10 +1504,12 @@ local function pause()
         local WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
         print("connected to webhook")
         local foundmessage = false
-        local websocketpreventdisconnect; websocketpreventdisconnect = WebSocket.OnClose:Connect(function()
+        local function reconnect()
+            wait(0.3)
             WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
             print("reconnected")
-        end)
+        end
+        local websocketpreventdisconnect; websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
         local websocketconnection; websocketconnection = WebSocket.OnMessage:Connect(function(Msg)
             local Message = HttpService:JSONDecode(Msg)
             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
@@ -1518,20 +1520,23 @@ local function pause()
                     websocketconnection:Disconnect()
                     WebSocket:Close()
                     kill()
+                    return
                 elseif Message.Action == "catch" then
                     websocketpreventdisconnect:Disconnect()
                     WebSocket:Close()
                     websocketconnection:Disconnect()
                     catch()
+                    return
                 elseif Message.Action == "run" then
                     websocketpreventdisconnect:Disconnect()
                     WebSocket:Close()
                     websocketconnection:Disconnect()
                     run()
+                    return
                 end
             end
         end)
-        repeat task.wait() until foundmessage == true
+        repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won")
     end
 end
 
