@@ -1539,6 +1539,7 @@ local function pause()
             end
         end
         local function reconnect()
+            print("disconnected from webhook")
             if foundmessage == false then
                 if websocketpreventdisconnect ~= nil then websocketpreventdisconnect:Disconnect() end
                 if websocketconnection ~= nil then websocketconnection:Disconnect() end
