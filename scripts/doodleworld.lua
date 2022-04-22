@@ -1557,6 +1557,7 @@ local function pause()
         repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won")
     elseif getgenv().autofarm_settings.remote_control == true and websocketfunc == nil then
         notify("Unsupported Exploit", "No Websockets")
+        print("unsupported exploit: no websockets")
     end
 end
 
