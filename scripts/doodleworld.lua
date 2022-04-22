@@ -1517,6 +1517,7 @@ local function pause()
             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
                 print("got message")
                 foundmessage = true
+                WebSocket:Send([[{"Action": "MessageReceived", "discordID": "]]..Message.discordID..[["}]])
                 if Message.Action == "kill" then
                     websocketpreventdisconnect:Disconnect()
                     websocketconnection:Disconnect()
