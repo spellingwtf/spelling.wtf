@@ -1506,9 +1506,9 @@ local function pause()
     print("paused")
     if getgenv().autofarm_settings.remote_control == true and websocketfunc ~= nil then
         local PORT = 5000
-        print("connecting to webhook")
+        print("connecting to websocket")
         local WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
-        print("connected to webhook")
+        print("connected to websocket")
         local foundmessage = false
         local websocketpreventdisconnect
         local websocketconnection;
@@ -1539,14 +1539,14 @@ local function pause()
             end
         end
         local function reconnect()
-            print("disconnected from webhook")
+            print("disconnected from websocket")
             if foundmessage == false then
                 if websocketpreventdisconnect ~= nil then websocketpreventdisconnect:Disconnect() end
                 if websocketconnection ~= nil then websocketconnection:Disconnect() end
                 wait(0.1)
-                print("reconnecting")
+                print("reconnecting to websocket")
                 WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
-                print("reconnected")
+                print("reconnected to websocket")
                 websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
                 websocketconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
             end
