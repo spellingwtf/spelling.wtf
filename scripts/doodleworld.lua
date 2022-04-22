@@ -1509,13 +1509,9 @@ local function pause()
         local WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
         print("connected to webhook")
         local foundmessage = false
-        local function reconnect()
-            wait(0.3)
-            WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
-            print("reconnected")
-        end
-        local websocketpreventdisconnect; websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
-        local websocketconnection; websocketconnection = WebSocket.OnMessage:Connect(function(Msg)
+        local websocketpreventdisconnect
+        local websocketconnection;
+        local function onmessage(Msg)
             local Message = HttpService:JSONDecode(Msg)
             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
                 print("got message")
@@ -1540,7 +1536,21 @@ local function pause()
                     return
                 end
             end
-        end)
+        end
+        local function reconnect()
+            if foundmessage == false then
+                if websocketpreventdisconnect ~= nil then websocketpreventdisconnect:Disconnect() end
+                if websocketconnection ~= nil then websocketconnection:Disconnect() end
+                wait(0.1)
+                print("reconnecting")
+                WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
+                print("reconnected")
+                websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
+                websocketconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
+            end
+        end
+        websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
+        websocketconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
         repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won")
     elseif getgenv().autofarm_settings.remote_control == true and websocketfunc == nil then
         notify("Unsupported Exploit", "No Websockets")
