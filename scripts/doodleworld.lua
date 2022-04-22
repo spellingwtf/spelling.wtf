@@ -272,14 +272,19 @@ local function wildbattlewebhook(battletime, action)
     })
 end
 
+local betterisfile = function(file)
+	local suc, res = pcall(function() return readfile(file) end)
+	return suc and res ~= nil
+end
+
 local function getcustomassetfunc(path)
-    if not isfile(path) then
+    if not betterisfile(path) then
         local req = requestfunc({
             Url = "https://spelling.wtf/scripts/assets/"..path,
             Method = "GET"
         })
         writefile(path, req.Body)
-        repeat task.wait() until isfile(path)
+        repeat task.wait() until betterisfile(path)
     end
     return getasset(path) 
 end
@@ -479,7 +484,7 @@ MainSettings:NewButton("Save Settings", "", function()
             end
         end
     end
-    repeat task.wait() until isfile("DoodleWorldAutoFarmSettings.json")
+    repeat task.wait() until betterisfile("DoodleWorldAutoFarmSettings.json")
     notify("Save Settings", "Success")
 end)
 
@@ -518,7 +523,7 @@ local Capsules = {}
 local CapsuleSelection
 
 MainSettings:NewButton("Load Settings", "", function()
-    if isfile("DoodleWorldAutoFarmSettings.json") then
+    if betterisfile("DoodleWorldAutoFarmSettings.json") then
         local SettingsFile = readfile("DoodleWorldAutoFarmSettings.json")
         local SpecificDoodleTable
         local BlacklistTable
