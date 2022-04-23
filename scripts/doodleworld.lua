@@ -1134,6 +1134,9 @@ local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player li
     LocalPlayer.PlayerGui.MainGui.PlayerList.Visible = false
     LocalPlayer.Character.Head.Nametag.Username.Visible = false
 end)
+local Heal = MainMiscSection:NewButton("Heal", "heals your doodles", function()
+    Client.Network:post("PlayerData", "Heal")
+end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
     Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
 end)
@@ -1599,6 +1602,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
                 elseif CurrentRoute.Name == "011_Sewer" then
                     Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
+                elseif CurrentRoute.Name == "018_CrystalCaverns" then
+                    Client.Battle:WildBattle("RequestWild", "CaveWater", "CaveWater")
                 else
                     Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
                 end
@@ -1618,6 +1623,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                         Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
                     elseif CurrentRoute.Name == "011_Sewer" then
                         Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+                    elseif CurrentRoute.Name == "018_CrystalCaverns" then
+                        Client.Network:post("RequestWild", CurrentRoute.Name, "CaveWater")
                     else
                         Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
                     end
