@@ -512,6 +512,7 @@ Misc:NewToggle("Webhooks", "enables webhooks", function(state)
                 if checkUIExistence("TextBox", "Discord ID") == false then
                     Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
                         getgenv().autofarm_settings.discord_ID = ID
+                        notify("Remote Control", "Discord ID Set")
                     end)
                 end
             end)
@@ -806,6 +807,7 @@ MainSettings:NewButton("Load Settings", "", function()
                         if checkUIExistence("TextBox", "Discord ID") == false then
                             Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
                                 getgenv().autofarm_settings.discord_ID = ID
+                                notify("Remote Control", "Discord ID Set")
                             end)
                         end
                     else
@@ -850,6 +852,7 @@ MainSettings:NewButton("Load Settings", "", function()
                         updateUIThing("Toggle", "Remote Control", true)
                         Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
                             getgenv().autofarm_settings.discord_ID = ID
+                            notify("Remote Control", "Discord ID Set")
                         end)
                     else
                         updateUIThing("Toggle", "Remote Control", false)
