@@ -876,8 +876,9 @@ end)
 
 local TeleportTab = Window:NewTab("Teleports")
 local MainTeleportTabSection = TeleportTab:NewSection("Teleport")
-MainTeleportTabSection:NewDropdown("Teleport to Location", "Teleports to chosen location", {"The Crossroads", "Graphite Lodge", "Route 4", "Lakewood Sewer", "Route 3", "Lakewood Town", "Route 2", "Route 1", "Sketchvale"}, function(location)
+MainTeleportTabSection:NewDropdown("Teleport to Location", "Teleports to chosen location", {"Crystal Caverns", "The Crossroads", "Graphite Lodge", "Route 4", "Lakewood Sewer", "Route 3", "Lakewood Town", "Route 2", "Route 1", "Sketchvale"}, function(location)
     local LocationsTable = {
+        ["Crystal Caverns"] = "018_CrystalCaverns",
         ["The Crossroads"] = "017_Crossroads",
         ["Graphite Lodge"] = "014_GraphiteLodge",
         ["Route 4"] = "013_Route4",
