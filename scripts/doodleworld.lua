@@ -800,16 +800,20 @@ MainSettings:NewButton("Load Settings", "", function()
                     if checkUIExistence("Toggle", "Remote Control") == false then
                         Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
                             getgenv().autofarm_settings.remote_control = state
+                            if checkUIExistence("TextBox", "Discord ID") == false then
+                                Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+                                    getgenv().autofarm_settings.discord_ID = ID
+                                    notify("Remote Control", "Discord ID Set")
+                                end)
+                            end
                         end)
                     end
                     if getgenv().autofarm_settings.remote_control == true then
                         updateUIThing("Toggle", "Remote Control", true)
-                        if checkUIExistence("TextBox", "Discord ID") == false then
-                            Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
-                                getgenv().autofarm_settings.discord_ID = ID
-                                notify("Remote Control", "Discord ID Set")
-                            end)
-                        end
+                        Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+                            getgenv().autofarm_settings.discord_ID = ID
+                            notify("Remote Control", "Discord ID Set")
+                        end)
                     else
                         updateUIThing("Toggle", "Remote Control", false)
                     end
@@ -847,6 +851,12 @@ MainSettings:NewButton("Load Settings", "", function()
                     end)
                     Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
                         getgenv().autofarm_settings.remote_control = state
+                        if checkUIExistence("TextBox", "Discord ID") == false then
+                            Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+                                getgenv().autofarm_settings.discord_ID = ID
+                                notify("Remote Control", "Discord ID Set")
+                            end)
+                        end
                     end)
                     if getgenv().autofarm_settings.remote_control == true then
                         updateUIThing("Toggle", "Remote Control", true)
