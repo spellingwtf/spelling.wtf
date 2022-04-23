@@ -1557,7 +1557,7 @@ local function pause()
         end
         websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
         websocketconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
-        repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won")
+        repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
     elseif getgenv().autofarm_settings.remote_control == true and websocketfunc == nil then
         notify("Unsupported Exploit", "No Websockets")
         print("unsupported exploit: no websockets")
