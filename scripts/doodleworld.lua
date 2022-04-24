@@ -12,6 +12,10 @@ local getasset = syn and getsynasset or getcustomasset
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
 local setthreadidentityfunc = syn and syn.set_thread_identity or setthreadcontext or set_thread_context or setthreadidentity or set_thread_identity or context_set or syn_context_set or nil
 local websocketfunc = syn and syn.websocket and syn.websocket.connect or Krnl and Krnl.WebSocket and Krnl.WebSocket.connect or WebSocket and WebSocket.connect or websocket and websocket.connect or nil
+local WebSocket
+local websocketpreventdisconnectconnection
+local websocketshutdownconnection
+local uninject = false
 local CurrentRoute
 local UI
 local AutoFarmConnection
@@ -46,6 +50,51 @@ local function notify(title, text)
         Duration = 3,
     })
 end
+
+if websocketfunc ~= nil then
+    local PORT = 5000
+    print("connecting to websocket")
+    WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
+    print("connected to websocket")
+    local function onmessage(Msg)
+        local Message = HttpService:JSONDecode(Msg)
+        if Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" then
+            print("forced shutdown by script dev")
+            notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+            local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+            NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+            for i = 59, 0, -1 do
+                if string.len(tostring(i)) == 1 then
+                    NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                else
+                    NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                end
+                wait(1)
+            end
+            game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+        end
+    end
+    local function reconnect()
+        if uninject == false then
+            print("disconnected from websocket")
+            if websocketpreventdisconnectconnection ~= nil then websocketpreventdisconnectconnection:Disconnect() end
+            if websocketshutdownconnection ~= nil then websocketshutdownconnection:Disconnect() end
+            print("reconnecting to websocket")
+            WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
+            print("reconnected to websocket")
+            websocketpreventdisconnectconnection = WebSocket.OnClose:Connect(reconnect)
+            websocketshutdownconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
+        end
+    end
+    websocketpreventdisconnectconnection = WebSocket.OnClose:Connect(reconnect)
+    websocketshutdownconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
+    LocalPlayer.OnTeleport:Connect(function(State)
+        if State == Enum.TeleportState.Started then
+    		websocketpreventdisconnectconnection:Disconnect()
+        end
+    end)
+end
+
 local function validatesettings()
     if type(getgenv().autofarm_settings.panhandle_mode) ~= "boolean" or type(getgenv().autofarm_settings.wild_mode) ~= "boolean" or type(getgenv().autofarm_settings.trainer_mode) ~= "boolean" then
         notify("Invalid Autofarm Mode Settings", "Setting hasn't been set")
@@ -398,6 +447,11 @@ local function checkUIExistence(type, name)
     end
 end
 
+local function hashfunction(str)
+    local shalib = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/shalib.lua"))()
+    return shalib.sha512(tostring(str).."SelfReport")
+end
+
 local Window = Library.CreateLib("Doodoo World AutoFarm", "DarkTheme")
 for i,v in pairs(CoreGui:GetChildren()) do
     if v.Name == tostring(tonumber(v.Name)) then
@@ -506,20 +560,46 @@ Misc:NewToggle("Webhooks", "enables webhooks", function(state)
                 notify("Webhook", "Webhook URL Set")
             end)
         end
-        if checkUIExistence("Toggle", "Remote Control") == false then
-            Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
-                getgenv().autofarm_settings.remote_control = state
-                if checkUIExistence("TextBox", "Discord ID") == false then
-                    Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
-                        getgenv().autofarm_settings.discord_ID = ID
-                        notify("Remote Control", "Discord ID Set")
-                    end)
-                end
-            end)
-        end
     elseif state == false then
         getgenv().autofarm_settings.webhooks = false
     end
+end)
+Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
+    getgenv().autofarm_settings.remote_control = state
+    if checkUIExistence("TextBox", "Discord ID") == false then
+        Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+            getgenv().autofarm_settings.discord_ID = ID
+            notify("Remote Control", "Discord ID Set")
+        end)
+    end
+    coroutine.wrap(function()
+        repeat task.wait() until type(getgenv().autofarm_settings.discord_ID) == "string"
+        local function onmessage(Msg)
+            local Message = HttpService:JSONDecode(Msg)
+            if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
+                if Message.Action == "heal" then
+                    notify("Remote Control", "Healing")
+                    Client.Network:post("PlayerData", "Heal")
+                elseif Message.Action == "changesettings" then
+                    notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
+                    if Message.value == "true" then
+                        getgenv().autofarm_settings[Message.settingToChange] = true
+                    elseif Message.value == "false" then
+                        getgenv().autofarm_settings[Message.settingToChange] = false
+                    else
+                        if Message.settingToChange == "specific_doodles" or Message.settingToChange == "blacklist_doodles" then
+                            Message.value:gsub([[\"]], [["]])
+                            loadstring("valuetable = "..Message.value)()
+                            getgenv().autofarm_settings[Message.settingToChange] = valuetable
+                        else
+                            getgenv().autofarm_settings[Message.settingToChange] = Message.value
+                        end
+                    end
+                end
+            end
+        end
+        WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
+    end)()
 end)
 local Capsules = {}
 local CapsuleSelection
@@ -791,32 +871,49 @@ MainSettings:NewButton("Load Settings", "", function()
                 updateUIThing("Toggle", "Sound Alerts", getgenv().autofarm_settings.sound_alerts)
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Toggle", "Webhooks", getgenv().autofarm_settings.webhooks)
+                updateUIThing("Toggle", "Remote Control", getgenv().autofarm_settings.remote_control)
                 if getgenv().autofarm_settings.webhooks == true then
                     if checkUIExistence("TextBox", "Webhook URL") == false then
                         Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
                             getgenv().autofarm_settings.webhook_url = url
                         end)
                     end
-                    if checkUIExistence("Toggle", "Remote Control") == false then
-                        Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
-                            getgenv().autofarm_settings.remote_control = state
-                            if checkUIExistence("TextBox", "Discord ID") == false then
-                                Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
-                                    getgenv().autofarm_settings.discord_ID = ID
-                                    notify("Remote Control", "Discord ID Set")
-                                end)
-                            end
-                        end)
-                    end
-                    if getgenv().autofarm_settings.remote_control == true then
-                        updateUIThing("Toggle", "Remote Control", true)
+                end
+                if getgenv().autofarm_settings.remote_control == true then
+                    if checkUIExistence("TextBox", "Discord ID") == false then
                         Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
                             getgenv().autofarm_settings.discord_ID = ID
                             notify("Remote Control", "Discord ID Set")
                         end)
-                    else
-                        updateUIThing("Toggle", "Remote Control", false)
                     end
+                    coroutine.wrap(function()
+                        repeat task.wait() until type(getgenv().autofarm_settings.discord_ID) == "string"
+                        local function onmessage(Msg)
+                            local Message = HttpService:JSONDecode(Msg)
+                            if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
+                                if Message.Action == "heal" then
+                                    notify("Remote Control", "Healing")
+                                    Client.Network:post("PlayerData", "Heal")
+                                elseif Message.Action == "changesettings" then
+                                    notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
+                                    if Message.value == "true" then
+                                        getgenv().autofarm_settings[Message.settingToChange] = true
+                                    elseif Message.value == "false" then
+                                        getgenv().autofarm_settings[Message.settingToChange] = false
+                                    else
+                                        if Message.settingToChange == "specific_doodles" or Message.settingToChange == "blacklist_doodles" then
+                                            Message.value:gsub([[\"]], [["]])
+                                            loadstring("valuetable = "..Message.value)()
+                                            getgenv().autofarm_settings[Message.settingToChange] = valuetable
+                                        else
+                                            getgenv().autofarm_settings[Message.settingToChange] = Message.value
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
+                    end)()
                 end
                 updateUIThing("Dropdown", "AutoFarm Mode", "Wild Battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
@@ -844,29 +941,49 @@ MainSettings:NewButton("Load Settings", "", function()
                 end
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Dropdown", "AutoFarm Mode", "Trainer Farm")
-                updateUIThing("Toggle", "Webhooks", getgenv().autofarm_settings.webhooks)
+                updateUIThing("Toggle", "Remote Control", getgenv().autofarm_settings.remote_control)
                 if getgenv().autofarm_settings.webhooks == true then
-                    Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
-                        getgenv().autofarm_settings.webhook_url = url
-                    end)
-                    Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
-                        getgenv().autofarm_settings.remote_control = state
-                        if checkUIExistence("TextBox", "Discord ID") == false then
-                            Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
-                                getgenv().autofarm_settings.discord_ID = ID
-                                notify("Remote Control", "Discord ID Set")
-                            end)
-                        end
-                    end)
-                    if getgenv().autofarm_settings.remote_control == true then
-                        updateUIThing("Toggle", "Remote Control", true)
+                    if checkUIExistence("TextBox", "Webhook URL") == false then
+                        Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
+                            getgenv().autofarm_settings.webhook_url = url
+                        end)
+                    end
+                end
+                if getgenv().autofarm_settings.remote_control == true then
+                    if checkUIExistence("TextBox", "Discord ID") == false then
                         Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
                             getgenv().autofarm_settings.discord_ID = ID
                             notify("Remote Control", "Discord ID Set")
                         end)
-                    else
-                        updateUIThing("Toggle", "Remote Control", false)
                     end
+                    coroutine.wrap(function()
+                        repeat task.wait() until type(getgenv().autofarm_settings.discord_ID) == "string"
+                        local function onmessage(Msg)
+                            local Message = HttpService:JSONDecode(Msg)
+                            if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
+                                if Message.Action == "heal" then
+                                    notify("Remote Control", "Healing")
+                                    Client.Network:post("PlayerData", "Heal")
+                                elseif Message.Action == "changesettings" then
+                                    notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
+                                    if Message.value == "true" then
+                                        getgenv().autofarm_settings[Message.settingToChange] = true
+                                    elseif Message.value == "false" then
+                                        getgenv().autofarm_settings[Message.settingToChange] = false
+                                    else
+                                        if Message.settingToChange == "specific_doodles" or Message.settingToChange == "blacklist_doodles" then
+                                            Message.value:gsub([[\"]], [["]])
+                                            loadstring("valuetable = "..Message.value)()
+                                            getgenv().autofarm_settings[Message.settingToChange] = valuetable
+                                        else
+                                            getgenv().autofarm_settings[Message.settingToChange] = Message.value
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
+                    end)()
                 end
             elseif getgenv().autofarm_settings.panhandle_mode == true then
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
@@ -1514,21 +1631,11 @@ local function kill()
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The wild "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "The opposing "..LocalPlayer.PlayerGui.MainGui.MainBattle.FrontBox.NameLabel.Text.." fainted")
 end
 
-local function hashfunction(str)
-    local shalib = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/shalib.lua"))()
-    return shalib.sha512(tostring(str).."SelfReport")
-end
-
 local function pause()
     print("paused")
     if getgenv().autofarm_settings.remote_control == true and websocketfunc ~= nil then
-        local PORT = 5000
-        print("connecting to websocket")
-        local WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
-        print("connected to websocket")
         local foundmessage = false
-        local websocketpreventdisconnect
-        local websocketconnection;
+        local websocketconnection
         local function onmessage(Msg)
             local Message = HttpService:JSONDecode(Msg)
             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
@@ -1536,40 +1643,20 @@ local function pause()
                 foundmessage = true
                 WebSocket:Send([[{"Action": "MessageReceived", "discordID": "]]..Message.discordID..[["}]])
                 if Message.Action == "kill" then
-                    websocketpreventdisconnect:Disconnect()
                     websocketconnection:Disconnect()
-                    WebSocket:Close()
                     kill()
                     return
                 elseif Message.Action == "catch" then
-                    websocketpreventdisconnect:Disconnect()
-                    WebSocket:Close()
                     websocketconnection:Disconnect()
                     catch()
                     return
                 elseif Message.Action == "run" then
-                    websocketpreventdisconnect:Disconnect()
-                    WebSocket:Close()
                     websocketconnection:Disconnect()
                     run()
                     return
                 end
             end
         end
-        local function reconnect()
-            print("disconnected from websocket")
-            if foundmessage == false then
-                if websocketpreventdisconnect ~= nil then websocketpreventdisconnect:Disconnect() end
-                if websocketconnection ~= nil then websocketconnection:Disconnect() end
-                wait(0.1)
-                print("reconnecting to websocket")
-                WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
-                print("reconnected to websocket")
-                websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
-                websocketconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
-            end
-        end
-        websocketpreventdisconnect = WebSocket.OnClose:Connect(reconnect)
         websocketconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
         repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
     elseif getgenv().autofarm_settings.remote_control == true and websocketfunc == nil then
@@ -1648,24 +1735,32 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 coroutine.wrap(function()
-                    task.wait(4)
-                    if LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then
-                        print("FailSafe Activated")
-                        repeat task.wait()
-                            if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
-                                LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
-                            else
-                                print("FailSafe Activated: restarting battle because something broke")
-                                if CurrentRoute.Name == "007_Lakewood" then
-                                    Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
-                                elseif CurrentRoute.Name == "011_Sewer" then
-                                    Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
+                    repeat task.wait() until type(getgenv().autofarm_settings.discord_ID) == "string"
+                    local function onmessage(Msg)
+                        local Message = HttpService:JSONDecode(Msg)
+                        if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
+                            if Message.Action == "heal" then
+                                notify("Remote Control", "Healing")
+                                Client.Network:post("PlayerData", "Heal")
+                            elseif Message.Action == "changesettings" then
+                                notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
+                                if Message.value == "true" then
+                                    getgenv().autofarm_settings[Message.settingToChange] = true
+                                elseif Message.value == "false" then
+                                    getgenv().autofarm_settings[Message.settingToChange] = false
                                 else
-                                    Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+                                    if Message.settingToChange == "specific_doodles" or Message.settingToChange == "blacklist_doodles" then
+                                        Message.value:gsub([[\"]], [["]])
+                                        loadstring("valuetable = "..Message.value)()
+                                        getgenv().autofarm_settings[Message.settingToChange] = valuetable
+                                    else
+                                        getgenv().autofarm_settings[Message.settingToChange] = Message.value
+                                    end
                                 end
                             end
-                        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+                        end
                     end
+                    WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
                 end)()
             end
         end
@@ -1811,6 +1906,8 @@ end)
 --// UNINJECT
 UninjectConnection = UserInputService.InputBegan:Connect(function(key)
     if key.KeyCode == Enum.KeyCode.Comma then
+        uninject = true
+        if WebSocket ~= nil then WebSocket:Close() end
         getgenv().autofarm_settings.enabled = false
         notify("AutoFarm", "Uninjecting...")
         AutoFarmConnection:Disconnect()
