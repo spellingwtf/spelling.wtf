@@ -51,15 +51,21 @@ local function notify(title, text)
     })
 end
 
+local function secureprint(text)
+    if getgenv().autofarm_settings.prints == true then 
+        print(text)
+    end
+end
+
 if websocketfunc ~= nil then
     local PORT = 5000
-    print("connecting to websocket")
+    secureprint("connecting to websocket")
     WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
-    print("connected to websocket")
+    secureprint("connected to websocket")
     local function onmessage(Msg)
         local Message = HttpService:JSONDecode(Msg)
         if Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" then
-            print("forced shutdown by script dev")
+            secureprint("forced shutdown by script dev")
             notify("Rejoin in 1 minute", "Forced shutdown by script dev")
             local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
             NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
@@ -76,12 +82,12 @@ if websocketfunc ~= nil then
     end
     local function reconnect()
         if uninject == false then
-            print("disconnected from websocket")
+            secureprint("disconnected from websocket")
             if websocketpreventdisconnectconnection ~= nil then websocketpreventdisconnectconnection:Disconnect() end
             if websocketshutdownconnection ~= nil then websocketshutdownconnection:Disconnect() end
-            print("reconnecting to websocket")
+            secureprint("reconnecting to websocket")
             WebSocket = websocketfunc("wss://doodle-world-websocket.glitch.me/"..PORT)
-            print("reconnected to websocket")
+            secureprint("reconnected to websocket")
             websocketpreventdisconnectconnection = WebSocket.OnClose:Connect(reconnect)
             websocketshutdownconnection = WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
         end
@@ -466,7 +472,7 @@ local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldo
 local AutoFarmingSince = MainSection:NewLabel("AutoFarming Since: 0 hours 0 minutes 0 seconds")
 
 local Enabled = MainSection:NewToggle("Enabled", "Enable/Disable the AutoFarm", function(state)
-    print("toggled")
+    secureprint("toggled")
     local validsettings = validatesettings()
 
     if validsettings == true then
@@ -493,7 +499,7 @@ local Enabled = MainSection:NewToggle("Enabled", "Enable/Disable the AutoFarm", 
             getgenv().autofarm_settings.enabled = false
         end
     else
-        print(validsettings)
+        secureprint(validsettings)
         notify("unable to enable", "invalid settings")
     end
 end)
@@ -530,12 +536,12 @@ local MainSettings = SettingsTab:NewSection("Main")
 
 MainSettings:NewButton("Save Settings", "", function()
     writefile("DoodleWorldAutoFarmSettings.json", HttpService:JSONEncode(getgenv().autofarm_settings))
-    print("Saved AutoFarm Settings: ")
+    secureprint("Saved AutoFarm Settings: ")
     for i,v in pairs(getgenv().autofarm_settings) do
-        print("    "..i, v)
+        secureprint("    "..i, v)
         if typeof(v) == "table" then
             for i2, v2 in pairs(v) do
-                print("        "..i2, v2)
+                secureprint("        "..i2, v2)
             end
         end
     end
@@ -618,12 +624,12 @@ MainSettings:NewButton("Load Settings", "", function()
         getgenv().autofarm_settings = HttpService:JSONDecode(SettingsFile)
         if SpecificDoodleTable ~= nil then getgenv().autofarm_settings.specific_doodles = SpecificDoodleTable end
         if BlacklistTable ~= nil then getgenv().autofarm_settings.blacklist_doodles = BlacklistTable end
-        print("Loaded AutoFarm Settings: ")
+        secureprint("Loaded AutoFarm Settings: ")
         for i,v in pairs(getgenv().autofarm_settings) do
-            print("    "..i, v)
+            secureprint("    "..i, v)
             if typeof(v) == "table" then
                 for i2, v2 in pairs(v) do
-                    print("        "..i2, v2)
+                    secureprint("        "..i2, v2)
                 end
             end
         end
@@ -1344,14 +1350,21 @@ end)
 local DebugTab = Window:NewTab("Debug")
 local DebugTabSection = DebugTab:NewSection("Main")
 DebugTabSection:NewButton("Print Current Settings", "", function()
-    print("AutoFarm Settings: ")
+    secureprint("AutoFarm Settings: ")
     for i,v in pairs(getgenv().autofarm_settings) do
-        print("    "..i, v)
+        secureprint("    "..i, v)
         if typeof(v) == "table" then
             for i2, v2 in pairs(v) do
-                print("        "..i2, v2)
+                secureprint("        "..i2, v2)
             end
         end
+    end
+end)
+DebugTabSection:NewToggle("Enable prints", "", function(state)
+    if state == true then
+        getgenv().autofarm_settings.prints = true
+    elseif state == false then
+        getgenv().autofarm_settings.prints = false
     end
 end)
 
@@ -1362,7 +1375,7 @@ local function run()
             if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r") then return end
         until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Run.MouseButton1Click)[1] ~= nil
         getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Run.MouseButton1Click)[1]:Fire()
-        print("ran")
+        secureprint("ran")
         task.wait(2)
     until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
 end
@@ -1388,7 +1401,7 @@ local function panhandle()
             if v.MoveName.Text == "Panhandle" then
                 repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                 getconnections(v.MouseButton1Click)[1]:Fire()
-                print("panhandled: doodle".."1")
+                secureprint("panhandled: doodle".."1")
                 break
             end
         end
@@ -1399,7 +1412,7 @@ local function panhandle()
         local Doodle = Client.Network:get("PlayerData", "GetParty")[doodlenumber]
         for i,v in pairs(Doodle.Moves) do
             if v.Name == "Panhandle" then
-                print("other doodle has panhandle, switching")
+                secureprint("other doodle has panhandle, switching")
                 repeat task.wait() until getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1] ~= nil
                 getconnections(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Actions.Switch.MouseButton1Click)[1]:Fire()
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.PartyUI:GetChildren()) do
@@ -1425,7 +1438,7 @@ local function panhandle()
                                 if v.MoveName.Text == "Panhandle" then
                                     repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                                     getconnections(v.MouseButton1Click)[1]:Fire()
-                                    print("panhandled: doodle"..doodlenumber)
+                                    secureprint("panhandled: doodle"..doodlenumber)
                                     break
                                 end
                             end
@@ -1477,7 +1490,7 @@ local function catch()
                     if v.MoveName.Text == "Glancing Blow" then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
-                        print("used glancing blow")
+                        secureprint("used glancing blow")
                     end
                 end
             elseif getgenv().autofarm_settings.autocatch_use_glancing_blow == true and not table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 then
@@ -1486,7 +1499,7 @@ local function catch()
             end
             if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp == 1 or noglancingblow == true or getgenv().autofarm_settings.autocatch_use_glancing_blow == false or getgenv().autofarm_settings.autocatch_use_glancing_blow == nil or onehpbutglancingblowdoodledead == true then
                 if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
-                    print("posting battle action")
+                    secureprint("posting battle action")
                     Client.SelectedAction:Fire({
                         ActionType = "Item",
                         Action = getgenv().autofarm_settings.autocatch_capsule,
@@ -1499,7 +1512,7 @@ local function catch()
                         User = Client.Battle.CurrentData.Out1[1].ID
                     }})
                     --repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You used "..getgenv().autofarm_settings.autocatch_capsule)
-                    print("capsule thrown")
+                    secureprint("capsule thrown")
                     task.wait(1)
                 end
             end
@@ -1549,7 +1562,7 @@ local function kill()
                 if v.Effective.Visible == true and v.MoveName.Text ~= "Glancing Blow" and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 and tonumber(string.split(v.Uses.Text, "/")[1]) <= tonumber(string.split(v.Uses.Text, "/")[2]) and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964542" and v.Effective.Image ~= "http://www.roblox.com/asset/?id=4597964185" then
                     repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                     getconnections(v.MouseButton1Click)[1]:Fire()
-                    print("attacked")
+                    secureprint("attacked")
                     foundsupereffective = true
                     foundstrongest = true
                     foundnoteffective = true
@@ -1580,7 +1593,7 @@ local function kill()
                     if v.MoveName.Text == strongestmove then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
-                        print("attacked")
+                        secureprint("attacked")
                         break
                     end
                 end
@@ -1613,7 +1626,7 @@ local function kill()
                     if v.MoveName.Text == strongestmove then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
-                        print("attacked")
+                        secureprint("attacked")
                         break
                     end
                 end
@@ -1623,7 +1636,7 @@ local function kill()
                 if v.MoveName.Text == getgenv().autofarm_settings.autokill_custom_move then
                     repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                     getconnections(v.MouseButton1Click)[1]:Fire()
-                    print("attacked")
+                    secureprint("attacked")
                     break
                 end
             end
@@ -1632,14 +1645,14 @@ local function kill()
 end
 
 local function pause()
-    print("paused")
+    secureprint("paused")
     if getgenv().autofarm_settings.remote_control == true and websocketfunc ~= nil then
         local foundmessage = false
         local websocketconnection
         local function onmessage(Msg)
             local Message = HttpService:JSONDecode(Msg)
             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
-                print("got message")
+                secureprint("got message")
                 foundmessage = true
                 WebSocket:Send([[{"Action": "MessageReceived", "discordID": "]]..Message.discordID..[["}]])
                 if Message.Action == "kill" then
@@ -1661,7 +1674,7 @@ local function pause()
         repeat task.wait() until foundmessage == true or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "You won") or string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^You r")
     elseif getgenv().autofarm_settings.remote_control == true and websocketfunc == nil then
         notify("Unsupported Exploit", "No Websockets")
-        print("unsupported exploit: no websockets")
+        secureprint("unsupported exploit: no websockets")
     end
 end
 
@@ -1676,7 +1689,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
     if getgenv().autofarm_settings.enabled == true then
         InABattle = true
         if getgenv().autofarm_settings.autoheal == true then
-            print("healing")
+            secureprint("healing")
             Client.Network:post("PlayerData", "Heal")
         end
         if getgenv().autofarm_settings.wild_mode == true then
@@ -1692,9 +1705,9 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         end
         if FirstEncounter == true then
-            print("first encounter true")
+            secureprint("first encounter true")
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
-                print("starting wild battle")
+                secureprint("starting wild battle")
                 if CurrentRoute.Name == "007_Lakewood" then
                     Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
                 elseif CurrentRoute.Name == "011_Sewer" then
@@ -1705,7 +1718,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
                 end
             elseif getgenv().autofarm_settings.trainer_mode == true then
-                print("starting trainer battle")
+                secureprint("starting trainer battle")
                 local RandomNPC
                 repeat
                     RandomNPC = CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())]
@@ -1714,7 +1727,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         elseif FirstEncounter == false then
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
-                print("waiting for battle cooldown (5 seconds)")
+                secureprint("waiting for battle cooldown (5 seconds)")
                 repeat task.wait()
                     if CurrentRoute.Name == "007_Lakewood" then
                         Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
@@ -1727,40 +1740,32 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     end
                 until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
                 Client.Music:PlaySong("battlefield5")
-                print("starting wild battle")
+                secureprint("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
-                print("starting trainer battle")
+                secureprint("starting trainer battle")
                 Client.Music:PlaySong("battlefield5")
                 Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())])
             end
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 coroutine.wrap(function()
-                    repeat task.wait() until type(getgenv().autofarm_settings.discord_ID) == "string"
-                    local function onmessage(Msg)
-                        local Message = HttpService:JSONDecode(Msg)
-                        if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
-                            if Message.Action == "heal" then
-                                notify("Remote Control", "Healing")
-                                Client.Network:post("PlayerData", "Heal")
-                            elseif Message.Action == "changesettings" then
-                                notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
-                                if Message.value == "true" then
-                                    getgenv().autofarm_settings[Message.settingToChange] = true
-                                elseif Message.value == "false" then
-                                    getgenv().autofarm_settings[Message.settingToChange] = false
+                    task.wait(4)
+                    if LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then
+                        print("FailSafe Activated")
+                        repeat task.wait()
+                            if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
+                                LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
+                            else
+                                print("FailSafe Activated: restarting battle because something broke")
+                                if CurrentRoute.Name == "007_Lakewood" then
+                                    Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
+                                elseif CurrentRoute.Name == "011_Sewer" then
+                                    Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
                                 else
-                                    if Message.settingToChange == "specific_doodles" or Message.settingToChange == "blacklist_doodles" then
-                                        Message.value:gsub([[\"]], [["]])
-                                        loadstring("valuetable = "..Message.value)()
-                                        getgenv().autofarm_settings[Message.settingToChange] = valuetable
-                                    else
-                                        getgenv().autofarm_settings[Message.settingToChange] = Message.value
-                                    end
+                                    Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
                                 end
                             end
-                        end
+                        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
                     end
-                    WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
                 end)()
             end
         end
@@ -1768,7 +1773,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will"
         if getgenv().autofarm_settings.wild_mode == true and not table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
             if Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.pause_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.catch_when_shiny == true or Client.Battle.CurrentData.EnemyDoodle.Shiny == true and getgenv().autofarm_settings.kill_when_shiny == true then
-                print("found shiny/misprint doodle")
+                secureprint("found shiny/misprint doodle")
                 notify("AutoFarm Found:", "Shiny/Misprint Doodle")
                 if getgenv().autofarm_settings.sound_alerts == true then
                     local Sound = Instance.new("Sound")
@@ -1792,7 +1797,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     pause()
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.pause_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.catch_when_skin == true or Client.Battle.CurrentData.EnemyDoodle.Skin ~= 0 and getgenv().autofarm_settings.kill_when_skin == true then
-                print("found skin")
+                secureprint("found skin")
                 notify("AutoFarm Found:", "Skin")
                 if getgenv().autofarm_settings.sound_alerts == true then
                     local Sound = Instance.new("Sound")
@@ -1816,7 +1821,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     pause()
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.pause_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.catch_when_tint == true or Client.Battle.CurrentData.EnemyDoodle.Tint ~= 0 and getgenv().autofarm_settings.kill_when_tint == true then
-                print("found tint")
+                secureprint("found tint")
                 notify("AutoFarm Found:", "Tint")
                 if getgenv().autofarm_settings.kill_when_tint == true then
                     local battletime = tick()
@@ -1831,7 +1836,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     pause()
                 end
             elseif Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.pause_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.catch_when_havent_caught_before == true or Client.Battle.CurrentData.EnemyDoodle.AlreadyCaught == nil and getgenv().autofarm_settings.kill_when_havent_caught_before == true then
-                print("found doodle that hasnt been caught before")
+                secureprint("found doodle that hasnt been caught before")
                 notify("AutoFarm Found:", "Doodle that hasn't been caught before")
                 if getgenv().autofarm_settings.kill_when_havent_caught_before == true then
                     local battletime = tick()
@@ -1846,7 +1851,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                     pause()
                 end
             elseif table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.pause_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.catch_when_specific_doodle == true or table.find(getgenv().autofarm_settings.specific_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) and getgenv().autofarm_settings.kill_when_specific_doodle == true then
-                print("found specific doodle")
+                secureprint("found specific doodle")
                 notify("AutoFarm Found:", "Specific Doodle")
                 if getgenv().autofarm_settings.kill_when_specific_doodle == true then
                     local battletime = tick()
@@ -1879,18 +1884,18 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         elseif getgenv().autofarm_settings.wild_mode == true and table.find(getgenv().autofarm_settings.blacklist_doodles, Client.Battle.CurrentData.EnemyDoodle.RealName) then
             run()
         elseif getgenv().autofarm_settings.panhandle_mode == true then
-            print("starting panhandle sequence")
+            secureprint("starting panhandle sequence")
             panhandle()
         elseif getgenv().autofarm_settings.trainer_mode == true then
             for i = 1, #Client.Battle.CurrentData.Player2Party do
-                print("killing doodle "..i)
+                secureprint("killing doodle "..i)
                 kill()
                 if i ~= #Client.Battle.CurrentData.Player2Party then
                     repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
                 end
             end
         end
-        print("waiting till battle gui gone")
+        secureprint("waiting till battle gui gone")
         Client.BattleEnd:Wait()
         --[[repeat
             task.wait()
