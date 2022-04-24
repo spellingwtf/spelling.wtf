@@ -1750,12 +1750,12 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 coroutine.wrap(function()
                     task.wait(4)
                     if LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false then
-                        print("FailSafe Activated")
+                        secureprint("FailSafe Activated")
                         repeat task.wait()
                             if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
                                 LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
                             else
-                                print("FailSafe Activated: restarting battle because something broke")
+                                secureprint("FailSafe Activated: restarting battle because something broke")
                                 if CurrentRoute.Name == "007_Lakewood" then
                                     Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
                                 elseif CurrentRoute.Name == "011_Sewer" then
