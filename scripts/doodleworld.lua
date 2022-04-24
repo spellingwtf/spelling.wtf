@@ -64,7 +64,7 @@ if websocketfunc ~= nil then
     secureprint("connected to websocket")
     local function onmessage(Msg)
         local Message = HttpService:JSONDecode(Msg)
-        if Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" then
+        if Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == "all" then
             secureprint("forced shutdown by script dev")
             notify("Rejoin in 1 minute", "Forced shutdown by script dev")
             local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
@@ -601,6 +601,20 @@ Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
                             getgenv().autofarm_settings[Message.settingToChange] = Message.value
                         end
                     end
+                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) or Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and hashfunction(getgenv().autofarm_settings.discord_ID) == Message.Target then
+                    secureprint("forced shutdown by script dev")
+                    notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                    local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                    NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                    for i = 59, 0, -1 do
+                        if string.len(tostring(i)) == 1 then
+                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                        else
+                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                        end
+                        wait(1)
+                    end
+                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
                 end
             end
         end
@@ -915,6 +929,20 @@ MainSettings:NewButton("Load Settings", "", function()
                                             getgenv().autofarm_settings[Message.settingToChange] = Message.value
                                         end
                                     end
+                                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) then
+                                    secureprint("forced shutdown by script dev")
+                                    notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                                    local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                                    NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                                    for i = 59, 0, -1 do
+                                        if string.len(tostring(i)) == 1 then
+                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                                        else
+                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                                        end
+                                        wait(1)
+                                    end
+                                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
                                 end
                             end
                         end
@@ -985,6 +1013,20 @@ MainSettings:NewButton("Load Settings", "", function()
                                             getgenv().autofarm_settings[Message.settingToChange] = Message.value
                                         end
                                     end
+                                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) then
+                                    secureprint("forced shutdown by script dev")
+                                    notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                                    local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                                    NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                                    for i = 59, 0, -1 do
+                                        if string.len(tostring(i)) == 1 then
+                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                                        else
+                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                                        end
+                                        wait(1)
+                                    end
+                                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
                                 end
                             end
                         end
