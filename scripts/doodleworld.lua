@@ -1802,13 +1802,13 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 secureprint("starting wild battle")
                 if CurrentRoute.Name == "007_Lakewood" then
-                    Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
+                    Client.Battle:WildBattle("RequestWild ", "Lake", "Lake")
                 elseif CurrentRoute.Name == "011_Sewer" then
-                    Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
+                    Client.Battle:WildBattle("RequestWild ", "Sewer", "Sewer")
                 elseif CurrentRoute.Name == "018_CrystalCaverns" then
-                    Client.Battle:WildBattle("RequestWild", "CaveWater", "CaveWater")
+                    Client.Battle:WildBattle("RequestWild ", "CaveWater", "CaveWater")
                 else
-                    Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
+                    Client.Battle:WildBattle("RequestWild ", "WildGrass", "WildGrass")
                 end
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 secureprint("starting trainer battle")
@@ -1821,16 +1821,17 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         elseif FirstEncounter == false then
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 secureprint("waiting for battle cooldown (5 seconds)")
-                task.wait(7)
-                if CurrentRoute.Name == "007_Lakewood" then
-                    Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
-                elseif CurrentRoute.Name == "011_Sewer" then
-                    Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
-                elseif CurrentRoute.Name == "018_CrystalCaverns" then
-                    Client.Battle:WildBattle("RequestWild", "CaveWater", "CaveWater")
-                else
-                    Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
-                end
+                repeat task.wait()
+                    if CurrentRoute.Name == "007_Lakewood" then
+                        Client.Network:post("RequestWild ", CurrentRoute.Name, "Lake")
+                    elseif CurrentRoute.Name == "011_Sewer" then
+                        Client.Network:post("RequestWild ", "011_RealSewer", "Sewer")
+                    elseif CurrentRoute.Name == "018_CrystalCaverns" then
+                        Client.Network:post("RequestWild ", CurrentRoute.Name, "CaveWater")
+                    else
+                        Client.Network:post("RequestWild ", CurrentRoute.Name, "WildGrass")
+                    end
+                until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
                 secureprint("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 secureprint("starting trainer battle")
