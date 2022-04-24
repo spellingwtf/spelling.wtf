@@ -467,7 +467,6 @@ end
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
-local WarningLabel2 = MainSection:NewLabel("Theres a serversided 4 second cooldown in between\n  wild battles")
 
 local AutoFarmingSince = MainSection:NewLabel("AutoFarming Since: 0 hours 0 minutes 0 seconds")
 
@@ -1770,18 +1769,16 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         elseif FirstEncounter == false then
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 secureprint("waiting for battle cooldown (5 seconds)")
-                repeat task.wait()
-                    if CurrentRoute.Name == "007_Lakewood" then
-                        Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
-                    elseif CurrentRoute.Name == "011_Sewer" then
-                        Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
-                    elseif CurrentRoute.Name == "018_CrystalCaverns" then
-                        Client.Network:post("RequestWild", CurrentRoute.Name, "CaveWater")
-                    else
-                        Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
-                    end
-                until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
-                Client.Music:PlaySong("battlefield5")
+                task.wait(7)
+                if CurrentRoute.Name == "007_Lakewood" then
+                    Client.Battle:WildBattle("RequestWild", "Lake", "Lake")
+                elseif CurrentRoute.Name == "011_Sewer" then
+                    Client.Battle:WildBattle("RequestWild", "Sewer", "Sewer")
+                elseif CurrentRoute.Name == "018_CrystalCaverns" then
+                    Client.Battle:WildBattle("RequestWild", "CaveWater", "CaveWater")
+                else
+                    Client.Battle:WildBattle("RequestWild", "WildGrass", "WildGrass")
+                end
                 secureprint("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 secureprint("starting trainer battle")
