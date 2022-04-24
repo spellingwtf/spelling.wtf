@@ -78,6 +78,19 @@ if websocketfunc ~= nil then
                 wait(1)
             end
             game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+
+            uninject = true
+            if WebSocket ~= nil then WebSocket:Close() end
+            getgenv().autofarm_settings.enabled = false
+            AutoFarmConnection:Disconnect()
+            for i,v in pairs(CoreGui:GetChildren()) do
+                if v.Name == tostring(tonumber(v.Name)) then
+                    v:Destroy()
+                end
+            end
+            getgenv().executed = false
+            UninjectConnection:Disconnect()
+
         end
     end
     local function reconnect()
@@ -614,6 +627,19 @@ Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
                         wait(1)
                     end
                     game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+
+                    uninject = true
+                    if WebSocket ~= nil then WebSocket:Close() end
+                    getgenv().autofarm_settings.enabled = false
+                    AutoFarmConnection:Disconnect()
+                    for i,v in pairs(CoreGui:GetChildren()) do
+                        if v.Name == tostring(tonumber(v.Name)) then
+                            v:Destroy()
+                        end
+                    end
+                    getgenv().executed = false
+                    UninjectConnection:Disconnect()
+
                 end
             end
         end
@@ -942,6 +968,19 @@ MainSettings:NewButton("Load Settings", "", function()
                                         wait(1)
                                     end
                                     game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+
+                                    uninject = true
+                                    if WebSocket ~= nil then WebSocket:Close() end
+                                    getgenv().autofarm_settings.enabled = false
+                                    AutoFarmConnection:Disconnect()
+                                    for i,v in pairs(CoreGui:GetChildren()) do
+                                        if v.Name == tostring(tonumber(v.Name)) then
+                                            v:Destroy()
+                                        end
+                                    end
+                                    getgenv().executed = false
+                                    UninjectConnection:Disconnect()
+
                                 end
                             end
                         end
@@ -1026,6 +1065,19 @@ MainSettings:NewButton("Load Settings", "", function()
                                         wait(1)
                                     end
                                     game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+
+                                    uninject = true
+                                    if WebSocket ~= nil then WebSocket:Close() end
+                                    getgenv().autofarm_settings.enabled = false
+                                    AutoFarmConnection:Disconnect()
+                                    for i,v in pairs(CoreGui:GetChildren()) do
+                                        if v.Name == tostring(tonumber(v.Name)) then
+                                            v:Destroy()
+                                        end
+                                    end
+                                    getgenv().executed = false
+                                    UninjectConnection:Disconnect()
+                                    
                                 end
                             end
                         end
