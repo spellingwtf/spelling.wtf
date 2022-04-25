@@ -486,7 +486,14 @@ local function hashfunction(str)
     return shalib.sha512(tostring(str).."SelfReport")
 end
 
-local Window = Library.CreateLib("Doodoo World AutoFarm", "DarkTheme")
+local colors = {
+    SchemeColor = Color3.fromRGB(66, 70, 77), --discord
+    Background = Color3.fromRGB(54, 57,63), --discord
+    Header = Color3.fromRGB(47, 49, 54), --discord
+    TextColor = Color3.fromRGB(220, 221, 222), --discord
+    ElementColor = Color3.fromRGB(32, 34, 37)
+}
+local Window = Library.CreateLib("Doodoo World AutoFarm", colors)
 for i,v in pairs(CoreGui:GetChildren()) do
     if v.Name == tostring(tonumber(v.Name)) then
         UI = v
@@ -1458,6 +1465,13 @@ GUISettingsSection:NewTextBox("Toggle GUI Keybind", "", function(txt)
         end
     end)
 end)
+local GUISettingsColorsSection = GUISettings:NewSection("Colors")
+for theme, color in pairs(colors) do
+    GUISettingsColorsSection:NewColorPicker(theme, "Change your "..theme, color, function(color3)
+        Library:ChangeColor(theme, color3)
+    end)
+end
+
 
 local DebugTab = Window:NewTab("Debug")
 local DebugTabSection = DebugTab:NewSection("Main")
