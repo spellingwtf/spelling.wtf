@@ -1647,7 +1647,7 @@ local function catch()
         if string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true then
             if getgenv().autofarm_settings.autocatch_use_glancing_blow == true and table.find(moves, "Glancing Blow") and Client.Battle.CurrentData.EnemyDoodle.currenthp ~= 1 and type(Client.Battle.CurrentData) == "table" then
                 for i,v in pairs(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Moves:GetChildren()) do
-                    if v.MoveName.Text == "Glancing Blow" then
+                    if v.MoveName.Text == "Glancing Blow" and tonumber(string.split(v.Uses.Text, "/")[1]) ~= 0 then
                         repeat task.wait() until getconnections(v.MouseButton1Click)[1] ~= nil
                         getconnections(v.MouseButton1Click)[1]:Fire()
                         secureprint("used glancing blow")
