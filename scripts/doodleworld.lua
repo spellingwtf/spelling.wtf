@@ -494,7 +494,6 @@ for i,v in pairs(CoreGui:GetChildren()) do
 end
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
-local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 if updated == true then
     MainSection:NewLabel("Untested Version: Safe Mode Activated")
 end
@@ -600,70 +599,72 @@ Misc:NewToggle("Webhooks", "enables webhooks", function(state)
         getgenv().autofarm_settings.webhooks = false
     end
 end)
-Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
-    getgenv().autofarm_settings.remote_control = state
-    if checkUIExistence("TextBox", "Discord ID") == false then
-        Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
-            getgenv().autofarm_settings.discord_ID = ID
-            notify("Remote Control", "Discord ID Set")
-        end)
-    end
-    coroutine.wrap(function()
-        repeat task.wait() until type(getgenv().autofarm_settings.discord_ID) == "string"
-        local function onmessage(Msg)
-            local Message = HttpService:JSONDecode(Msg)
-            if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
-                if Message.Action == "heal" then
-                    notify("Remote Control", "Healing")
-                    Client.ClientDatabase:PDSEvent("Heal")
-                elseif Message.Action == "changesettings" then
-                    notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
-                    if Message.value == "true" then
-                        getgenv().autofarm_settings[Message.settingToChange] = true
-                    elseif Message.value == "false" then
-                        getgenv().autofarm_settings[Message.settingToChange] = false
-                    else
-                        if Message.settingToChange == "specific_doodles" or Message.settingToChange == "blacklist_doodles" then
-                            Message.value:gsub([[\"]], [["]])
-                            loadstring("valuetable = "..Message.value)()
-                            getgenv().autofarm_settings[Message.settingToChange] = valuetable
+if websocketfunc ~= nil then
+    Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
+        getgenv().autofarm_settings.remote_control = state
+        if checkUIExistence("TextBox", "Discord ID") == false then
+            Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
+                getgenv().autofarm_settings.discord_ID = ID
+                notify("Remote Control", "Discord ID Set")
+            end)
+        end
+        coroutine.wrap(function()
+            repeat task.wait() until type(getgenv().autofarm_settings.discord_ID) == "string"
+            local function onmessage(Msg)
+                local Message = HttpService:JSONDecode(Msg)
+                if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
+                    if Message.Action == "heal" then
+                        notify("Remote Control", "Healing")
+                        Client.ClientDatabase:PDSEvent("Heal")
+                    elseif Message.Action == "changesettings" then
+                        notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
+                        if Message.value == "true" then
+                            getgenv().autofarm_settings[Message.settingToChange] = true
+                        elseif Message.value == "false" then
+                            getgenv().autofarm_settings[Message.settingToChange] = false
                         else
-                            getgenv().autofarm_settings[Message.settingToChange] = Message.value
+                            if Message.settingToChange == "specific_doodles" or Message.settingToChange == "blacklist_doodles" then
+                                Message.value:gsub([[\"]], [["]])
+                                loadstring("valuetable = "..Message.value)()
+                                getgenv().autofarm_settings[Message.settingToChange] = valuetable
+                            else
+                                getgenv().autofarm_settings[Message.settingToChange] = Message.value
+                            end
                         end
-                    end
-                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) or Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and hashfunction(getgenv().autofarm_settings.discord_ID) == Message.Target then
-                    secureprint("forced shutdown by script dev")
-                    notify("Rejoin in 1 minute", "Forced shutdown by script dev")
-                    local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
-                    NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
-                    for i = 59, 0, -1 do
-                        if string.len(tostring(i)) == 1 then
-                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
-                        else
-                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                    elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) or Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and hashfunction(getgenv().autofarm_settings.discord_ID) == Message.Target then
+                        secureprint("forced shutdown by script dev")
+                        notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                        local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                        NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                        for i = 59, 0, -1 do
+                            if string.len(tostring(i)) == 1 then
+                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                            else
+                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                            end
+                            wait(1)
                         end
-                        wait(1)
-                    end
-                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+                        game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 
-                    uninject = true
-                    if WebSocket ~= nil then WebSocket:Close() end
-                    getgenv().autofarm_settings.enabled = false
-                    AutoFarmConnection:Disconnect()
-                    for i,v in pairs(CoreGui:GetChildren()) do
-                        if v.Name == tostring(tonumber(v.Name)) then
-                            v:Destroy()
+                        uninject = true
+                        if WebSocket ~= nil then WebSocket:Close() end
+                        getgenv().autofarm_settings.enabled = false
+                        AutoFarmConnection:Disconnect()
+                        for i,v in pairs(CoreGui:GetChildren()) do
+                            if v.Name == tostring(tonumber(v.Name)) then
+                                v:Destroy()
+                            end
                         end
-                    end
-                    getgenv().executed = false
-                    UninjectConnection:Disconnect()
+                        getgenv().executed = false
+                        UninjectConnection:Disconnect()
 
+                    end
                 end
             end
-        end
-        WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
-    end)()
-end)
+            WebSocket.OnMessage:Connect(function(Msg) onmessage(Msg) end)
+        end)()
+    end)
+end
 local Capsules = {}
 local CapsuleSelection
 
@@ -934,7 +935,7 @@ MainSettings:NewButton("Load Settings", "", function()
                 updateUIThing("Toggle", "Sound Alerts", getgenv().autofarm_settings.sound_alerts)
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Toggle", "Webhooks", getgenv().autofarm_settings.webhooks)
-                updateUIThing("Toggle", "Remote Control", getgenv().autofarm_settings.remote_control)
+                if websocketfunc ~= nil then updateUIThing("Toggle", "Remote Control", getgenv().autofarm_settings.remote_control) end
                 if getgenv().autofarm_settings.webhooks == true then
                     if checkUIExistence("TextBox", "Webhook URL") == false then
                         Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
@@ -942,7 +943,7 @@ MainSettings:NewButton("Load Settings", "", function()
                         end)
                     end
                 end
-                if getgenv().autofarm_settings.remote_control == true then
+                if websocketfunc ~= nil and getgenv().autofarm_settings.remote_control == true then
                     if checkUIExistence("TextBox", "Discord ID") == false then
                         Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
                             getgenv().autofarm_settings.discord_ID = ID
@@ -1031,7 +1032,7 @@ MainSettings:NewButton("Load Settings", "", function()
                 end
                 updateUIThing("Toggle", "AutoHeal", getgenv().autofarm_settings.autoheal)
                 updateUIThing("Dropdown", "AutoFarm Mode", "Trainer Farm")
-                updateUIThing("Toggle", "Remote Control", getgenv().autofarm_settings.remote_control)
+                if websocketfunc ~= nil then updateUIThing("Toggle", "Remote Control", getgenv().autofarm_settings.remote_control) end
                 if getgenv().autofarm_settings.webhooks == true then
                     if checkUIExistence("TextBox", "Webhook URL") == false then
                         Misc:NewTextBox("Webhook URL", "set the webhook URL", function(url)
@@ -1039,7 +1040,7 @@ MainSettings:NewButton("Load Settings", "", function()
                         end)
                     end
                 end
-                if getgenv().autofarm_settings.remote_control == true then
+                if websocketfunc ~= nil and getgenv().autofarm_settings.remote_control == true then
                     if checkUIExistence("TextBox", "Discord ID") == false then
                         Misc:NewTextBox("Discord ID", "put your discord ID", function(ID)
                             getgenv().autofarm_settings.discord_ID = ID
