@@ -69,7 +69,7 @@ local function secureprint(text)
         print(text)
     end
 end
---[[
+
 if websocketfunc ~= nil then
     local PORT = 5000
     secureprint("connecting to websocket")
@@ -78,34 +78,36 @@ if websocketfunc ~= nil then
     local function onmessage(Msg)
         local Message = HttpService:JSONDecode(Msg)
         if Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == "all" then
-            secureprint("forced shutdown by script dev")
-            notify("Rejoin in 1 minute", "Forced shutdown by script dev")
-            local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
-            NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
-            for i = 59, 0, -1 do
-                if string.len(tostring(i)) == 1 then
-                    NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
-                else
-                    NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+            local shutdownvalidation = HttpService:JSONDecode(game:HttpGet("https://doodleworldremotecontrol-1.spellingwtf.repl.co/validateShutdown.json"))
+            if shutdownvalidation.validateShutdown == true and shutdownvalidation.Target == "all" then
+                secureprint("forced shutdown by script dev")
+                notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                for i = 59, 0, -1 do
+                    if string.len(tostring(i)) == 1 then
+                        NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                    else
+                        NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                    end
+                    wait(1)
                 end
-                wait(1)
-            end
-            game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+                game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 
-            uninject = true
-            if WebSocket ~= nil then WebSocket:Close() end
-            getgenv().autofarm_settings.enabled = false
-            AutoFarmConnection:Disconnect()
-            for i,v in pairs(CoreGui:GetChildren()) do
-                if v.Name == tostring(tonumber(v.Name)) then
-                    v:Destroy()
+                uninject = true
+                if WebSocket ~= nil then WebSocket:Close() end
+                getgenv().autofarm_settings.enabled = false
+                AutoFarmConnection:Disconnect()
+                for i,v in pairs(CoreGui:GetChildren()) do
+                    if v.Name == tostring(tonumber(v.Name)) then
+                        v:Destroy()
+                    end
                 end
+                getgenv().executed = false
+                UninjectConnection:Disconnect()
+
+                LocalPlayer:Kick()
             end
-            getgenv().executed = false
-            UninjectConnection:Disconnect()
-
-            LocalPlayer:Kick()
-
         end
     end
     local function reconnect()
@@ -127,7 +129,7 @@ if websocketfunc ~= nil then
     		websocketpreventdisconnectconnection:Disconnect()
         end
     end)
-end]]
+end
 
 local function validatesettings()
     if type(getgenv().autofarm_settings.panhandle_mode) ~= "boolean" or type(getgenv().autofarm_settings.wild_mode) ~= "boolean" or type(getgenv().autofarm_settings.trainer_mode) ~= "boolean" then
@@ -639,32 +641,34 @@ if websocketfunc ~= nil then
                             end
                         end
                     elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) or Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and hashfunction(getgenv().autofarm_settings.discord_ID) == Message.Target then
-                        secureprint("forced shutdown by script dev")
-                        notify("Rejoin in 1 minute", "Forced shutdown by script dev")
-                        local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
-                        NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
-                        for i = 59, 0, -1 do
-                            if string.len(tostring(i)) == 1 then
-                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
-                            else
-                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                        local shutdownvalidation = HttpService:JSONDecode(game:HttpGet("https://doodleworldremotecontrol-1.spellingwtf.repl.co/validateShutdown.json"))
+                        if shutdownvalidation.validateShutdown == true and shutdownvalidation.Target == hashfunction(getgenv().autofarm_settings.discord_ID) then
+                            secureprint("forced shutdown by script dev")
+                            notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                            local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                            NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                            for i = 59, 0, -1 do
+                                if string.len(tostring(i)) == 1 then
+                                    NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                                else
+                                    NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                                end
+                                wait(1)
                             end
-                            wait(1)
-                        end
-                        game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+                            game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 
-                        uninject = true
-                        if WebSocket ~= nil then WebSocket:Close() end
-                        getgenv().autofarm_settings.enabled = false
-                        AutoFarmConnection:Disconnect()
-                        for i,v in pairs(CoreGui:GetChildren()) do
-                            if v.Name == tostring(tonumber(v.Name)) then
-                                v:Destroy()
+                            uninject = true
+                            if WebSocket ~= nil then WebSocket:Close() end
+                            getgenv().autofarm_settings.enabled = false
+                            AutoFarmConnection:Disconnect()
+                            for i,v in pairs(CoreGui:GetChildren()) do
+                                if v.Name == tostring(tonumber(v.Name)) then
+                                    v:Destroy()
+                                end
                             end
+                            getgenv().executed = false
+                            UninjectConnection:Disconnect()
                         end
-                        getgenv().executed = false
-                        UninjectConnection:Disconnect()
-
                     end
                 end
             end
@@ -980,33 +984,35 @@ MainSettings:NewButton("Load Settings", "", function()
                                             getgenv().autofarm_settings[Message.settingToChange] = Message.value
                                         end
                                     end
-                                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) then
-                                    secureprint("forced shutdown by script dev")
-                                    notify("Rejoin in 1 minute", "Forced shutdown by script dev")
-                                    local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
-                                    NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
-                                    for i = 59, 0, -1 do
-                                        if string.len(tostring(i)) == 1 then
-                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
-                                        else
-                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) or Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and hashfunction(getgenv().autofarm_settings.discord_ID) == Message.Target then
+                                    local shutdownvalidation = HttpService:JSONDecode(game:HttpGet("https://doodleworldremotecontrol-1.spellingwtf.repl.co/validateShutdown.json"))
+                                    if shutdownvalidation.validateShutdown == true and shutdownvalidation.Target == hashfunction(getgenv().autofarm_settings.discord_ID) then
+                                        secureprint("forced shutdown by script dev")
+                                        notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                                        local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                                        NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                                        for i = 59, 0, -1 do
+                                            if string.len(tostring(i)) == 1 then
+                                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                                            else
+                                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                                            end
+                                            wait(1)
                                         end
-                                        wait(1)
-                                    end
-                                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+                                        game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 
-                                    uninject = true
-                                    if WebSocket ~= nil then WebSocket:Close() end
-                                    getgenv().autofarm_settings.enabled = false
-                                    AutoFarmConnection:Disconnect()
-                                    for i,v in pairs(CoreGui:GetChildren()) do
-                                        if v.Name == tostring(tonumber(v.Name)) then
-                                            v:Destroy()
+                                        uninject = true
+                                        if WebSocket ~= nil then WebSocket:Close() end
+                                        getgenv().autofarm_settings.enabled = false
+                                        AutoFarmConnection:Disconnect()
+                                        for i,v in pairs(CoreGui:GetChildren()) do
+                                            if v.Name == tostring(tonumber(v.Name)) then
+                                                v:Destroy()
+                                            end
                                         end
+                                        getgenv().executed = false
+                                        UninjectConnection:Disconnect()
                                     end
-                                    getgenv().executed = false
-                                    UninjectConnection:Disconnect()
-
                                 end
                             end
                         end
@@ -1077,33 +1083,35 @@ MainSettings:NewButton("Load Settings", "", function()
                                             getgenv().autofarm_settings[Message.settingToChange] = Message.value
                                         end
                                     end
-                                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) then
-                                    secureprint("forced shutdown by script dev")
-                                    notify("Rejoin in 1 minute", "Forced shutdown by script dev")
-                                    local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
-                                    NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
-                                    for i = 59, 0, -1 do
-                                        if string.len(tostring(i)) == 1 then
-                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
-                                        else
-                                            NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                                elseif Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and Message.Target == hashfunction(getgenv().autofarm_settings.discord_ID) or Message.Action == "shutdown" and Message.discordID == "ce8097423a53e8cde41682d81a1aed2e2607b7fcca24a627b3b5185fee8b9b5b9be20f9568171b91439372fa03829aeac4c0e19b3de9ef4c767faec0ef403483" and hashfunction(getgenv().autofarm_settings.discord_ID) == Message.Target then
+                                    local shutdownvalidation = HttpService:JSONDecode(game:HttpGet("https://doodleworldremotecontrol-1.spellingwtf.repl.co/validateShutdown.json"))
+                                    if shutdownvalidation.validateShutdown == true and shutdownvalidation.Target == hashfunction(getgenv().autofarm_settings.discord_ID) then
+                                        secureprint("forced shutdown by script dev")
+                                        notify("Rejoin in 1 minute", "Forced shutdown by script dev")
+                                        local NetworkBinds = getupvalue(Client.Network.UnbindEvent, 1)
+                                        NetworkBinds["ShutdownSoon"]("Rejoining in 1:00\nForced shutdown by script dev")
+                                        for i = 59, 0, -1 do
+                                            if string.len(tostring(i)) == 1 then
+                                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:0"..i.."\nForced shutdown by script dev")
+                                            else
+                                                NetworkBinds["ShutdownSoon"]("Rejoining in 0:"..i.."\nForced shutdown by script dev")
+                                            end
+                                            wait(1)
                                         end
-                                        wait(1)
-                                    end
-                                    game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+                                        game:GetService('TeleportService'):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 
-                                    uninject = true
-                                    if WebSocket ~= nil then WebSocket:Close() end
-                                    getgenv().autofarm_settings.enabled = false
-                                    AutoFarmConnection:Disconnect()
-                                    for i,v in pairs(CoreGui:GetChildren()) do
-                                        if v.Name == tostring(tonumber(v.Name)) then
-                                            v:Destroy()
+                                        uninject = true
+                                        if WebSocket ~= nil then WebSocket:Close() end
+                                        getgenv().autofarm_settings.enabled = false
+                                        AutoFarmConnection:Disconnect()
+                                        for i,v in pairs(CoreGui:GetChildren()) do
+                                            if v.Name == tostring(tonumber(v.Name)) then
+                                                v:Destroy()
+                                            end
                                         end
+                                        getgenv().executed = false
+                                        UninjectConnection:Disconnect()
                                     end
-                                    getgenv().executed = false
-                                    UninjectConnection:Disconnect()
-                                    
                                 end
                             end
                         end
