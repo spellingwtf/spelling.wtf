@@ -69,7 +69,7 @@ local function secureprint(text)
         print(text)
     end
 end
-
+--[[
 if websocketfunc ~= nil then
     local PORT = 5000
     secureprint("connecting to websocket")
@@ -127,7 +127,7 @@ if websocketfunc ~= nil then
     		websocketpreventdisconnectconnection:Disconnect()
         end
     end)
-end
+end]]
 
 local function validatesettings()
     if type(getgenv().autofarm_settings.panhandle_mode) ~= "boolean" or type(getgenv().autofarm_settings.wild_mode) ~= "boolean" or type(getgenv().autofarm_settings.trainer_mode) ~= "boolean" then
