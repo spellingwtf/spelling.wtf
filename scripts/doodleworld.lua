@@ -1813,6 +1813,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 CurrentRoute = v
             end
         end
+        secureprint("waiting for battle cooldown")
+        repeat task.wait() until LocalPlayer.AAF.Value == false
         if FirstEncounter == true then
             secureprint("first encounter true")
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
@@ -1836,9 +1838,8 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             end
         elseif FirstEncounter == false then
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
-                secureprint("waiting for battle cooldown (5 seconds)")
+                secureprint("starting wild battle")
                 if updated == false then
-                    repeat task.wait() until LocalPlayer.AAF.Value == false
                     repeat task.wait()
                         if CurrentRoute.Name == "007_Lakewood" then
                             Client.Network:post("RequestWild ", CurrentRoute.Name, "Lake")
@@ -1851,7 +1852,6 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                         end
                     until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
                 elseif updated == true then
-                    repeat task.wait() until LocalPlayer.AAF.Value == false
                     if CurrentRoute.Name == "007_Lakewood" then
                         Client.Battle:WildBattle("Lake")
                     elseif CurrentRoute.Name == "011_Sewer" then
@@ -1862,7 +1862,6 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                         Client.Battle:WildBattle("WildGrass")
                     end
                 end
-                secureprint("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 secureprint("starting trainer battle")
                 local RandomNPC
