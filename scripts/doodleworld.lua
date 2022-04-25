@@ -1832,7 +1832,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 repeat
                     RandomNPC = CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())]
                 until RandomNPC:FindFirstChild("Head")
-                Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())])
+                Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, RandomNPC)
             end
         elseif FirstEncounter == false then
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
@@ -1865,8 +1865,16 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 secureprint("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 secureprint("starting trainer battle")
-                Client.Music:PlaySong("battlefield5")
-                Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())])
+                local RandomNPC
+                repeat
+                    RandomNPC = CurrentRoute.NPC:GetChildren()[math.random(1, #CurrentRoute.NPC:GetChildren())]
+                until RandomNPC:FindFirstChild("Head")
+                if updated == true then
+                    Client.Battle:TrainerBattle(getgenv().autofarm_settings.trainer_ID, RandomNPC)
+                elseif updated == false then
+                    Client.CurrentTrainerModel = RandomNPC
+                    Client.Network:post("RequestTrainer", getgenv().autofarm_settings.trainer_ID)
+                end
             end
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 coroutine.wrap(function()
