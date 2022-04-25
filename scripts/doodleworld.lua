@@ -56,55 +56,6 @@ getgenv().executed = true
 
 if type(getgenv().autofarm_settings) ~= "table" then getgenv().autofarm_settings = {} end
 
---[[if game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Updated ~= "2022-04-24T11:37:06.837002Z" then
-    local ScreenGui = Instance.new("ScreenGui", CoreGui)
-	local image = Instance.new("ImageLabel")
-	image.Size = UDim2.new(1, 0, 1, 36)
-	image.Position = UDim2.new(0, 0, 0, -36)
-	image.ZIndex = 9
-	image.Parent = ScreenGui
-    local textlabel = Instance.new("TextLabel")
-    textlabel.Size = UDim2.new(1, 0, 1, 36)
-    textlabel.Text = "Script is currently down for testing due to the update.\nThe discord has been copied to your clipboard."
-	textlabel.TextColor3 = Color3.new(1, 1, 1)
-    textlabel.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
-	textlabel.BackgroundTransparency = 0.5
-	textlabel.BorderSizePixel = 0
-    textlabel.Position = UDim2.new(0, 0, 0, -36)
-	textlabel.ZIndex = 10
-    textlabel.TextSize = 30
-    textlabel.Parent = ScreenGui
-	spawn(function()
-		for i = 1, 14 do
-			spawn(function()
-				local reqbody = {
-					["nonce"] = game:GetService("HttpService"):GenerateGUID(false),
-					["args"] = {
-						["invite"] = {["code"] = "spelling"},
-						["code"] = "spelling",
-					},
-					["cmd"] = "INVITE_BROWSER"
-				}
-				local newreq = game:GetService("HttpService"):JSONEncode(reqbody)
-				requestfunc({
-					Headers = {
-						["Content-Type"] = "application/json",
-						["Origin"] = "https://discord.com"
-					},
-					Url = "http://127.0.0.1:64"..(53 + i).."/rpc?v=1",
-					Method = "POST",
-					Body = newreq
-				})
-			end)
-		end
-	end)
-	setclipboard("https://discord.com/invite/spelling")
-    task.wait(0.5)
-    spawn(function()
-        while true do end
-    end)
-end]]
-
 local function notify(title, text)
     StarterGui:SetCore("SendNotification", {
         Title = title,
@@ -1869,13 +1820,13 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 secureprint("starting wild battle")
                 if CurrentRoute.Name == "007_Lakewood" then
-                    Client.Battle:WildBattle("RequestWild ", "Lake", "Lake")
+                    Client.Battle:WildBattle("Lake")
                 elseif CurrentRoute.Name == "011_Sewer" then
-                    Client.Battle:WildBattle("RequestWild ", "Sewer", "Sewer")
+                    Client.Battle:WildBattle("Sewer")
                 elseif CurrentRoute.Name == "018_CrystalCaverns" then
-                    Client.Battle:WildBattle("RequestWild ", "CaveWater", "CaveWater")
+                    Client.Battle:WildBattle("CaveWater")
                 else
-                    Client.Battle:WildBattle("RequestWild ", "WildGrass", "WildGrass")
+                    Client.Battle:WildBattle("WildGrass")
                 end
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 secureprint("starting trainer battle")
@@ -1903,13 +1854,13 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                 elseif updated == true then
                     repeat task.wait() until LocalPlayer.AAF.Value == false
                     if CurrentRoute.Name == "007_Lakewood" then
-                        Client.Battle:WildBattle("RequestWild ", "Lake", "Lake")
+                        Client.Battle:WildBattle("Lake")
                     elseif CurrentRoute.Name == "011_Sewer" then
-                        Client.Battle:WildBattle("RequestWild ", "Sewer", "Sewer")
+                        Client.Battle:WildBattle("Sewer")
                     elseif CurrentRoute.Name == "018_CrystalCaverns" then
-                        Client.Battle:WildBattle("RequestWild ", "CaveWater", "CaveWater")
+                        Client.Battle:WildBattle("CaveWater")
                     else
-                        Client.Battle:WildBattle("RequestWild ", "WildGrass", "WildGrass")
+                        Client.Battle:WildBattle("WildGrass")
                     end
                 end
                 secureprint("starting wild battle")
@@ -2069,12 +2020,6 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         end
         secureprint("waiting till battle gui gone")
         Client.BattleEnd:Wait()
-        --[[repeat
-            task.wait()
-            if LocalPlayer.PlayerGui.MainGui.Menu.Visible == true then
-                LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
-            end
-        until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == false and LocalPlayer.PlayerGui.MainGui.MenuButton.Visible == true]]
     end
     FirstEncounter = false
     InABattle = false
