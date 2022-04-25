@@ -615,7 +615,7 @@ Misc:NewToggle("Remote Control", "remote control discord bot", function(state)
             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
                 if Message.Action == "heal" then
                     notify("Remote Control", "Healing")
-                    Client.Network:post("PlayerData", "Heal")
+                    Client.ClientDatabase:PDSEvent("Heal")
                 elseif Message.Action == "changesettings" then
                     notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
                     if Message.value == "true" then
@@ -956,7 +956,7 @@ MainSettings:NewButton("Load Settings", "", function()
                             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
                                 if Message.Action == "heal" then
                                     notify("Remote Control", "Healing")
-                                    Client.Network:post("PlayerData", "Heal")
+                                    Client.ClientDatabase:PDSEvent("Heal")
                                 elseif Message.Action == "changesettings" then
                                     notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
                                     if Message.value == "true" then
@@ -1053,7 +1053,7 @@ MainSettings:NewButton("Load Settings", "", function()
                             if Message.discordID == hashfunction(getgenv().autofarm_settings.discord_ID) or hashfunction(getgenv().autofarm_settings.discord_ID) == Message.discordID then
                                 if Message.Action == "heal" then
                                     notify("Remote Control", "Healing")
-                                    Client.Network:post("PlayerData", "Heal")
+                                    Client.ClientDatabase:PDSEvent("Heal")
                                 elseif Message.Action == "changesettings" then
                                     notify("Remote Control", "Changing "..Message.settingToChange.." to "..Message.value)
                                     if Message.value == "true" then
@@ -1379,7 +1379,7 @@ local HideIdentity = MainMiscSection:NewButton("Hide Identity", "Hides player li
     LocalPlayer.Character.Head.Nametag.Username.Visible = false
 end)
 local Heal = MainMiscSection:NewButton("Heal", "heals your doodles", function()
-    Client.Network:post("PlayerData", "Heal")
+    Client.ClientDatabase:PDSEvent("Heal")
 end)
 local FightGlubbie = MainMiscSection:NewButton("Fight Glubbie", "Starts a glubbie fight", function()
     Client.Battle:WildBattle("GenericIndoors", "GlubbieSpecial")
@@ -1563,8 +1563,6 @@ local function panhandle()
     end
     repeat task.wait() until string.match(LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Say.Text, "^What will") == "What will" and LocalPlayer.PlayerGui.MainGui.MainBattle.BottomBar.Visible == true
     run()
-    --notify("Panhandle AutoFarm", "GOT: $"..moneygot)
-    --print("got: $"..moneygot)
 end
 
 local function catch()
@@ -1801,7 +1799,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         InABattle = true
         if getgenv().autofarm_settings.autoheal == true then
             secureprint("healing")
-            Client.Network:post("PlayerData", "Heal")
+            Client.ClientDatabase:PDSEvent("Heal")
         end
         if getgenv().autofarm_settings.wild_mode == true then
             Capsules = {}
