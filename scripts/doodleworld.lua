@@ -1880,12 +1880,26 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
                                 LocalPlayer.PlayerGui.MainGui.Menu.Visible = false
                             else
                                 secureprint("FailSafe Activated: restarting battle because something broke")
-                                if CurrentRoute.Name == "007_Lakewood" then
-                                    Client.Network:post("RequestWild", CurrentRoute.Name, "Lake")
-                                elseif CurrentRoute.Name == "011_Sewer" then
-                                    Client.Network:post("RequestWild", "011_RealSewer", "Sewer")
-                                else
-                                    Client.Network:post("RequestWild", CurrentRoute.Name, "WildGrass")
+                                if updated == false then
+                                    if CurrentRoute.Name == "007_Lakewood" then
+                                        Client.Network:post("RequestWild ", CurrentRoute.Name, "Lake")
+                                    elseif CurrentRoute.Name == "011_Sewer" then
+                                        Client.Network:post("RequestWild ", "011_RealSewer", "Sewer")
+                                    elseif CurrentRoute.Name == "018_CrystalCaverns" then
+                                        Client.Network:post("RequestWild ", CurrentRoute.Name, "CaveWater")
+                                    else
+                                        Client.Network:post("RequestWild ", CurrentRoute.Name, "WildGrass")
+                                    end
+                                elseif updated == true then
+                                    if CurrentRoute.Name == "007_Lakewood" then
+                                        Client.Battle:WildBattle("Lake")
+                                    elseif CurrentRoute.Name == "011_Sewer" then
+                                        Client.Battle:WildBattle("Sewer")
+                                    elseif CurrentRoute.Name == "018_CrystalCaverns" then
+                                        Client.Battle:WildBattle("CaveWater")
+                                    else
+                                        Client.Battle:WildBattle("WildGrass")
+                                    end
                                 end
                             end
                         until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
