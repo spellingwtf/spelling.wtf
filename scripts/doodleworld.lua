@@ -22,12 +22,25 @@ local AutoFarmConnection
 local UninjectConnection
 local InABattle = false
 local FirstEncounter = true
+local ActiveVersions = {
+    "0.1.2",
+    "0.1.2a",
+    "0.1.2b",
+    "0.1.2c",
+    "0.1.2d",
+    "0.1.2e",
+    "0.1.2f"
+}
+local updated = false
 local KeyBind = "RightShift"
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 for i,v in pairs(workspace:GetChildren()) do
     if v:IsA("Model") and string.find(v.Name, "_") and v ~= LocalPlayer.Character then
         CurrentRoute = v
     end
+end
+if not table.find(ActiveVersions, workspace.Version.Value) then
+    updated = true
 end
 
 --// PREVENT REEXECUTESs
@@ -42,6 +55,55 @@ end
 getgenv().executed = true
 
 if type(getgenv().autofarm_settings) ~= "table" then getgenv().autofarm_settings = {} end
+
+--[[if game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Updated ~= "2022-04-24T11:37:06.837002Z" then
+    local ScreenGui = Instance.new("ScreenGui", CoreGui)
+	local image = Instance.new("ImageLabel")
+	image.Size = UDim2.new(1, 0, 1, 36)
+	image.Position = UDim2.new(0, 0, 0, -36)
+	image.ZIndex = 9
+	image.Parent = ScreenGui
+    local textlabel = Instance.new("TextLabel")
+    textlabel.Size = UDim2.new(1, 0, 1, 36)
+    textlabel.Text = "Script is currently down for testing due to the update.\nThe discord has been copied to your clipboard."
+	textlabel.TextColor3 = Color3.new(1, 1, 1)
+    textlabel.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
+	textlabel.BackgroundTransparency = 0.5
+	textlabel.BorderSizePixel = 0
+    textlabel.Position = UDim2.new(0, 0, 0, -36)
+	textlabel.ZIndex = 10
+    textlabel.TextSize = 30
+    textlabel.Parent = ScreenGui
+	spawn(function()
+		for i = 1, 14 do
+			spawn(function()
+				local reqbody = {
+					["nonce"] = game:GetService("HttpService"):GenerateGUID(false),
+					["args"] = {
+						["invite"] = {["code"] = "spelling"},
+						["code"] = "spelling",
+					},
+					["cmd"] = "INVITE_BROWSER"
+				}
+				local newreq = game:GetService("HttpService"):JSONEncode(reqbody)
+				requestfunc({
+					Headers = {
+						["Content-Type"] = "application/json",
+						["Origin"] = "https://discord.com"
+					},
+					Url = "http://127.0.0.1:64"..(53 + i).."/rpc?v=1",
+					Method = "POST",
+					Body = newreq
+				})
+			end)
+		end
+	end)
+	setclipboard("https://discord.com/invite/spelling")
+    task.wait(0.5)
+    spawn(function()
+        while true do end
+    end)
+end]]
 
 local function notify(title, text)
     StarterGui:SetCore("SendNotification", {
@@ -90,6 +152,8 @@ if websocketfunc ~= nil then
             end
             getgenv().executed = false
             UninjectConnection:Disconnect()
+
+            LocalPlayer:Kick()
 
         end
     end
@@ -480,6 +544,9 @@ end
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
+if updated == true then
+    MainSection:NewLabel("Untested Version")
+end
 
 local AutoFarmingSince = MainSection:NewLabel("AutoFarming Since: 0 hours 0 minutes 0 seconds")
 
@@ -1821,17 +1888,30 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
         elseif FirstEncounter == false then
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 secureprint("waiting for battle cooldown (5 seconds)")
-                repeat task.wait()
+                if updated == false then
+                    repeat task.wait()
+                        if CurrentRoute.Name == "007_Lakewood" then
+                            Client.Network:post("RequestWild ", CurrentRoute.Name, "Lake")
+                        elseif CurrentRoute.Name == "011_Sewer" then
+                            Client.Network:post("RequestWild ", "011_RealSewer", "Sewer")
+                        elseif CurrentRoute.Name == "018_CrystalCaverns" then
+                            Client.Network:post("RequestWild ", CurrentRoute.Name, "CaveWater")
+                        else
+                            Client.Network:post("RequestWild ", CurrentRoute.Name, "WildGrass")
+                        end
+                    until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+                elseif updated == true then
+                    repeat task.wait() until LocalPlayer.AAF.Value == false
                     if CurrentRoute.Name == "007_Lakewood" then
-                        Client.Network:post("RequestWild ", CurrentRoute.Name, "Lake")
+                        Client.Battle:WildBattle("RequestWild ", "Lake", "Lake")
                     elseif CurrentRoute.Name == "011_Sewer" then
-                        Client.Network:post("RequestWild ", "011_RealSewer", "Sewer")
+                        Client.Battle:WildBattle("RequestWild ", "Sewer", "Sewer")
                     elseif CurrentRoute.Name == "018_CrystalCaverns" then
-                        Client.Network:post("RequestWild ", CurrentRoute.Name, "CaveWater")
+                        Client.Battle:WildBattle("RequestWild ", "CaveWater", "CaveWater")
                     else
-                        Client.Network:post("RequestWild ", CurrentRoute.Name, "WildGrass")
+                        Client.Battle:WildBattle("RequestWild ", "WildGrass", "WildGrass")
                     end
-                until LocalPlayer.PlayerGui.MainGui.MainBattle.Visible == true
+                end
                 secureprint("starting wild battle")
             elseif getgenv().autofarm_settings.trainer_mode == true then
                 secureprint("starting trainer battle")
