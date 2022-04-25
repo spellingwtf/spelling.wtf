@@ -29,7 +29,8 @@ local ActiveVersions = {
     "0.1.2c",
     "0.1.2d",
     "0.1.2e",
-    "0.1.2f"
+    "0.1.2f",
+    "0.1.2g"
 }
 local updated = false
 local KeyBind = "RightShift"
