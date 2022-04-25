@@ -496,7 +496,7 @@ local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Main")
 local WarningLabel = MainSection:NewLabel("Don't forget to set your settings before enabling\n  (everything is off by default)")
 if updated == true then
-    MainSection:NewLabel("Untested Version")
+    MainSection:NewLabel("Untested Version: Safe Mode Activated")
 end
 
 local AutoFarmingSince = MainSection:NewLabel("AutoFarming Since: 0 hours 0 minutes 0 seconds")
