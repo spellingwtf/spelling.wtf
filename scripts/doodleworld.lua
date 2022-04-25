@@ -1840,6 +1840,7 @@ AutoFarmConnection = RunService.RenderStepped:Connect(function()
             if getgenv().autofarm_settings.wild_mode == true or getgenv().autofarm_settings.panhandle_mode == true then
                 secureprint("waiting for battle cooldown (5 seconds)")
                 if updated == false then
+                    repeat task.wait() until LocalPlayer.AAF.Value == false
                     repeat task.wait()
                         if CurrentRoute.Name == "007_Lakewood" then
                             Client.Network:post("RequestWild ", CurrentRoute.Name, "Lake")
