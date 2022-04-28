@@ -14,7 +14,7 @@ local function getcustomassetfunc(path)
         repeat task.wait() until betterisfile(path)
     end
     local asset = getasset(path)
-    repeat task.wait() until asset ~= nil
+    repeat task.wait() until asset ~= nil and string.len(readfile(path)) ~= 0
     return asset
 end
 local GUI = Instance.new("ScreenGui", game:GetService("CoreGui"))
