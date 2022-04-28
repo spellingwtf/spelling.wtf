@@ -15,7 +15,7 @@ local function getcustomassetfunc(path)
         repeat task.wait() until string.len(readfile(path)) ~= 0
     end
     local asset = getasset(path)
-    repeat task.wait() until asset ~= nil
+    repeat task.wait() until type(asset) == "string"
     repeat task.wait() until string.len(asset) ~= 0
     return asset
 end
