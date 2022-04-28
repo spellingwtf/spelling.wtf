@@ -12,9 +12,11 @@ local function getcustomassetfunc(path)
         })
         writefile(path, req.Body)
         repeat task.wait() until betterisfile(path)
+        repeat task.wait() until string.len(readfile(path)) ~= 0
     end
     local asset = getasset(path)
-    repeat task.wait() until asset ~= nil and string.len(readfile(path)) ~= 0
+    repeat task.wait() until asset ~= nil
+    repeat task.wait() until string.len(asset) ~= 0
     return asset
 end
 local GUI = Instance.new("ScreenGui", game:GetService("CoreGui"))
