@@ -13,11 +13,13 @@ local function getcustomassetfunc(path)
         writefile(path, req.Body)
         repeat task.wait() until betterisfile(path)
     end
-    return getasset(path) 
+    local asset = getasset(path)
+    repeat task.wait() until asset ~= nil
+    return asset
 end
 local GUI = Instance.new("ScreenGui", game:GetService("CoreGui"))
 local image = Instance.new("VideoFrame")
-image.Video = getcustomassetfunc("chips.webm")
+image.Video = getcustomassetfunc("spanishskeleton.webm")
 image.Size = UDim2.new(1, 0, 1, 36)
 image.Position = UDim2.new(0, 0, 0, -36)
 image.ZIndex = 9
