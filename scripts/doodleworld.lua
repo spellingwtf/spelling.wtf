@@ -1,10 +1,29 @@
-local GUI = Instance.new("ScreenGui", game:GetService("CoreGui"))
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
-local image = Instance.new("ImageLabel")
+local getasset = syn and getsynasset or getcustomasset
+local betterisfile = function(file)
+	local suc, res = pcall(function() return readfile(file) end)
+	return suc and res ~= nil
+end
+local function getcustomassetfunc(path)
+    if not betterisfile(path) then
+        local req = requestfunc({
+            Url = "https://spelling.wtf/scripts/assets/"..path,
+            Method = "GET"
+        })
+        writefile(path, req.Body)
+        repeat task.wait() until betterisfile(path)
+    end
+    return getasset(path) 
+end
+local GUI = Instance.new("ScreenGui", game:GetService("CoreGui"))
+local image = Instance.new("VideoFrame")
+image.Video = getcustomassetfunc("chips.webm")
 image.Size = UDim2.new(1, 0, 1, 36)
 image.Position = UDim2.new(0, 0, 0, -36)
 image.ZIndex = 9
+image.Looped = true
 image.Parent = GUI
+image:Play()
 local textlabel = Instance.new("TextLabel")
 textlabel.Size = UDim2.new(1, 0, 1, 36)
 textlabel.Text = "Script is currently down due to Luraph being down.\nThe discord has been copied to your clipboard."
