@@ -85,7 +85,7 @@ local GAMEPAD_GROUP = {
 	[Enum.UserInputType.Gamepad8] = true
 }
 
-local CreateRadial = require(script:WaitForChild("CreateRadial"))
+local CreateRadial = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/CreateRadial.lua"))()
 
 -- Class
 
