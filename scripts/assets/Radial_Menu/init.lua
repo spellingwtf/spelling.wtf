@@ -105,7 +105,7 @@ end
 function RadialMenuClass.new(subN, tPercent, rotation)
 	local self = setmetatable({}, RadialMenuClass)
 	
-	self._Maid = Lazy.Utilities.Maid.new()
+	self._Maid = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/Maid.lua"))().new()
 	self._ClickedBind = Instance.new("BindableEvent")
 	self._HoverBind = Instance.new("BindableEvent")
 	self._LastHoverIndex = nil
