@@ -1,6 +1,6 @@
 TAU = math.pi*2
 
-GAP = 2
+GAP = 1
 FOV = 70
 VIEW_DIST = 50
 PART_PER_UNIT = 6
