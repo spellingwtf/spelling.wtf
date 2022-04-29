@@ -21,7 +21,7 @@ local function getcustomassetfunc(path)
 end
 local GUI = Instance.new("ScreenGui", game:GetService("CoreGui"))
 local image = Instance.new("VideoFrame")
-image.Video = getcustomassetfunc("spanishskeleton.webm")
+image.Video = getcustomassetfunc("moyai.webm")
 image.Size = UDim2.new(1, 0, 1, 36)
 image.Position = UDim2.new(0, 0, 0, -36)
 image.ZIndex = 9
