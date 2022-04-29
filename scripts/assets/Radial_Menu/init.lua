@@ -58,7 +58,7 @@ Events:
 -- CONSTANTS
 
 local GuiLib = script.Parent.Parent
-local Lazy = require(GuiLib:WaitForChild("LazyLoader"))
+local Lazy = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/LazyLoader.lua"))()
 local Defaults = GuiLib:WaitForChild("Defaults")
 
 local UIS = game:GetService("UserInputService")

@@ -1,7 +1,7 @@
 -- CONSTANTS
 
-local CONSTANTS = require(script.Parent:WaitForChild("CONSTANTS"))
-local Triangle = require(script.Parent:WaitForChild("Triangle"))
+local CONSTANTS = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/CONSTANTS.lua"))()
+local Triangle = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/Triangle.lua"))()
 
 local PI2 = math.pi/2
 local TAU = CONSTANTS.TAU
