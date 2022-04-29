@@ -56,9 +56,6 @@ Events:
 
 
 -- CONSTANTS
-
-local Lazy = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/LazyLoader.lua"))()
-
 local UIS = game:GetService("UserInputService")
 local RUNSERVICE = game:GetService("RunService")
 local CONSTANTS = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/CONSTANTS.lua"))()
