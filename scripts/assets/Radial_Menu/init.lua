@@ -61,7 +61,7 @@ local Lazy = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial
 
 local UIS = game:GetService("UserInputService")
 local RUNSERVICE = game:GetService("RunService")
-local CONSTANTS = require(script:WaitForChild("CONSTANTS"))
+local CONSTANTS = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Radial_Menu/CONSTANTS.lua"))()
 
 local PI = math.pi
 local TAU = CONSTANTS.TAU
