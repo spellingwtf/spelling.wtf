@@ -3,7 +3,7 @@ TAU = math.pi*2
 GAP = 1
 FOV = 70
 VIEW_DIST = 50
-PART_PER_UNIT = 12
+PART_PER_UNIT = 24
 
 CENTER = CFrame.new(0, 0, -VIEW_DIST)
 EXTERIOR_RADIUS = VIEW_DIST * math.tan(math.rad(FOV/2))
