@@ -34,7 +34,7 @@ function Connection.new(url, id)
 					Url = newConnection.url.."/poll/"..newConnection.id,
 					Method = "POST",
 					Headers = {
-						["Content-Type"] = "Application/JSON"
+						["content-type"] = "application/json"
 					},
 					Body = HttpService:JSONEncode({
 						name = Base64.encode("internal_ping"),
@@ -63,7 +63,7 @@ function Connection:send(name, data)
 		Url = self.url.."/poll/"..self.id,
 		Method = "POST",
 		Headers = {
-			["Content-Type"] = "Application/JSON"
+			["content-type"] = "application/json"
 		},
 		Body = HttpService:JSONEncode({
 			name = Base64.encode(name),
