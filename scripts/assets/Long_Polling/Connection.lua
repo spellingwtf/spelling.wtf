@@ -53,7 +53,7 @@ function Connection.new(url, id)
 	end
 	
 	--game:BindToClose(close);
-	game.Close:Connect(close)
+	--game.Close:Connect(close)
 
 	return newConnection
 end
