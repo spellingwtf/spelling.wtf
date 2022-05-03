@@ -9,7 +9,7 @@ function robloxLongPolling.Connect(url, password)
 		Url = url.."/connection",
 		Method = "POST",
 		Headers = {
-			["Content-Type"] = "application/json",
+			["content-type"] = "application/json",
 		},
 		Body = HttpService:JSONEncode({
 			password = password
