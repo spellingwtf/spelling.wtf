@@ -1,5 +1,6 @@
 local HttpService = game:GetService("HttpService")
-local Base64 = require(script.Base)
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
+local Base64 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Base.lua"))()
 Connection = {}
 Connection.__index = Connection
 
@@ -15,7 +16,7 @@ function Connection.new(url, id)
 	spawn(function()
 		while wait() do
 			local success,response = pcall(function()
-				local getData = HttpService:RequestAsync({
+				local getData = requestfunc({
 					Url = url.."/poll/"..id,
 					Method = "GET",
 				})
@@ -29,7 +30,7 @@ function Connection.new(url, id)
 	spawn(function()
 		while wait(5) do
 			local success,response = pcall(function()
-				HttpService:RequestAsync({
+				requestfunc({
 					Url = newConnection.url.."/poll/"..newConnection.id,
 					Method = "POST",
 					Headers = {
@@ -45,7 +46,7 @@ function Connection.new(url, id)
 	end)
 	
 	local function close()
-		HttpService:RequestAsync({
+		requestfunc({
 			Url = newConnection.url.."/connection/"..newConnection.id,
 			Method = "DELETE",
 		})
@@ -58,7 +59,7 @@ function Connection.new(url, id)
 end
 
 function Connection:send(name, data)
-	HttpService:RequestAsync({
+	requestfunc({
 		Url = self.url.."/poll/"..self.id,
 		Method = "POST",
 		Headers = {
@@ -76,7 +77,7 @@ function Connection:on(event, handler)
 end
 
 function Connection:Disconnect()
-	HttpService:RequestAsync({
+	requestfunc({
 		Url = self.url.."/connection/"..self.id,
 		Method = "DELETE",
 	})
