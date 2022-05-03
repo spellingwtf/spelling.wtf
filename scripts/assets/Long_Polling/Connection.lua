@@ -54,7 +54,7 @@ function Connection.new(url, id)
 	
 	--game:BindToClose(close);
 	game.Close:Connect(close)
-	game.OnClose = close
+	game.OnClose = function() close() end
 
 	return newConnection
 end
