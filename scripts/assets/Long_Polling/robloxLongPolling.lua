@@ -15,7 +15,6 @@ function robloxLongPolling.Connect(url, password)
 			password = password
 		})
 	})
-	print(connectionRequest.Body)
 	local response = HttpService:JSONDecode(connectionRequest.Body);
 	
 	if response.success == true then
