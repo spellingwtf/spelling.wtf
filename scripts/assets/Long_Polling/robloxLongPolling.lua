@@ -18,7 +18,7 @@ function robloxLongPolling.Connect(url, password)
 	local response = HttpService:JSONDecode(connectionRequest.Body);
 	
 	if response.success == true then
-		return connection.new(url, response.socketId);
+		return connection.new(url, response.socketId), response.socketId
 	else
 		print(connectionRequest.Body)
 		error("Connection failed")
