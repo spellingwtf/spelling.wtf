@@ -19,8 +19,6 @@ function robloxLongPolling.Connect(url, password)
 	local response = HttpService:JSONDecode(connectionRequest.Body);
 	
 	if response.success == true then
-		print("waiting 5")
-		wait(5)
 		return connection.new(url, response.socketId);
 	else
 		print(connectionRequest.Body)
