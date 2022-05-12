@@ -15,7 +15,8 @@ function Connection.new(url, id)
 	newConnection.handlers = {};
 
 	spawn(function()
-		while wait() and connected do
+		while wait() do
+            if connected == false then break end
 			local success,response = pcall(function()
 				local getData = requestfunc({
 					Url = url.."/poll/"..id,
@@ -29,7 +30,8 @@ function Connection.new(url, id)
 		end
 	end)
 	spawn(function()
-		while wait(5) and connected do
+		while wait(5) do
+            if connected == false then break end
 			local success,response = pcall(function()
 				requestfunc({
 					Url = newConnection.url.."/poll/"..newConnection.id,
