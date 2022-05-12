@@ -3,6 +3,7 @@ local requestfunc = syn and syn.request or http and http.request or http_request
 local Base64 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Base.lua"))()
 Connection = {}
 Connection.__index = Connection
+local connected = true
 
 function Connection.new(url, id)
 	local newConnection = {}
@@ -14,7 +15,7 @@ function Connection.new(url, id)
 	newConnection.handlers = {};
 
 	spawn(function()
-		while wait() do
+		while wait() and connected do
 			local success,response = pcall(function()
 				local getData = requestfunc({
 					Url = url.."/poll/"..id,
@@ -28,7 +29,7 @@ function Connection.new(url, id)
 		end
 	end)
 	spawn(function()
-		while wait(5) do
+		while wait(5) and connected do
 			local success,response = pcall(function()
 				requestfunc({
 					Url = newConnection.url.."/poll/"..newConnection.id,
@@ -50,6 +51,7 @@ function Connection.new(url, id)
 			Url = newConnection.url.."/connection/"..newConnection.id,
 			Method = "DELETE",
 		})
+		connected = false
 	end
 	
 	return newConnection
@@ -78,6 +80,7 @@ function Connection:Disconnect()
 		Url = self.url.."/connection/"..self.id,
 		Method = "DELETE",
 	})
+	connected = false
 end
 
 return Connection
