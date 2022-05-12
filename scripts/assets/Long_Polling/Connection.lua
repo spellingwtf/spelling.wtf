@@ -30,7 +30,7 @@ function Connection.new(url, id)
 		end
 	end)
 	spawn(function()
-		while wait(5) do
+		while wait(2.5) do
             if connected == false then break end
 			local success,response = pcall(function()
 				requestfunc({
