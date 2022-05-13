@@ -14,8 +14,8 @@ function Connection.new(url, id)
 	
 	newConnection.handlers = {};
 
-	spawn(function()
-		while wait() do
+	coroutine.wrap(function()
+		while task.wait() do
             if connected == false then break end
 			local success,response = pcall(function()
 				local getData = requestfunc({
@@ -28,9 +28,9 @@ function Connection.new(url, id)
 				end
 			end)
 		end
-	end)
-	spawn(function()
-		while wait(2.5) do
+	end)()
+	coroutine.wrap(function()
+		while task.wait(2.5) do
             if connected == false then break end
 			local success,response = pcall(function()
 				requestfunc({
@@ -46,16 +46,7 @@ function Connection.new(url, id)
 				})
 			end)
 		end
-	end)
-	
-	local function close()
-		requestfunc({
-			Url = newConnection.url.."/connection/"..newConnection.id,
-			Method = "DELETE",
-		})
-		connected = false
-	end
-	
+	end)()
 	return newConnection
 end
 
@@ -68,7 +59,7 @@ function Connection:send(name, data)
 		},
 		Body = HttpService:JSONEncode({
 			name = Base64.encode(name),
-				data = Base64.encode(data)
+		    data = Base64.encode(data)
 		})
 	})
 end
@@ -77,7 +68,7 @@ function Connection:on(event, handler)
 	self.handlers[event] = handler;
 end
 
-function Connection:Disconnect()
+function Connection:disconnect()
 	local request = requestfunc({
 		Url = self.url.."/connection/"..self.id,
 		Method = "DELETE",
