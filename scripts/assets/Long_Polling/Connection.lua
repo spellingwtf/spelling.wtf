@@ -3,7 +3,6 @@ local requestfunc = syn and syn.request or http and http.request or http_request
 local Base64 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Base.lua"))()
 Connection = {}
 Connection.__index = Connection
-local connected = true
 
 function Connection.new(url, id)
 	local newConnection = {}
@@ -13,6 +12,8 @@ function Connection.new(url, id)
 	newConnection.id = id;
 	
 	newConnection.handlers = {};
+	
+	newConnection.connected = true
 
 	coroutine.wrap(function()
 		repeat
@@ -27,7 +28,7 @@ function Connection.new(url, id)
 				end
 		    end)
 		    task.wait()
-		until connected == false
+		until newConnection.connected == false
 	end)()
 	coroutine.wrap(function()
 	    repeat
@@ -45,7 +46,7 @@ function Connection.new(url, id)
 				})
 	        end)
 		    task.wait(2.5)
-	    until connected == false
+	    until newConnection.connected == false
 	end)()
 	return newConnection
 end
@@ -75,7 +76,7 @@ function Connection:disconnect()
     		Method = "DELETE",
     	})
 	end)()
-    connected = false
+    self.connected = false
 end
 
 return Connection
