@@ -17,7 +17,7 @@ function Connection.new(url, id)
 
 	coroutine.wrap(function()
 		repeat
-		    local success,response = pcall(function()
+		    pcall(function()
 				local getData = requestfunc({
 					Url = url.."/poll/"..id,
 					Method = "GET",
@@ -76,6 +76,7 @@ function Connection:disconnect()
     		Method = "DELETE",
     	})
 	end)()
+	self.handlers = {}
     self.connected = false
 end
 
