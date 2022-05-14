@@ -75,11 +75,7 @@ function Connection:disconnect()
     		Method = "DELETE",
     	})
 	end)()
-	local response = HttpService:JSONDecode(request.Body)
-	if response.success == true then
-        	connected = false
-        return
-    end
+    connected = false
 end
 
 return Connection
