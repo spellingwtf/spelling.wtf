@@ -69,11 +69,12 @@ function Connection:on(event, handler)
 end
 
 function Connection:disconnect()
-	print("disconnecting")
-	local request = requestfunc({
-		Url = self.url.."/connection/"..self.id,
-		Method = "DELETE",
-	})
+    coroutine.wrap(function()
+    	local request = requestfunc({
+    		Url = self.url.."/connection/"..self.id,
+    		Method = "DELETE",
+    	})
+	end)()
 	local response = HttpService:JSONDecode(request.Body)
 	if response.success == true then
         	connected = false
