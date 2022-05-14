@@ -5,24 +5,23 @@ local connection = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/
 local robloxLongPolling = {}
 
 function robloxLongPolling.Connect(url, password)
-	local connectionRequest = requestfunc({
-		Url = url.."/connection",
-		Method = "POST",
-		Headers = {
-			["content-type"] = "application/json",
-		},
-		Body = HttpService:JSONEncode({
-			password = password
-		})
-	})
-	local response = HttpService:JSONDecode(connectionRequest.Body);
-	
-	if response.success == true then
-		return connection.new(url, response.socketId), response.socketId
-	else
-		print(connectionRequest.Body)
-		error("Connection failed")
-	end
+    local response
+    local connectionRequest
+    repeat
+        connectionRequest = requestfunc({
+            Url = url.."/connection",
+            Method = "POST",
+            Headers = {
+                ["content-type"] = "application/json",
+            },
+            Body = HttpService:JSONEncode({
+                password = password
+            })
+        })
+        response = HttpService:JSONDecode(connectionRequest.Body);
+        task.wait()
+    until response.success == true
+	return connection.new(url, response.socketId), response.socketId
 end
 
 return robloxLongPolling
