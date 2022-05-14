@@ -69,13 +69,14 @@ function Connection:on(event, handler)
 end
 
 function Connection:disconnect()
+	print("disconnecting")
 	local request = requestfunc({
 		Url = self.url.."/connection/"..self.id,
 		Method = "DELETE",
 	})
-    local response = HttpService:JSONDecode(request.Body)
-    if response.success == true then
-        connected = false
+	local response = HttpService:JSONDecode(request.Body)
+	if response.success == true then
+        	connected = false
         return
     end
 end
