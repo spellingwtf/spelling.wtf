@@ -15,9 +15,8 @@ function Connection.new(url, id)
 	newConnection.handlers = {};
 
 	coroutine.wrap(function()
-		while task.wait() do
-            if connected == false then break end
-			local success,response = pcall(function()
+		repeat
+		    local success,response = pcall(function()
 				local getData = requestfunc({
 					Url = url.."/poll/"..id,
 					Method = "GET",
@@ -26,13 +25,13 @@ function Connection.new(url, id)
 				if response.success == true then
 					newConnection.handlers[response.event.name](response.event.data)
 				end
-			end)
-		end
+		    end)
+		    task.wait()
+		until connected == false
 	end)()
 	coroutine.wrap(function()
-		while task.wait(2.5) do
-            if connected == false then break end
-			local success,response = pcall(function()
+	    repeat
+	        local success,response = pcall(function()
 				requestfunc({
 					Url = newConnection.url.."/poll/"..newConnection.id,
 					Method = "POST",
@@ -44,8 +43,9 @@ function Connection.new(url, id)
 						data = Base64.encode("whats poppin lo gang")
 					})
 				})
-			end)
-		end
+	        end)
+		    task.wait(2.5)
+	    until connected == false
 	end)()
 	return newConnection
 end
@@ -70,7 +70,7 @@ end
 
 function Connection:disconnect()
     coroutine.wrap(function()
-    	local request = requestfunc({
+    	requestfunc({
     		Url = self.url.."/connection/"..self.id,
     		Method = "DELETE",
     	})
