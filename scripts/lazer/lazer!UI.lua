@@ -37,7 +37,7 @@ return function(args)
         ["GUIKeybind"] = "RightShift",
         ["KeybindCaptured"] = false,
         ["PressedKeybindKey"] = "",
-        ["ObjectsThatCanBeSaved"] = {},
+        ["SaveableObjects"] = {},
     }
 
     local function GetURL(scripturl)
@@ -166,6 +166,8 @@ return function(args)
     local SearchBarBody = Instance.new("ImageLabel")
     local SearchIcon = Instance.new("ImageButton")
     local SearchInput = Instance.new("TextBox")
+    local Tabs = Instance.new("ScrollingFrame")
+    local UIGridLayout = Instance.new("UIGridLayout")
 
     --Properties:
     osulazerUI.Name = "osu!lazerUI"
@@ -187,7 +189,7 @@ return function(args)
     BottomBar.BackgroundTransparency = 1.000
     BottomBar.Position = UDim2.new(0.245000005, 0, 0.906037033, 0)
     BottomBar.Size = UDim2.new(0.688000023, 0, 0.143037036, 0)
-    BottomBar.Image = "rbxassetid://9646319664"
+    BottomBar.Image = getcustomassetfunc("lazer/assets/bottombar.png")
 
     Uninject.Name = "Uninject"
     Uninject.Parent = BottomBar
@@ -196,7 +198,7 @@ return function(args)
     Uninject.BorderSizePixel = 0
     Uninject.Position = UDim2.new(0.805205405, 0, 0.207081825, 0)
     Uninject.Size = UDim2.new(0.170235306, 0, 0.258933187, 0)
-    Uninject.Image = "rbxassetid://9678316823"
+    Uninject.Image = getcustomassetfunc("lazer/assets/BottomBar/bluebutton.png")
 
     Text.Name = "Text"
     Text.Parent = Uninject
@@ -217,7 +219,7 @@ return function(args)
     TopBar.BorderSizePixel = 0
     TopBar.Position = UDim2.new(0.0520000011, 0, -0.0481481478, 0)
     TopBar.Size = UDim2.new(0.698000014, 0, 0.226861104, 0)
-    TopBar.Image = "rbxassetid://9646312621"
+    TopBar.Image = getcustomassetfunc("lazer/assets/topbar.png")
 
     Description.Name = "Description"
     Description.Parent = TopBar
@@ -252,7 +254,7 @@ return function(args)
     SearchBarBackgound.BorderSizePixel = 0
     SearchBarBackgound.Position = UDim2.new(0.710982859, 0, 0.708000004, 0)
     SearchBarBackgound.Size = UDim2.new(0.25999999, 0, 0.244887963, 0)
-    SearchBarBackgound.Image = "rbxassetid://9655815668"
+    SearchBarBackgound.Image = getcustomassetfunc("lazer/assets/SearchBar/searchbackground.png")
 
     SearchBarBody.Name = "SearchBarBody"
     SearchBarBody.Parent = TopBar
@@ -261,7 +263,7 @@ return function(args)
     SearchBarBody.BorderSizePixel = 0
     SearchBarBody.Position = UDim2.new(0.710982859, 0, 0.708000004, 0)
     SearchBarBody.Size = UDim2.new(0.208081618, 0, 0.245000005, 0)
-    SearchBarBody.Image = "rbxassetid://9655850526"
+    SearchBarBody.Image = getcustomassetfunc("lazer/assets/SearchBar/searchbar.png")
 
     SearchIcon.Name = "SearchIcon"
     SearchIcon.Parent = TopBar
@@ -270,7 +272,7 @@ return function(args)
     SearchIcon.BorderSizePixel = 0
     SearchIcon.Position = UDim2.new(0.930999994, 0, 0.784539402, 0)
     SearchIcon.Size = UDim2.new(0.0170000009, 0, 0.0918738022, 0)
-    SearchIcon.Image = "rbxassetid://9655861165"
+    SearchIcon.Image = getcustomassetfunc("lazer/assets/SearchBar/searchicon.png")
 
     SearchInput.Name = "SearchInput"
     SearchInput.Parent = TopBar
@@ -284,4 +286,74 @@ return function(args)
     SearchInput.TextColor3 = Color3.fromRGB(255, 255, 255)
     SearchInput.TextSize = 20.000
     SearchInput.TextXAlignment = Enum.TextXAlignment.Left
+
+    Tabs.Name = "Tabs"
+    Tabs.Parent = ScaledGui
+    Tabs.Active = true
+    Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Tabs.BackgroundTransparency = 1.000
+    Tabs.BorderSizePixel = 0
+    Tabs.Position = UDim2.new(0.0520833321, 0, 0.208000004, 0)
+    Tabs.Size = UDim2.new(1, 0, 0.690999985, 0)
+    Tabs.CanvasSize = UDim2.new(10, 0, 0, 0)
+    Tabs.ScrollBarThickness = 0
+    Tabs.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Left
+
+    UIGridLayout.Parent = Tabs
+    UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIGridLayout.CellPadding = UDim2.new(-0.00529999984, 0, 0, 0)
+    UIGridLayout.CellSize = UDim2.new(0.0286052078, 0, 1, 0)
+
+    api["CreateTab"] = function(argstable)
+		local currentexpandedbutton = nil
+		local windowapi = {}
+
+        -- Instances:
+        local Tab1 = Instance.new("ImageLabel")
+        local Body = Instance.new("ImageLabel")
+        local Title = Instance.new("TextLabel")
+
+        --Properties:
+        Tab1.Name = "Tab1"
+        Tab1.Parent = Tabs
+        Tab1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Tab1.BackgroundTransparency = 1.000
+        Tab1.BorderSizePixel = 0
+        Tab1.Position = UDim2.new(0.292601824, 0, 0.359087795, 0)
+        Tab1.Size = UDim2.new(0, 100, 0, 100)
+        Tab1.Image = getcustomassetfunc("lazer/assets/Tabs/tabcolor_"..args.Color..".png")
+
+        Body.Name = "Body"
+        Body.Parent = Tab1
+        Body.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Body.BackgroundTransparency = 1.000
+        Body.BorderSizePixel = 0
+        Body.Position = UDim2.new(-0.00499999989, 0, 0.0804300308, 0)
+        Body.Size = UDim2.new(0.984000027, 0, 0.918926537, 0)
+        Body.Image = getcustomassetfunc("lazer/assets/Tabs/tabbackground.png")
+
+        Title.Name = "Title"
+        Title.Parent = Tab1
+        Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Title.BackgroundTransparency = 1.000
+        Title.BorderSizePixel = 0
+        Title.Position = UDim2.new(0.234999999, 0, 0.0254561044, 0)
+        Title.Size = UDim2.new(0.649999976, 0, 0.0549739264, 0)
+        Title.Font = Enum.Font.GothamBold
+        Title.Text = args.Title
+        Title.TextColor3 = Color3.fromRGB(0, 0, 0)
+        Title.TextSize = 20.000
+        Title.TextXAlignment = Enum.TextXAlignment.Left
+
+        --tilted grid layout
+        Body.ChildAdded:Connect(function(child)
+            local buttonscount = Body:GetChildren()
+            for i,v in pairs(buttonscount) do
+                if not v:IsA("ImageLabel") then
+                    table.remove(buttonscount, i)
+                end
+            end
+            child.Position = buttonscount[#buttonscount].Position + UDim2.new(-0.0184195992, 0, 0.0948199183, 0)
+        end)
+    end
 end
