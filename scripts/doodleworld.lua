@@ -4,20 +4,27 @@ local betterisfile = function(file)
 	local suc, res = pcall(function() return readfile(file) end)
 	return suc and res ~= nil
 end
-local function getcustomassetfunc(path)
+local function downloadfile(path)
+    local req = requestfunc({
+        Url = "https://spelling.wtf/scripts/assets/"..path,
+        Method = "GET"
+    })
     if not betterisfile(path) then
-        local req = requestfunc({
-            Url = "https://spelling.wtf/scripts/assets/"..path,
-            Method = "GET"
-        })
         writefile(path, req.Body)
         repeat task.wait() until betterisfile(path)
-        repeat task.wait() until string.len(readfile(path)) ~= 0
+        repeat task.wait() until readfile(path) == req.Body
+    elseif betterisfile(path) then
+        if readfile(path) ~= req.Body then
+            writefile(path, req.Body)
+            repeat task.wait() until betterisfile(path)
+            repeat task.wait() until readfile(path) == req.Body
+        end
     end
-    local asset = getasset(path)
-    repeat task.wait() until type(asset) == "string"
-    repeat task.wait() until string.len(asset) ~= 0
-    return asset
+end
+
+local function getcustomassetfunc(path)
+    downloadfile(path)
+    return getasset(path)
 end
 local GUI = Instance.new("ScreenGui", game:GetService("CoreGui"))
 local image = Instance.new("VideoFrame")
