@@ -19,7 +19,7 @@ local Configuration = {
 	Remotes = {"RemoteEvent", "RemoteFunction", "BindableEvent", "BindableFunction"},
 	Services = {"StarterPlayerScripts", "StarterCharacterScripts"},
 	Replace = {["'"] = "&apos;", ["\""] = "&quot;", ["<"] = "&lt;", [">"] = "&gt;", ["&"] = "&amp;"},
-	Threads = 20,
+	Threads = 10,
 	Version = 4,
 
     Ignored = {
