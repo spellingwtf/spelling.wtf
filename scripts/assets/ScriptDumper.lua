@@ -19,7 +19,7 @@ local Configuration = {
 	Remotes = {"RemoteEvent", "RemoteFunction", "BindableEvent", "BindableFunction"},
 	Services = {"StarterPlayerScripts", "StarterCharacterScripts"},
 	Replace = {["'"] = "&apos;", ["\""] = "&quot;", ["<"] = "&lt;", [">"] = "&gt;", ["&"] = "&amp;"},
-	Threads = 5,
+	Threads = 20,
 	Version = 4,
 
     Ignored = {
@@ -285,15 +285,14 @@ local function Main(_Configuration)
                 local Data = table.remove(NeedsDecompile)
                 local result
 
-                -- // Decompile
-                coroutine.wrap(function()
-                    result = decompile(Data.Script, false, 9e9)
-                end)()
-
-                -- // task.wait until we have a decompiled script or not (default decompiler timeout isn't reliable)
-                repeat
-                    task.wait()
-                until result ~= nil
+                repeat task.wait()
+                    coroutine.wrap(function()
+                        result = decompile(Data.Script, false, 9e9)
+                    end)()
+                    repeat
+                        task.wait()
+                    until result ~= nil
+                until result ~= ""
 
                 -- // Script decompile failsure
                 if (result ~= nil) then
