@@ -287,7 +287,7 @@ local function Main(_Configuration)
 
                 -- // Decompile
                 coroutine.wrap(function()
-                    result = decompile(Data.Script, false, 30)
+                    result = decompile(Data.Script, false, 9e9)
                 end)()
 
                 -- // task.wait until we have a decompiled script or not (default decompiler timeout isn't reliable)
