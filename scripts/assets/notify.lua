@@ -9,7 +9,7 @@ elseif gethui then
     MainGui.DisplayOrder = 999
     MainGui.Parent = gethui()
 elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
-    MainGui = CoreGui.RobloxGui
+    MainGui = game:GetService("CoreGui").RobloxGui
 end
 
 local NotificationWindow = Instance.new("Frame")
@@ -56,7 +56,9 @@ local function bettertween2(obj, newpos, dir, style, tim, override)
     end)()
 end
 
-local function notify(title, text, showtime) 
+local Notifications = {}
+
+Notifications.Notify = function(title, text, showtime) 
     coroutine.wrap(function()
         local showtime = showtime or 1.5
         local title = title or "Notification"
@@ -113,8 +115,17 @@ local function notify(title, text, showtime)
     end)()
 end
 
-Connections.Notification = NotificationWindow.ChildRemoved:Connect(function()
+Notifications.NotificationConnection = NotificationWindow.ChildRemoved:Connect(function()
     for i,v in pairs(NotificationWindow:GetChildren()) do
         bettertween(v, UDim2.new(1, v.Position.X.Offset, 1, -((5 + NotificationSize.Y.Offset) * (i - 1))), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.15, true)
     end
 end)
+
+Notifications.Uninject = function()
+    Notifications.NotificationConnection:Disconnect()
+    MainGui:Destroy()
+    Notifications.Notify = nil
+    Notifications.Uninject = nil
+end
+
+return Notifications
