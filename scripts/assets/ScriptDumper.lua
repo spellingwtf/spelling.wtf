@@ -30,7 +30,7 @@ local Configuration = {
     },
 
     StringFormats = {
-        Welcome = "Welcome to savescirpts vee%d!",
+        Welcome = "Welcome to savescirpts v%d!",
         DecompilingScripts = "Decompiling %d scripts...",
         DecompilingScriptsProgress = "Decompiling scripts... (%d / %d)",
         FileSave = "Scripts for %s (%d) [%d].rbxlx",
@@ -284,20 +284,22 @@ local function Main(_Configuration)
                 -- // Vars
                 local Data = table.remove(NeedsDecompile)
                 local result
-
-                repeat task.wait()
-                    coroutine.wrap(function()
-                        result = decompile(Data.Script, false, 9e9)
-                    end)()
-                    repeat
-                        task.wait()
-                    until result ~= nil
-                until result ~= ""
-
-                -- // Script decompile failsure
-                if (result ~= nil) then
-                    Output[Data.Index] = (result == "" and Configuration.Strings.DecompileFail or result)
+                local ScriptHash = getscripthash(Data.Script)
+                local ScriptHashText = ""
+                if ScriptHash ~= nil then
+                    ScriptHashText = "-- Script Hash: "..ScriptHash.."\n"
                 end
+
+                coroutine.wrap(function()
+                    result = decompile(Data.Script, false, 9e9)
+                end)()
+                repeat
+                    task.wait()
+                until result ~= nil
+                print("Finished Decompiling "..Data.Script:GetFullName())
+
+                Output[Data.Index] = ScriptHashText..(result == "" and Configuration.Strings.DecompileFail or result)
+
                 task.wait()
 
                 -- // Update
