@@ -85,7 +85,7 @@ function u1.load(p15)
 		if v20 == nil then
 			error(tostring(p15) .. " is not a valid font name");
 		end;
-		v19 = require(v20);
+		v19 = v20;
 	elseif type(p15) == "table" then
 		v19 = p15;
 		p15 = v19.name;
