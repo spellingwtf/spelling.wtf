@@ -89,11 +89,10 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		v23 = p20.AnimationFadeDisabled;
 		v24 = p20.Transparency;
 		if p20.Scaled then
-			local v27 = true;
+			v25 = true
 		else
-			v27 = false;
+			v25 = false
 		end;
-		v25 = v27;
 		v26 = p20.TextXAlignment;
 	end;
 	if p16 == "" then
