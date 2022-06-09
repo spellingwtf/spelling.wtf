@@ -21,6 +21,9 @@ local u2 = {};
 function v4.__index(p6, p7)
 	if u2[p6][p7] ~= nil then
 		return u2[p6][p7];
+	else
+		print(tostring(p7) .. " is not a valid member of font")
+		return nil
 	end;
 	error(tostring(p7) .. " is not a valid member of font");
 end;
