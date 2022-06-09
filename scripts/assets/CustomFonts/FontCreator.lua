@@ -169,9 +169,6 @@ function u1.load(p15)
 		local v51, v52, v53 = v5(p17, v17);
 		local v54 = v51(v52, v53);
 		local v55, v56 = v17.getCharBounds(v54);
-		for i,v in pairs(v55) do
-			print(i, v)
-		end
 		local v57 = v56 and v55.Y or (v23 and v55.ImageRectSize.Y or v55[4]);
 		local v58 = v48 * v57 / v17.baseHeight;
 		local v59 = v57 * v58;
