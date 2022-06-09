@@ -55,7 +55,8 @@ Utilities.fadeGui = Utilities.Create("Frame")({
 	AnchorPoint = Vector2.new(0.5, 0.5),
 	Position = UDim2.fromScale(0.5, 0.5),
 	Name = "FadeGui",
-	BackgroundTransparency = 1
+	BackgroundTransparency = 1,
+	ZIndex = 1
 })
 
 function Utilities.uid(p27)
