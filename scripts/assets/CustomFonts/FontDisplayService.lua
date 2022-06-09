@@ -376,8 +376,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		end;
 		local v88, v89, v90 = pairs(u12);
 		local v91 = nil
-		print(v88(v89, v90))
-		for v92, v93 in pairs(v88(v89, v90)) do
+		--[[for v92, v93 in pairs(v88(v89, v90)) do
 			local v94 = u14[v93];
 			v91 = u15[v93];
 			v93.Size = UDim2.new(v94.X / l__X__85, 0, v94.Y / l__baseHeight__86, 0);
@@ -394,7 +393,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 					v93.TextSize = math.floor(l__substitutionSize__30 * v93.AbsoluteSize.Y / v28.baseHeight + 0.5);
 				end);
 			end;
-		end
+		end]]
 		v83 = v87;
 	else
 		for v96, v97 in next, u12 do
