@@ -268,7 +268,6 @@ function Utilities.Tween(p64, p65, p66, p67, p68)
 end;
 
 function Utilities.FadeOut(p42, p43, p44)
-	Utilities.fadeGui.ZIndex = 30;
 	Utilities.fadeGui.BackgroundColor3 = p43 or Color3.new(0, 0, 0);
 	local l__BackgroundTransparency__20 = Utilities.fadeGui.BackgroundTransparency;
 	Utilities.Tween(p42, nil, function(p45)
