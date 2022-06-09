@@ -275,7 +275,7 @@ function Utilities.FadeInWithCircle(p52, p53)
 			BackgroundTransparency = 1, 
 			Size = UDim2.new(1, 0, 1, 36), 
 			Position = UDim2.new(0, 0, 0, -36), 
-			Parent = Utilities.frontGui
+			Parent = Utilities.gui
 		});
 		v84 = l__Create__95("ImageLabel")({
 			BackgroundTransparency = 1, 
