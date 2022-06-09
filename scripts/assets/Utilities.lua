@@ -11,7 +11,7 @@ function Utilities.Write(...)
     return FontDisplayService:Write(...)
 end
 FontDisplayService:Preload("Avenir")
-FontDisplayService:Preload("Outlined")
+FontDisplayService:Preload("R1")
 FontDisplayService:Preload("Outlined")
 FontDisplayService:Preload("FWNums")
 
