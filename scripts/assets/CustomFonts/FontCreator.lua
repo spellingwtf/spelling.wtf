@@ -32,10 +32,11 @@ local function v5(p11, p12)
 	for v7, v8 in pairs(p12.specialCharacters) do
 		local v9 = 1;
 		local v10 = #v8;
-		print(p11:find(v8, v9, true))
-		for v11, v12 in pairs(p11:find(v8, v9, true)) do
-			v9 = v12 + 1;
-			table.insert(v6, { v11, v10, v8 });
+		if p11:find(v8, v9, true) then
+			for v11, v12 in pairs(p11:find(v8, v9, true)) do
+				v9 = v12 + 1;
+				table.insert(v6, { v11, v10, v8 });
+			end
 		end
 	end;
 	table.sort(v6, function(p13, p14)
