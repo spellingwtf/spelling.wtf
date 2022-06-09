@@ -90,8 +90,7 @@ function u1.load(p15)
 	for v21, v22 in next, v19 do
 		v17[v21] = v22;
 	end;
-	local v23 = v17.isV2 and false;
-	v17.isV2 = v23;
+	local v23 = v17.isV2
 	v17.letterSpacing = v17.letterSpacing and 0;
 	v17.baselineOffset = v17.baselineOffset and 0;
 	if not v17.extensions then
