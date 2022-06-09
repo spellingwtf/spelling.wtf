@@ -298,6 +298,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local v65 = nil;
 	local v66, v67, v68 = l__iterateGraphemes__3(p16, v28);
 	while true do
+        task.wait()
 		local v69, v70, v71 = v66(v67, v68);
 		if not v69 then
 			break;
@@ -369,6 +370,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		end;
 		local v88, v89, v90 = pairs(u12);
 		while true do
+            task.wait()
 			local v91 = nil;
 			local v92, v93 = v88(v89, v90);
 			if not v92 then
@@ -439,6 +441,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				local v105 = l__X__104 * p24;
 				local v106, v107, v108 = pairs(u12);
 				while true do
+                    task.wait()
 					local v109 = nil;
 					local v110 = nil;
 					local v111, v112 = v106(v107, v108);
@@ -472,6 +475,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				local v115 = l__x__102 * p25;
 				local v116, v117, v118 = pairs(u12);
 				while true do
+                    task.wait()
 					local v119 = nil;
 					local v120, v121 = v116(v117, v118);
 					if not v120 then
