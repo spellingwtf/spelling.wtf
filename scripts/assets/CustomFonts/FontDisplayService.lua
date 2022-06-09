@@ -154,8 +154,9 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local u21 = 0;
 	local function u22(p23)
 		if p23 == " " or p23 == "\t" then
+			local v40
 			if p23 == " " then
-				local v40 = 1;
+				v40 = 1;
 			else
 				v40 = false;
 				if p23 == "\t" then
