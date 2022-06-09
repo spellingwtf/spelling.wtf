@@ -1,4 +1,5 @@
 
+-- Script Hash: d44c0bd9259f09bfffba91af1aacb4fb6e869029e0cf14cf043f79828af5455c258f2fa170403f8370e6baf653356df8
 -- Decompiled with the Synapse X Luau decompiler.
 
 return {
@@ -6,6 +7,7 @@ return {
 	source = { "rbxassetid://1753551721", "rbxassetid://1753618137", "rbxassetid://1753552436", "rbxassetid://3297004259" }, 
 	modeBaselineToTop = 101, 
 	spaceWidth = 43, 
+	letterSpacing = 0,
 	baseHeight = 101, 
 	baselineOffset = 101, 
 	lineSpacing = 99, 

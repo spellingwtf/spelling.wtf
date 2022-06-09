@@ -65,11 +65,10 @@ local u5 = {
 	__newindex = function(p10, p11, p12)
 		for v17, v18 in ipairs(p10) do
 			if v18.ClassName == "ImageLabel" then
-				local v19 = "ImageColor3";
+				v18["ImageColor3"] = p12
 			else
-				v19 = "TextColor3";
+				v18["TextColor3"] = p12
 			end;
-			v18[v19] = p12;
 		end;
 	end
 };
@@ -88,11 +87,10 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		v23 = p20.AnimationFadeDisabled;
 		v24 = p20.Transparency;
 		if p20.Scaled then
-			local v27 = true;
+			v25 = true
 		else
-			v27 = false;
+			v25 = false
 		end;
-		v25 = v27;
 		v26 = p20.TextXAlignment;
 	end;
 	if p16 == "" then
@@ -118,13 +116,15 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local v35 = Vector2.new(0, v28.baselineOffset);
 	local v36 = Vector2.new();
 	local v37 = Vector2.new(0, 0);
+	local v38
+	local v39
 	if p17 then
-		local v38 = true;
+		v38 = true;
 	else
 		v38 = false;
 	end;
 	if p19 then
-		local v39 = true;
+		v39 = true;
 	else
 		v39 = false;
 	end;
@@ -178,8 +178,9 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			if v43 then
 				v48 = v48 + v41.SpriteOffset;
 			end;
+			local v49
 			if v42 then
-				local v49 = Instance.new("TextLabel");
+				v49 = Instance.new("TextLabel");
 				v49.Name = tostring(#u12 + 1);
 				v49.BackgroundTransparency = 1;
 				v49.Font = v28.substitutionFont;
@@ -204,7 +205,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				local v50 = v41[5];
 				if not v50 then
 					if v32 then
-						v50 = l__source__31[v41.Sheet and 1] or l__source__31;
+						v50 = l__source__31[v41.Sheet] or l__source__31;
 					else
 						v50 = l__source__31;
 					end;
@@ -233,6 +234,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 					u15[v49] = v48;
 				end;
 				v49.Position = UDim2.new(0, v52, 0, v53);
+				local v57
 				if l__isV2__11 then
 					if v51 then
 						v49.Size = UDim2.new(0, v54, 0, v55);
@@ -240,7 +242,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 						v49.Size = UDim2.new(0, v54, 0, v55);
 						u18[v49] = v41.SpriteOffset.Y;
 					end;
-					local v57 = v41.NoColor;
+					v57 = v41.NoColor;
 				else
 					v49.Size = UDim2.new(0, v54, 0, v55);
 					v57 = v41[5];
@@ -369,14 +371,13 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			end;
 		end;
 		local v88, v89, v90 = pairs(u12);
-		local v91 = nil
-		for v92, v93 in pairs(v88(v89, v90)) do
+		for v92, v93 in v88, v89, v90 do
 			local v94 = u14[v93];
-			v91 = u15[v93];
+			local v91 = u15[v93];
 			v93.Size = UDim2.new(v94.X / l__X__85, 0, v94.Y / l__baseHeight__86, 0);
 			if u18[v93] then
 				local v95 = u18[v93];
-				v93.Position = UDim2.new(v91.X / l__X__85, 0, (v91.Y - v95) / l__baseHeight__86, 0);
+				v93.Position = UDim2.new(v91.X / l__X__85, 0, (v91.Y - v95) / l__baseHeight__86, 0)
 				v93.AnchorPoint = Vector2.new(0, -v95 / v93.ImageRectSize.Y);
 			else
 				v93.Position = UDim2.new(v91.X / l__X__85, 0, v91.Y / l__baseHeight__86, 0);
@@ -395,8 +396,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		end;
 	end;
 	if v22 then
-		local l__Subject__98 = p20.Subject;
-		local v99 = l__Subject__98 and l__Subject__98.blip or p20.Blip;
+		local v99 = p20.Blip;
 		if v99 then
 			local u23 = true;
 			local u24 = 0;
@@ -413,19 +413,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			end)();
 		end;
 		local l__x__102 = v81.x;
-		if l__Subject__98 and l__Subject__98.face then
-			l__Subject__98.face:StartTalking();
-		end;
-		local l__SkipSignal__103 = p20.SkipSignal;
-		if l__SkipSignal__103 then
-			local u25 = nil;
-			local u26 = false;
-			spawn(function()
-				u25 = l__SkipSignal__103:connect(function()
-					u26 = true;
-				end);
-			end);
-		end;
+		local u28
 		if v25 then
 			local l__X__104 = v82.X;
 			local u27 = false;
@@ -435,37 +423,44 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				end;
 				local v105 = l__X__104 * p24;
 				local v106, v107, v108 = pairs(u12);
-				local v109 = nil;
-				local v110 = nil;
-				for v111, v112 in pairs(v106(v107, v108)) do
+				while true do
+					local v109 = nil;
+					local v110 = nil;
+					local v111, v112 = v106(v107, v108);
+					if not v111 then
+						break;
+					end;
 					v108 = v111;
 					v109 = u14[v112].X;
 					v110 = u15[v112].X;
 					local v113 = u16[v112];
 					if v23 then
 						if v110 + v109 / 2 <= v105 then
-							local v114 = 0;
+							v112[v113] = 0
 						else
-							v114 = 1;
+							v112[v113] = 1
 						end;
-						v112[v113] = v114;
 					elseif v110 + v109 <= v105 then
 						v112[v113] = 0;
 					elseif v110 < v105 then
 						v112[v113] = 1 - (v105 - v110) / v109;
-					end;
-				end
+					end;				
+				end;
 			end);
 		else
-			local u28 = false;
+			u28 = false;
 			u4(l__x__102 / u8 / v28.baseHeight / v22, function(p25)
 				if u28 then
 					return false;
 				end;
 				local v115 = l__x__102 * p25;
 				local v116, v117, v118 = pairs(u12);
-				local v119 = nil;
-				for v120, v121 in pairs(v116(v117, v118)) do
+				while true do
+					local v119 = nil;
+					local v120, v121 = v116(v117, v118);
+					if not v120 then
+						break;
+					end;
 					v118 = v120;
 					local l__Offset__122 = v121.Position.X.Offset;
 					local l__Offset__123 = v121.Size.X.Offset;
@@ -474,20 +469,14 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 						v121[v119] = 0;
 					elseif l__Offset__122 < v115 then
 						v121[v119] = 1 - (v115 - l__Offset__122) / l__Offset__123;
-					end;
-				end
+					end;				
+				end;
 			end);
 		end;
 		if u28 then
 			for v124, v125 in pairs(u12) do
 				v125[u16[v125]] = 0;
 			end;
-		end;
-		if nil then
-			(nil):Disconnect();
-		end;
-		if l__Subject__98 and l__Subject__98.face and (not v64 or not p20.Line1) then
-			l__Subject__98.face:SetMouthGoal(0);
 		end;
 	end;
 	local v126 = {

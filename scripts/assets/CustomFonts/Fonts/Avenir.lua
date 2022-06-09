@@ -1,4 +1,5 @@
 
+-- Script Hash: e534390aa9908ee9d36a1d57665ee59a098ecbe9e061c34fcee9673945fe39410703ace727fede5eb0cd97cbc904cfd7
 -- Decompiled with the Synapse X Luau decompiler.
 
 return {

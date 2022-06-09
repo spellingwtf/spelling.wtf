@@ -32,12 +32,14 @@ local function v5(p11, p12)
 	for v7, v8 in pairs(p12.specialCharacters) do
 		local v9 = 1;
 		local v10 = #v8;
-		if p11:find(v8, v9, true) then
-			for v11, v12 in pairs(p11:find(v8, v9, true)) do
-				v9 = v12 + 1;
-				table.insert(v6, { v11, v10, v8 });
-			end
-		end
+		while true do
+			local v11, v12 = p11:find(v8, v9, true);
+			if not v11 then
+				break;
+			end;
+			v9 = v12 + 1;
+			table.insert(v6, { v11, v10, v8 });		
+		end;
 	end;
 	table.sort(v6, function(p13, p14)
 		return p13[1] < p14[1];
@@ -101,7 +103,39 @@ function u1.load(p15)
 	local l__next__24 = next;
 	local l__map__25 = v17.map;
 	local v26 = nil;
-	local mapclone = v17.map
+
+	--ORIGINAL THAT CRASHES
+	--[[while true do
+		local v27, v28 = l__next__24(l__map__25, v26);
+		if not v27 then
+			break;
+		end;
+		if utf8.len(v27) > 1 then
+			table.insert(v17.specialCharacters, v27);
+		end;
+		local v29 = v28[6];
+		if v29 then
+			local v30 = v28[3];
+			local v31 = v28[4];
+			v28[8] = v30;
+			v28[9] = v31;
+			v28[3] = v30 * v29;
+			v28[4] = v31 * v29;
+		end;
+		if v23 and not v28.NoHeightFix then
+			local l__Y__32 = v28.ImageRectSize.Y;
+			local l__Y__33 = v28.SpriteOffset.Y;
+			local l__modeBaselineToTop__34 = v17.modeBaselineToTop;
+			local v35 = -l__Y__33 < l__modeBaselineToTop__34 and l__modeBaselineToTop__34 + l__Y__33 or 0;
+			local v36 = l__Y__33 + l__Y__32 < 0 and -l__Y__33 - l__Y__32 or 0;
+			if v35 > 0 or v36 > 0 then
+				v28.ImageRectSize = v28.ImageRectSize + Vector2.new(0, v35 + v36);
+				v28.ImageRectOffset = v28.ImageRectOffset + Vector2.new(0, -v35);
+				v28.SpriteOffset = v28.SpriteOffset + Vector2.new(0, -v35);
+			end;
+		end;	
+	end;]]
+
 	for v27, v28 in pairs(l__map__25) do
 		if utf8.len(v27) > 1 then
 			table.insert(v17.specialCharacters, v27);
@@ -128,6 +162,7 @@ function u1.load(p15)
 			end;
 		end;	
 	end
+
 	if not v17.baseHeight then
 		local v37 = 0;
 		for v38, v39 in next, v17.map do
@@ -167,17 +202,22 @@ function u1.load(p15)
 		local v49 = 0;
 		local v50 = 0;
 		local v51, v52, v53 = v5(p17, v17);
-		local v54 = v51(v52, v53);
-		local v55, v56 = v17.getCharBounds(v54);
-		local v57 = v56 and v55.Y or (v23 and v55.ImageRectSize.Y or v55[4]);
-		local v58 = v48 * v57 / v17.baseHeight;
-		local v59 = v57 * v58;
-		local v60 = v17.extensions[v54];
-		if v60 then
-			v59 = v59 + (v60[1] + v60[2]) * v58;
+		while true do
+			local v54 = v51(v52, v53);
+			if not v54 then
+				break;
+			end;
+			local v55, v56 = v17.getCharBounds(v54);
+			local v57 = v56 and v55.Y or (v23 and v55.ImageRectSize.Y or v55[4]);
+			local v58 = v48 * v57 / v17.baseHeight;
+			local v59 = v57 * v58;
+			local v60 = v17.extensions[v54];
+			if v60 then
+				v59 = v59 + (v60[1] + v60[2]) * v58;
+			end;
+			v49 = v49 + ((v56 and v55.X or (v23 and v55.Advance or v55[3])) + v17.letterSpacing) * v48;
+			v50 = math.max(v50, v59);		
 		end;
-		v49 = v49 + ((v56 and v55.X or (v23 and v55.Advance or v55[3])) + v17.letterSpacing) * v48;
-		v50 = math.max(v50, v59);
 		return Vector2.new(v49, v50);
 	end;
 	v17.loaded = false;
