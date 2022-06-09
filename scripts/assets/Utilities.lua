@@ -4,6 +4,10 @@ local FontDisplayService = loadstring(game:HttpGet("https://spelling.wtf/scripts
 function Utilities.Write(...)
     return FontDisplayService:Write(...)
 end
+FontDisplayService:Preload("Avenir")
+FontDisplayService:Preload("Outlined")
+FontDisplayService:Preload("Outlined")
+FontDisplayService:Preload("FWNums")
 
 function Utilities.Create(class)
     return function(properties)
