@@ -202,7 +202,7 @@ function Utilities.FadeOutWithCircle(p49, p50)
 		BackgroundTransparency = 1, 
 		Size = UDim2.new(1, 0, 1, 36), 
 		Position = UDim2.new(0, 0, 0, -36), 
-		Parent = Utilities.frontGui
+		Parent = Utilities.gui
 	});
 	local u22 = l__Create__80("ImageLabel")({
 		BackgroundTransparency = 1, 
