@@ -1,3 +1,9 @@
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
 local Utilities = {}
 
 local FontDisplayService = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/CustomFonts/FontDisplayService.lua"))()
@@ -37,10 +43,25 @@ function Utilities.Create(class)
 	end;
 end
 
+Utilities.gui = Utilities.Create("ScreenGui")({
+	Parent = CoreGui,
+	IgnoreGuiInset = true
+})
+
+Utilities.fadeGui = Utilities.Create("Frame")({
+	Parent = Utilities.gui,
+	BorderSizePixel = 0,
+	Size = UDim2.fromScale(1, 1),
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Name = "FadeGui",
+	BackgroundTransparency = 1
+})
+
 function Utilities.uid(p27)
 	local v47 = nil;
 	if not p27 then
-		p27 = game:GetService("HttpService"):GenerateGUID(false);
+		p27 = HttpService:GenerateGUID(false);
 	end;
 	p27 = p27:gsub("%X+", "");
 	local v48 = #p27;
@@ -111,10 +132,9 @@ function Utilities.Tween(p64, p65, p66, p67, p68)
 	end;
 	if p67 then
 		local v111 = "Tween_" .. Utilities.uid();
-		local l__RunService__112 = game:GetService("RunService");
 		local u30 = false;
 		local u31 = Utilities.Signal();
-		l__RunService__112:BindToRenderStep(v111, p67, function()
+		RunService:BindToRenderStep(v111, p67, function()
 			if u30 then
 				return;
 			end;
@@ -135,7 +155,7 @@ function Utilities.Tween(p64, p65, p66, p67, p68)
 			end;
 		end);
 		local v115 = u31:wait();
-		l__RunService__112:UnbindFromRenderStep(v111);
+		RunService:UnbindFromRenderStep(v111);
 		return v115;
 	end;
 	while true do
@@ -154,6 +174,153 @@ function Utilities.Tween(p64, p65, p66, p67, p68)
 		end;	
 	end;
 	return false;
+end;
+
+function Utilities.FadeOut(p42, p43, p44)
+	Utilities.fadeGui.ZIndex = 30;
+	Utilities.fadeGui.BackgroundColor3 = p43 or Color3.new(0, 0, 0);
+	local l__BackgroundTransparency__20 = Utilities.fadeGui.BackgroundTransparency;
+	Utilities.Tween(p42, nil, function(p45)
+		Utilities.fadeGui.BackgroundTransparency = l__BackgroundTransparency__20 + (0 - l__BackgroundTransparency__20) * p45;
+		if p44 then
+			p44(p45);
+		end;
+	end);
+end;
+function Utilities.FadeIn(p46, p47)
+	local l__BackgroundTransparency__21 = Utilities.fadeGui.BackgroundTransparency;
+	Utilities.Tween(p46, nil, function(p48)
+		Utilities.fadeGui.BackgroundTransparency = l__BackgroundTransparency__21 + (1 - l__BackgroundTransparency__21) * p48;
+		if p47 then
+			p47(p48);
+		end;
+	end);
+end;
+function Utilities.FadeOutWithCircle(p49, p50)
+	local l__Create__80 = Utilities.Create;
+	local v81 = l__Create__80("Frame")({
+		BackgroundTransparency = 1, 
+		Size = UDim2.new(1, 0, 1, 36), 
+		Position = UDim2.new(0, 0, 0, -36), 
+		Parent = Utilities.frontGui
+	});
+	local u22 = l__Create__80("ImageLabel")({
+		BackgroundTransparency = 1, 
+		Image = "rbxassetid://317129150", 
+		ZIndex = 9, 
+		Parent = v81
+	});
+	local u23 = l__Create__80("Frame")({
+		BorderSizePixel = 0, 
+		BackgroundColor3 = Color3.new(0, 0, 0), 
+		ZIndex = 9, 
+		Parent = v81
+	});
+	local u24 = l__Create__80("Frame")({
+		BorderSizePixel = 0, 
+		BackgroundColor3 = Color3.new(0, 0, 0), 
+		ZIndex = 9, 
+		Parent = v81, 
+		Position = UDim2.new(1, 0, 0, 0)
+	});
+	local u25 = l__Create__80("Frame")({
+		BorderSizePixel = 0, 
+		BackgroundColor3 = Color3.new(0, 0, 0), 
+		ZIndex = 9, 
+		Parent = v81
+	});
+	local u26 = l__Create__80("Frame")({
+		BorderSizePixel = 0, 
+		BackgroundColor3 = Color3.new(0, 0, 0), 
+		ZIndex = 9, 
+		Parent = v81, 
+		Position = UDim2.new(0, 0, 1, 0)
+	});
+	Utilities.Tween(p49 and 0.6, nil, function(p51)
+		local v82 = v81.AbsoluteSize.X * 1.42 * (1 - p51);
+		u22.Size = UDim2.new(0, v82, 0, v82);
+		u22.Position = UDim2.new(0.5, -v82 / 2, 0.5, -v82 / 2);
+		u23.Size = UDim2.new(0.5, -v82 / 2 + 1, 1, 0);
+		u24.Size = UDim2.new(-0.5, v82 / 2 - 1, 1, 0);
+		u25.Size = UDim2.new(1, 0, 0.5, -v82 / 2 + 1);
+		u26.Size = UDim2.new(1, 0, -0.5, v82 / 2 - 1);
+	end);
+	if not p50 then
+		Utilities.fadeGui.BackgroundColor3 = Color3.new(0, 0, 0);
+		Utilities.fadeGui.BackgroundTransparency = 0;
+		v81:Destroy();
+		return;
+	end;
+	return { v81, u22, u23, u24, u25, u26 };
+end;
+function Utilities.FadeInWithCircle(p52, p53)
+	local v83 = nil;
+	local v84 = nil;
+	local v85 = nil;
+	local v86 = nil;
+	local v87 = nil;
+	local v88 = nil;
+	if p53 then
+		local v89, v90, v91, v92, v93, v94 = unpack(p53);
+		v83 = v89;
+		v84 = v90;
+		v85 = v91;
+		v86 = v92;
+		v87 = v93;
+		v88 = v94;
+	end;
+	if not v83 then
+		local l__Create__95 = Utilities.Create;
+		v83 = l__Create__95("Frame")({
+			BackgroundTransparency = 1, 
+			Size = UDim2.new(1, 0, 1, 36), 
+			Position = UDim2.new(0, 0, 0, -36), 
+			Parent = Utilities.frontGui
+		});
+		v84 = l__Create__95("ImageLabel")({
+			BackgroundTransparency = 1, 
+			Image = "rbxassetid://317129150", 
+			ZIndex = 9, 
+			Parent = v83
+		});
+		v85 = l__Create__95("Frame")({
+			BorderSizePixel = 0, 
+			BackgroundColor3 = Color3.new(0, 0, 0), 
+			ZIndex = 9, 
+			Parent = v83
+		});
+		v86 = l__Create__95("Frame")({
+			BorderSizePixel = 0, 
+			BackgroundColor3 = Color3.new(0, 0, 0), 
+			ZIndex = 9, 
+			Parent = v83, 
+			Position = UDim2.new(1, 0, 0, 0)
+		});
+		v87 = l__Create__95("Frame")({
+			BorderSizePixel = 0, 
+			BackgroundColor3 = Color3.new(0, 0, 0), 
+			ZIndex = 9, 
+			Parent = v83
+		});
+		v88 = l__Create__95("Frame")({
+			BorderSizePixel = 0, 
+			BackgroundColor3 = Color3.new(0, 0, 0), 
+			ZIndex = 9, 
+			Parent = v83, 
+			Position = UDim2.new(0, 0, 1, 0)
+		});
+		Utilities.fadeGui.BackgroundTransparency = 1;
+	end;
+	Utilities.Tween(p52 and 0.6, nil, function(p54)
+		local v96 = v83.AbsoluteSize.X * 1.42 * p54;
+		v84.Size = UDim2.new(0, v96, 0, v96);
+		v84.Position = UDim2.new(0.5, -v96 / 2, 0.5, -v96 / 2);
+		v85.Size = UDim2.new(0.5, -v96 / 2 + 1, 1, 0);
+		v86.Size = UDim2.new(-0.5, v96 / 2 - 1, 1, 0);
+		v87.Size = UDim2.new(1, 0, 0.5, -v96 / 2 + 1);
+		v88.Size = UDim2.new(1, 0, -0.5, v96 / 2 - 1);
+	end);
+	v83:Destroy();
 end;
 
 return Utilities
