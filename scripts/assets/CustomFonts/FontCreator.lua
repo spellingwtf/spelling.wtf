@@ -99,7 +99,7 @@ function u1.load(p15)
 		v17.extensions = {};
 	end;
 	v17.specialCharacters = {};
-	v17.yScale = v17.yScale and false;
+	v17.yScale = v17.yScale;
 	local l__next__24 = next;
 	local l__map__25 = v17.map;
 	local v26 = nil;
