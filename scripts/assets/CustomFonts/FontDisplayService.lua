@@ -369,7 +369,6 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		end;
 		local v88, v89, v90 = pairs(u12);
 		while true do
-            task.wait()
 			local v91 = nil;
 			local v92, v93 = v88(v89, v90);
 			if not v92 then
