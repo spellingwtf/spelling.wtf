@@ -82,7 +82,7 @@ function u1.load(p15)
 	local v19 = nil;
 	if type(p15) == "string" then
 		local v20 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/CustomFonts/Fonts/"..p15..".lua"))();
-		if v20 == nil then
+		if v20 == nil or type(v20) ~= "table" then
 			error(tostring(p15) .. " is not a valid font name");
 		end;
 		v19 = v20;
