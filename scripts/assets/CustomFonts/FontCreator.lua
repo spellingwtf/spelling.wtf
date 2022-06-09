@@ -32,14 +32,10 @@ local function v5(p11, p12)
 	for v7, v8 in pairs(p12.specialCharacters) do
 		local v9 = 1;
 		local v10 = #v8;
-		while true do
-			local v11, v12 = p11:find(v8, v9, true);
-			if not v11 then
-				break;
-			end;
+		for v11, v12 in pairs(p11:find(v8, v9, true)) do
 			v9 = v12 + 1;
-			table.insert(v6, { v11, v10, v8 });		
-		end;
+			table.insert(v6, { v11, v10, v8 });
+		end
 	end;
 	table.sort(v6, function(p13, p14)
 		return p13[1] < p14[1];
@@ -170,11 +166,7 @@ function u1.load(p15)
 		local v49 = 0;
 		local v50 = 0;
 		local v51, v52, v53 = v5(p17, v17);
-		while true do
-			local v54 = v51(v52, v53);
-			if not v54 then
-				break;
-			end;
+		for _, v54 in pairs(v51(v52, v53)) do
 			local v55, v56 = v17.getCharBounds(v54);
 			local v57 = v56 and v55.Y or (v23 and v55.ImageRectSize.Y or v55[4]);
 			local v58 = v48 * v57 / v17.baseHeight;
@@ -184,8 +176,8 @@ function u1.load(p15)
 				v59 = v59 + (v60[1] + v60[2]) * v58;
 			end;
 			v49 = v49 + ((v56 and v55.X or (v23 and v55.Advance or v55[3])) + v17.letterSpacing) * v48;
-			v50 = math.max(v50, v59);		
-		end;
+			v50 = math.max(v50, v59);
+		end
 		return Vector2.new(v49, v50);
 	end;
 	v17.loaded = false;
