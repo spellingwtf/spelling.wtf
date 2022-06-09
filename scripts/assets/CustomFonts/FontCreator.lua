@@ -33,7 +33,9 @@ local function v5(p11, p12)
 		local v9 = 1;
 		local v10 = #v8;
 		while true do
-			--task.wait()
+			-- ERRORING HERE
+			task.wait() 
+			print("s")
 			local v11, v12 = p11:find(v8, v9, true);
 			if not v11 then
 				break;
@@ -175,7 +177,6 @@ function u1.load(p15)
 		local v50 = 0;
 		local v51, v52, v53 = v5(p17, v17);
 		while true do
-			task.wait()
 			local v54 = v51(v52, v53);
 			if not v54 then
 				break;
