@@ -101,7 +101,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local l__substitutionSize__30 = v28.substitutionSize;
 	local l__source__31 = v28.source;
 	local v32 = type(l__source__31) == "table";
-	if v28.yScale then
+	if v28.yScale ~= nil then
 		local v33 = Instance.new("Frame");
 		v33.BackgroundTransparency = 1;
 		v33.Size = UDim2.new(1, 0, v28.yScale, 0);
