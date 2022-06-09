@@ -298,7 +298,6 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local v65 = nil;
 	local v66, v67, v68 = l__iterateGraphemes__3(p16, v28);
 	while true do
-        task.wait()
 		local v69, v70, v71 = v66(v67, v68);
 		if not v69 then
 			break;
