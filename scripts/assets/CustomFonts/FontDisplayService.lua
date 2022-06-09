@@ -500,14 +500,9 @@ function u1.WriteToFrame(p13, fontname, size, text, wraps, frame, wordDetectionE
 	end;
 	return v64, v126;
 end;
-function u1.Write(p27, p28)
+function u1.Write(p27, text)
 	return function(p29)
-		local v129 = p29.WordDetectionEnabled;
-		if v129 == nil then
-			v129 = true;
-		end;
-		return p27:WriteToFrame(p29.Font, p29.Size or p29.Frame.AbsoluteSize.Y, p28, p29.Wraps, p29.Frame, v129, p29);
+		return p27:WriteToFrame(p29.Font, p29.Size or p29.Frame.AbsoluteSize.Y, text, p29.Wraps, p29.Frame, p29.WordDetectionEnabled, p29);
 	end;
 end;
 return v1;
-
