@@ -108,6 +108,7 @@ function u1.load(p15)
 		--ERRORING HERE
 		task.wait()
 		local v27, v28 = l__next__24(l__map__25, v26);
+		print(v27, v28)
 		if not v27 then
 			break;
 		end;
