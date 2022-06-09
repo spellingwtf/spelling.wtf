@@ -104,14 +104,8 @@ function u1.load(p15)
 	local l__next__24 = next;
 	local l__map__25 = v17.map;
 	local v26 = nil;
-	while true do
-		--ERRORING HERE
-		task.wait()
-		local v27, v28 = l__next__24(l__map__25, v26);
-		print(v27, v28)
-		if not v27 then
-			break;
-		end;
+	local mapclone = v17.map
+	for v27, v28 in pairs(l__map__25) do
 		if utf8.len(v27) > 1 then
 			table.insert(v17.specialCharacters, v27);
 		end;
@@ -136,7 +130,7 @@ function u1.load(p15)
 				v28.SpriteOffset = v28.SpriteOffset + Vector2.new(0, -v35);
 			end;
 		end;	
-	end;
+	end
 	if not v17.baseHeight then
 		local v37 = 0;
 		for v38, v39 in next, v17.map do
