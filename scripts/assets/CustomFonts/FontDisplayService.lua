@@ -517,7 +517,7 @@ function u1.Write(p27, p28)
 		if v129 == nil then
 			v129 = true;
 		end;
-		return p27:WriteToFrame(p29.Font and "R1", p29.Size or p29.Frame.AbsoluteSize.Y, p28, p29.Wraps and false, p29.Frame, v129, p29);
+		return p27:WriteToFrame(p29.Font, p29.Size or p29.Frame.AbsoluteSize.Y, p28, p29.Wraps and false, p29.Frame, v129, p29);
 	end;
 end;
 return v1;
