@@ -114,8 +114,98 @@ function Utilities.Signal()
 	return v148;
 end
 
-local Timing = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Timing.lua"))()
-Utilities.Timing = Timing
+local l__components__1 = CFrame.new().components;
+local l__inverse__2 = CFrame.new().inverse;
+local l__Vector3_new__3 = Vector3.new;
+local u4 = 1 / math.sqrt(2);
+local l__math_sqrt__5 = math.sqrt;
+local l__math_acos__6 = math.acos;
+local l__CFrame_fromAxisAngle__7 = CFrame.fromAxisAngle;
+function Utilities.lerpCFrame(p1, p2)
+	local v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12 = l__components__1(l__inverse__2(p1) * p2);
+	local v13 = (v4 + v8 + v12 - 1) / 2;
+	local v14 = l__Vector3_new__3(v11 - v9, v6 - v10, v7 - v5);
+	local v15 = p2.p - p1.p;
+	if v13 >= 0.999 then
+		return 0, function(p3)
+			return p1 + v15 * p3;
+		end;
+	end;
+	local v16
+	if v13 <= -0.999 then
+		v16 = math.pi;
+		local v17 = (v4 + 1) / 2;
+		local v18 = (v8 + 1) / 2;
+		local v19 = (v12 + 1) / 2;
+		if v18 < v17 and v19 < v17 then
+			if v17 < 0.001 then
+				v14 = l__Vector3_new__3(0, u4, u4);
+			else
+				local v20 = l__math_sqrt__5(v17);
+				v14 = l__Vector3_new__3(v20, (v7 + v5) / 4 / v20, (v10 + v6) / 4 / v20);
+			end;
+		elseif v19 < v18 then
+			if v18 < 0.001 then
+				v14 = l__Vector3_new__3(u4, 0, u4);
+			else
+				local v21 = l__math_sqrt__5(v18);
+				v14 = l__Vector3_new__3((v7 + v5) / 4 / v21, v21, (v11 + v9) / 4 / v21);
+			end;
+		elseif v19 < 0.001 then
+			v14 = l__Vector3_new__3(u4, u4, 0);
+		else
+			local v22 = l__math_sqrt__5(v19);
+			v14 = l__Vector3_new__3((v10 + v6) / 4 / v22, (v11 + v9) / 4 / v22, v22);
+		end;
+	else
+		v16 = l__math_acos__6(v13);
+	end;
+	return v16, function(p4, p5)
+		return p1 * l__CFrame_fromAxisAngle__7(v14, v16 * (p5 and p4)) + v15 * p4;
+	end;
+end
+
+function Utilities.lerpUDim2(p17, p18)
+	local l__Scale__35 = p17.X.Scale;
+	local l__Offset__36 = p17.X.Offset;
+	local l__Scale__37 = p17.Y.Scale;
+	local l__Offset__38 = p17.Y.Offset;
+	local u5 = p18.X.Scale - l__Scale__35;
+	local u6 = p18.X.Offset - l__Offset__36;
+	local u7 = p18.Y.Scale - l__Scale__37;
+	local u8 = p18.Y.Offset - l__Offset__38;
+	return function(p19)
+		return UDim2.new(l__Scale__35 + u5 * p19, l__Offset__36 + u6 * p19, l__Scale__37 + u7 * p19, l__Offset__38 + u8 * p19);
+	end;
+end;
+
+function Utilities.lerpVector2(p20, p21)
+	local l__X__39 = p20.X;
+	local l__Y__40 = p20.Y;
+	local u9 = p21.X - l__X__39;
+	local u10 = p21.Y - l__Y__40;
+	return function(p22)
+		return Vector2.new(l__X__39 + u9 * p22, l__Y__40 + u10 * p22);
+	end;
+end;
+
+function Utilities.lerpColor3(p23, p24)
+	local l__r__41 = p23.r;
+	local l__g__42 = p23.g;
+	local l__b__43 = p23.b;
+	local u11 = p24.r - l__r__41;
+	local u12 = p24.g - l__g__42;
+	local u13 = p24.b - l__b__43;
+	return function(p25)
+		return Color3.new(l__r__41 + u11 * p25, l__g__42 + u12 * p25, l__b__43 + u13 * p25);
+	end;
+end;
+
+function Utilities.toRGB(p26)
+	return math.floor(p26.r * 255 + 0.5), math.floor(p26.g * 255 + 0.5), math.floor(p26.b * 255 + 0.5);
+end;
+
+Utilities.Timing = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Timing.lua"))()
 
 function Utilities.Tween(p64, p65, p66, p67, p68)
 	if p64 == 0 then
@@ -123,7 +213,7 @@ function Utilities.Tween(p64, p65, p66, p67, p68)
 		return true;
 	end;
 	if type(p65) == "string" then
-		p65 = Timing[p65](p64);
+		p65 = Utilities.Timing[p65](p64);
 	end;
 	p68 = p68 or os.clock;
 	local v110 = p68();
