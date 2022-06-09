@@ -64,9 +64,8 @@ end;
 local u5 = {
 	__newindex = function(p10, p11, p12)
 		for v17, v18 in ipairs(p10) do
-			local v19
 			if v18.ClassName == "ImageLabel" then
-				v19 = "ImageColor3";
+				local v19 = "ImageColor3";
 			else
 				v19 = "TextColor3";
 			end;
@@ -82,7 +81,6 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local v24 = nil;
 	local v25 = nil;
 	local v26 = nil;
-	local v27
 	if p20 then
 		v20 = p20.Color;
 		v21 = p20.WritingToChatBox;
@@ -90,7 +88,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		v23 = p20.AnimationFadeDisabled;
 		v24 = p20.Transparency;
 		if p20.Scaled then
-			v27 = true;
+			local v27 = true;
 		else
 			v27 = false;
 		end;
@@ -120,15 +118,13 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local v35 = Vector2.new(0, v28.baselineOffset);
 	local v36 = Vector2.new();
 	local v37 = Vector2.new(0, 0);
-	local v38
-	local v39
 	if p17 then
-		v38 = true;
+		local v38 = true;
 	else
 		v38 = false;
 	end;
 	if p19 then
-		v39 = true;
+		local v39 = true;
 	else
 		v39 = false;
 	end;
@@ -179,12 +175,11 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			local v46 = u8 / (v45 / v28.baseHeight);
 			local v47 = v43 and v41.Advance or v44;
 			local v48 = u9 + v35;
-			local v49
 			if v43 then
 				v48 = v48 + v41.SpriteOffset;
 			end;
 			if v42 then
-				v49 = Instance.new("TextLabel");
+				local v49 = Instance.new("TextLabel");
 				v49.Name = tostring(#u12 + 1);
 				v49.BackgroundTransparency = 1;
 				v49.Font = v28.substitutionFont;
@@ -238,7 +233,6 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 					u15[v49] = v48;
 				end;
 				v49.Position = UDim2.new(0, v52, 0, v53);
-				local v57
 				if l__isV2__11 then
 					if v51 then
 						v49.Size = UDim2.new(0, v54, 0, v55);
@@ -246,7 +240,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 						v49.Size = UDim2.new(0, v54, 0, v55);
 						u18[v49] = v41.SpriteOffset.Y;
 					end;
-					v57 = v41.NoColor;
+					local v57 = v41.NoColor;
 				else
 					v49.Size = UDim2.new(0, v54, 0, v55);
 					v57 = v41[5];
@@ -376,7 +370,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		end;
 		local v88, v89, v90 = pairs(u12);
 		local v91 = nil
-		--[[for v92, v93 in pairs(v88(v89, v90)) do
+		for v92, v93 in pairs(v88(v89, v90)) do
 			local v94 = u14[v93];
 			v91 = u15[v93];
 			v93.Size = UDim2.new(v94.X / l__X__85, 0, v94.Y / l__baseHeight__86, 0);
@@ -393,7 +387,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 					v93.TextSize = math.floor(l__substitutionSize__30 * v93.AbsoluteSize.Y / v28.baseHeight + 0.5);
 				end);
 			end;
-		end]]
+		end
 		v83 = v87;
 	else
 		for v96, v97 in next, u12 do
@@ -432,7 +426,6 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				end);
 			end);
 		end;
-		local u28 = false;
 		if v25 then
 			local l__X__104 = v82.X;
 			local u27 = false;
@@ -449,10 +442,9 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 					v109 = u14[v112].X;
 					v110 = u15[v112].X;
 					local v113 = u16[v112];
-					local v114
 					if v23 then
 						if v110 + v109 / 2 <= v105 then
-							v114 = 0;
+							local v114 = 0;
 						else
 							v114 = 1;
 						end;
@@ -465,7 +457,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				end
 			end);
 		else
-			u28 = false;
+			local u28 = false;
 			u4(l__x__102 / u8 / v28.baseHeight / v22, function(p25)
 				if u28 then
 					return false;
