@@ -81,7 +81,7 @@ function u1.load(p15)
 	u2[v18] = v17;
 	local v19 = nil;
 	if type(p15) == "string" then
-		local v20 = l__script__7:FindFirstChild(p15);
+		local v20 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/CustomFonts/Fonts/"..p15..".lua"))();
 		if v20 == nil then
 			error(tostring(p15) .. " is not a valid font name");
 		end;
