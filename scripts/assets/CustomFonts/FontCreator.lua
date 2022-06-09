@@ -104,38 +104,6 @@ function u1.load(p15)
 	local l__map__25 = v17.map;
 	local v26 = nil;
 
-	--ORIGINAL THAT CRASHES
-	--[[while true do
-		local v27, v28 = l__next__24(l__map__25, v26);
-		if not v27 then
-			break;
-		end;
-		if utf8.len(v27) > 1 then
-			table.insert(v17.specialCharacters, v27);
-		end;
-		local v29 = v28[6];
-		if v29 then
-			local v30 = v28[3];
-			local v31 = v28[4];
-			v28[8] = v30;
-			v28[9] = v31;
-			v28[3] = v30 * v29;
-			v28[4] = v31 * v29;
-		end;
-		if v23 and not v28.NoHeightFix then
-			local l__Y__32 = v28.ImageRectSize.Y;
-			local l__Y__33 = v28.SpriteOffset.Y;
-			local l__modeBaselineToTop__34 = v17.modeBaselineToTop;
-			local v35 = -l__Y__33 < l__modeBaselineToTop__34 and l__modeBaselineToTop__34 + l__Y__33 or 0;
-			local v36 = l__Y__33 + l__Y__32 < 0 and -l__Y__33 - l__Y__32 or 0;
-			if v35 > 0 or v36 > 0 then
-				v28.ImageRectSize = v28.ImageRectSize + Vector2.new(0, v35 + v36);
-				v28.ImageRectOffset = v28.ImageRectOffset + Vector2.new(0, -v35);
-				v28.SpriteOffset = v28.SpriteOffset + Vector2.new(0, -v35);
-			end;
-		end;	
-	end;]]
-
 	for v27, v28 in pairs(l__map__25) do
 		if utf8.len(v27) > 1 then
 			table.insert(v17.specialCharacters, v27);
