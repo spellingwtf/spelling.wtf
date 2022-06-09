@@ -26,7 +26,7 @@ setmetatable(v1, v7);
 function u1.Preload(p6, p7)
 	local v8 = v2.load(p7);
 	local l__source__2 = v8.source;
-	coroutine.wrap(function()
+	spawn(function()
 		local v9 = {};
 		if type(l__source__2) == "table" then
 			for v10 = 1, #l__source__2 do
@@ -44,7 +44,7 @@ function u1.Preload(p6, p7)
 			v14:Destroy();
 		end;
 		v8.setLoaded();
-	end)()
+	end);
 end;
 local l__iterateGraphemes__3 = v2.iterateGraphemes;
 local function u4(p8, p9)
@@ -101,7 +101,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	local l__substitutionSize__30 = v28.substitutionSize;
 	local l__source__31 = v28.source;
 	local v32 = type(l__source__31) == "table";
-	if v28.yScale ~= nil then
+	if v28.yScale then
 		local v33 = Instance.new("Frame");
 		v33.BackgroundTransparency = 1;
 		v33.Size = UDim2.new(1, 0, v28.yScale, 0);
