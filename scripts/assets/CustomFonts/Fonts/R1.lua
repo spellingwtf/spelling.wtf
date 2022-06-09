@@ -7,6 +7,7 @@ return {
 	source = { "rbxassetid://1753551721", "rbxassetid://1753618137", "rbxassetid://1753552436", "rbxassetid://408444495", "rbxassetid://2587508455", "rbxassetid://8762485684" }, 
 	modeBaselineToTop = 101, 
 	spaceWidth = 43, 
+	letterSpacing = 0,
 	baseHeight = 101, 
 	baselineOffset = 101, 
 	lineSpacing = 99, 
