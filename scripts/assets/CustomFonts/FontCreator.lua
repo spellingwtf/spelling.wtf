@@ -168,19 +168,17 @@ function u1.load(p15)
 		local v49 = 0;
 		local v50 = 0;
 		local v51, v52, v53 = v5(p17, v17);
-		print(v51(v52, v53))
-		for v54, _ in pairs(v51(v52, v53)) do
-			local v55, v56 = v17.getCharBounds(v54);
-			local v57 = v56 and v55.Y or (v23 and v55.ImageRectSize.Y or v55[4]);
-			local v58 = v48 * v57 / v17.baseHeight;
-			local v59 = v57 * v58;
-			local v60 = v17.extensions[v54];
-			if v60 then
-				v59 = v59 + (v60[1] + v60[2]) * v58;
-			end;
-			v49 = v49 + ((v56 and v55.X or (v23 and v55.Advance or v55[3])) + v17.letterSpacing) * v48;
-			v50 = math.max(v50, v59);
-		end
+		local v54 = v51(v52, v53);
+		local v55, v56 = v17.getCharBounds(v54);
+		local v57 = v56 and v55.Y or (v23 and v55.ImageRectSize.Y or v55[4]);
+		local v58 = v48 * v57 / v17.baseHeight;
+		local v59 = v57 * v58;
+		local v60 = v17.extensions[v54];
+		if v60 then
+			v59 = v59 + (v60[1] + v60[2]) * v58;
+		end;
+		v49 = v49 + ((v56 and v55.X or (v23 and v55.Advance or v55[3])) + v17.letterSpacing) * v48;
+		v50 = math.max(v50, v59);
 		return Vector2.new(v49, v50);
 	end;
 	v17.loaded = false;
