@@ -64,9 +64,8 @@ end;
 local u5 = {
 	__newindex = function(p10, p11, p12)
 		for v17, v18 in ipairs(p10) do
-			local v19
 			if v18.ClassName == "ImageLabel" then
-				v19 = "ImageColor3";
+				local v19 = "ImageColor3";
 			else
 				v19 = "TextColor3";
 			end;
