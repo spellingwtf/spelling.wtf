@@ -93,8 +93,8 @@ function u1.load(p15)
 		v17[v21] = v22;
 	end;
 	local v23 = v17.isV2
-	v17.letterSpacing = v17.letterSpacing and 0;
-	v17.baselineOffset = v17.baselineOffset and 0;
+	v17.letterSpacing = v17.letterSpacing;
+	v17.baselineOffset = v17.baselineOffset;
 	if not v17.extensions then
 		v17.extensions = {};
 	end;
