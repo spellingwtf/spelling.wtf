@@ -72,7 +72,7 @@ local u5 = {
 		end;
 	end
 };
-function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
+function u1.WriteToFrame(p13, fontname, size, text, wraps, frame, wordDetectionEnabled, p20)
 	local v20 = nil;
 	local v21 = nil;
 	local v22 = nil;
@@ -93,10 +93,10 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		end;
 		v26 = p20.TextXAlignment;
 	end;
-	if p16 == "" then
+	if text == "" then
 		return {};
 	end;
-	local v28 = v2.load(p14);
+	local v28 = v2.load(fontname);
 	local l__substitutionFont__29 = v28.substitutionFont;
 	local l__substitutionSize__30 = v28.substitutionSize;
 	local l__source__31 = v28.source;
@@ -107,30 +107,30 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		v33.Size = UDim2.new(1, 0, v28.yScale, 0);
 		v33.AnchorPoint = Vector2.new(0, 0.5);
 		v33.Position = UDim2.new(0, 0, 0.5, 0);
-		v33.ZIndex = p18.ZIndex;
-		v33.Parent = p18;
-		p18 = v33;
-		p15 = math.floor(p15 * v28.yScale + 0.5);
+		v33.ZIndex = frame.ZIndex;
+		v33.Parent = frame;
+		frame = v33;
+		size = math.floor(size * v28.yScale + 0.5);
 	end;
-	local v34 = math.floor(l__substitutionSize__30 * p15 / v28.baseHeight + 0.5);
+	local v34 = math.floor(l__substitutionSize__30 * size / v28.baseHeight + 0.5);
 	local v35 = Vector2.new(0, v28.baselineOffset);
 	local v36 = Vector2.new();
 	local v37 = Vector2.new(0, 0);
 	local v38
 	local v39
-	if p17 then
+	if wraps then
 		v38 = true;
 	else
 		v38 = false;
 	end;
-	if p19 then
+	if wordDetectionEnabled then
 		v39 = true;
 	else
 		v39 = false;
 	end;
 	local u6 = Vector2.new(0, 0);
-	local l__AbsoluteSize__7 = p18.AbsoluteSize;
-	local u8 = p15 / v28.baseHeight;
+	local l__AbsoluteSize__7 = frame.AbsoluteSize;
+	local u8 = size / v28.baseHeight;
 	local u9 = v37;
 	local function u10(p21, p22)
 		if not v38 or not (l__AbsoluteSize__7.X < u6.X + p21) then
@@ -138,7 +138,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			u9 = u9 + Vector2.new(p22, 0);
 			return;
 		end;
-		u6 = Vector2.new(0, u6.Y + v28.letterSpacing * u8 + p15 + v28.lineSpacing * u8);
+		u6 = Vector2.new(0, u6.Y + v28.letterSpacing * u8 + size + v28.lineSpacing * u8);
 		u9 = Vector2.new(0, u9.Y + v28.letterSpacing + v28.baseHeight + v28.lineSpacing);
 	end;
 	local l__isV2__11 = v28.isV2;
@@ -165,7 +165,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			end;
 			u10((v28.spaceWidth + v28.letterSpacing) * v40 * u8, (v28.spaceWidth + v28.letterSpacing) * v40);
 		elseif p23 == "\n" then
-			u6 = Vector2.new(0, u6.y + v28.letterSpacing * u8 + p15 + v28.lineSpacing * u8);
+			u6 = Vector2.new(0, u6.y + v28.letterSpacing * u8 + size + v28.lineSpacing * u8);
 			u9 = Vector2.new(0, u9.y + v28.letterSpacing + v28.baseHeight + v28.lineSpacing);
 		else
 			local v41, v42 = v28.getCharBounds(p23);
@@ -187,11 +187,11 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				v49.Text = p23;
 				v49.TextSize = v34;
 				v49.Position = UDim2.new(0, v48.X * u8, 0, (v48.Y + l__substitutionAlignment__13) * u8);
-				v49.Size = UDim2.new(0, v44 * u8, 0, p15);
+				v49.Size = UDim2.new(0, v44 * u8, 0, size);
 				u14[v49] = Vector2.new(v44, v28.baseHeight);
 				u15[v49] = v48 + Vector2.new(0, l__substitutionAlignment__13);
 				u16[v49] = "TextTransparency";
-				v49.ZIndex = p18.ZIndex;
+				v49.ZIndex = frame.ZIndex;
 				v49.TextColor3 = v20 or Color3.new(1, 1, 1);
 				if v22 then
 					v49.TextTransparency = 1;
@@ -248,7 +248,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 					v57 = v41[5];
 				end;
 				u16[v49] = "ImageTransparency";
-				v49.ZIndex = p18.ZIndex;
+				v49.ZIndex = frame.ZIndex;
 				if v20 and not v57 then
 					v49.ImageColor3 = v20;
 				end;
@@ -286,7 +286,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				return false;
 			end;
 			if v38 and v39 then
-				u6 = Vector2.new(0, u6.Y + v28.letterSpacing * u8 + p15 + v28.lineSpacing * u8);
+				u6 = Vector2.new(0, u6.Y + v28.letterSpacing * u8 + size + v28.lineSpacing * u8);
 				u9 = Vector2.new(0, u9.Y + v28.letterSpacing + v28.baseHeight + v28.lineSpacing);
 			end;
 		end;
@@ -299,7 +299,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 	end;
 	local v64 = nil;
 	local v65 = nil;
-	local v66, v67, v68 = l__iterateGraphemes__3(p16, v28);
+	local v66, v67, v68 = l__iterateGraphemes__3(text, v28);
 	while true do
 		local v69, v70, v71 = v66(v67, v68);
 		if not v69 then
@@ -311,14 +311,14 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			if #u20 == 1 then
 				v65 = v70;
 			end;
-			u21 = u21 + v28.getStringSize(v69, p15).X;
+			u21 = u21 + v28.getStringSize(v69, size).X;
 			if v72 and not v61() then
-				v64 = p16:sub(v65);
+				v64 = text:sub(v65);
 				break;
 			end;
 		else
 			if #u20 > 0 and not v61() then
-				v64 = p16:sub(v65);
+				v64 = text:sub(v65);
 				break;
 			end;
 			if v69 == " " or v69 == "\t" or v69 == "\n" then
@@ -326,16 +326,16 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			else
 				v65 = v70;
 				u20 = { v69 };
-				u21 = v28.getStringSize(v69, p15).X;
+				u21 = v28.getStringSize(v69, size).X;
 				if not v61() then
-					v64 = p16:sub(v70);
+					v64 = text:sub(v70);
 					break;
 				end;
 			end;
 		end;	
 	end;
 	if #u20 > 0 and not v61() then
-		v64 = p16:sub(v65);
+		v64 = text:sub(v65);
 	end;
 	local v73 = 0;
 	local v74 = 0;
@@ -360,7 +360,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		v87.BackgroundTransparency = 1;
 		v87.SizeConstraint = Enum.SizeConstraint.RelativeYY;
 		v87.Size = UDim2.new(l__X__85 / l__baseHeight__86, 0, 1, 0);
-		v87.Parent = p18;
+		v87.Parent = frame;
 		if v26 ~= Enum.TextXAlignment.Left then
 			if v26 == Enum.TextXAlignment.Right then
 				v87.AnchorPoint = Vector2.new(1, 0);
@@ -392,7 +392,7 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 		v83 = v87;
 	else
 		for v96, v97 in next, u12 do
-			v97.Parent = p18;
+			v97.Parent = frame;
 		end;
 	end;
 	if v22 then
