@@ -368,12 +368,8 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 			end;
 		end;
 		local v88, v89, v90 = pairs(u12);
-		while true do
-			local v91 = nil;
-			local v92, v93 = v88(v89, v90);
-			if not v92 then
-				break;
-			end;
+		local v91 = nil
+		for v92, v93 in pairs(v88(v89, v90)) do
 			local v94 = u14[v93];
 			v91 = u15[v93];
 			v93.Size = UDim2.new(v94.X / l__X__85, 0, v94.Y / l__baseHeight__86, 0);
@@ -389,8 +385,8 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				v93:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 					v93.TextSize = math.floor(l__substitutionSize__30 * v93.AbsoluteSize.Y / v28.baseHeight + 0.5);
 				end);
-			end;		
-		end;
+			end;
+		end
 		v83 = v87;
 	else
 		for v96, v97 in next, u12 do
@@ -438,13 +434,9 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				end;
 				local v105 = l__X__104 * p24;
 				local v106, v107, v108 = pairs(u12);
-				while true do
-					local v109 = nil;
-					local v110 = nil;
-					local v111, v112 = v106(v107, v108);
-					if not v111 then
-						break;
-					end;
+				local v109 = nil;
+				local v110 = nil;
+				for v111, v112 in pairs(v106(v107, v108)) do
 					v108 = v111;
 					v109 = u14[v112].X;
 					v110 = u15[v112].X;
@@ -460,8 +452,8 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 						v112[v113] = 0;
 					elseif v110 < v105 then
 						v112[v113] = 1 - (v105 - v110) / v109;
-					end;				
-				end;
+					end;
+				end
 			end);
 		else
 			local u28 = false;
@@ -471,12 +463,8 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				end;
 				local v115 = l__x__102 * p25;
 				local v116, v117, v118 = pairs(u12);
-				while true do
-					local v119 = nil;
-					local v120, v121 = v116(v117, v118);
-					if not v120 then
-						break;
-					end;
+				local v119 = nil;
+				for v120, v121 in pairs(v116(v117, v118)) do
 					v118 = v120;
 					local l__Offset__122 = v121.Position.X.Offset;
 					local l__Offset__123 = v121.Size.X.Offset;
@@ -485,8 +473,8 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 						v121[v119] = 0;
 					elseif l__Offset__122 < v115 then
 						v121[v119] = 1 - (v115 - l__Offset__122) / l__Offset__123;
-					end;				
-				end;
+					end;
+				end
 			end);
 		end;
 		if u28 then
