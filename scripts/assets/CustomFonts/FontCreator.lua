@@ -108,6 +108,8 @@ function u1.load(p15)
 	local l__map__25 = v17.map;
 	local v26 = nil;
 	while true do
+		--ERRORING HERE
+		task.wait()
 		local v27, v28 = l__next__24(l__map__25, v26);
 		if not v27 then
 			break;
