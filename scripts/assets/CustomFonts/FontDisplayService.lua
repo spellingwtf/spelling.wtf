@@ -439,7 +439,6 @@ function u1.WriteToFrame(p13, p14, p15, p16, p17, p18, p19, p20)
 				local v105 = l__X__104 * p24;
 				local v106, v107, v108 = pairs(u12);
 				while true do
-                    task.wait()
 					local v109 = nil;
 					local v110 = nil;
 					local v111, v112 = v106(v107, v108);
