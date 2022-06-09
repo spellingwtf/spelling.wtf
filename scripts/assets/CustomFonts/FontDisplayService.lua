@@ -26,7 +26,7 @@ setmetatable(v1, v7);
 function u1.Preload(p6, p7)
 	local v8 = v2.load(p7);
 	local l__source__2 = v8.source;
-	spawn(function()
+	coroutine.wrap(function()
 		local v9 = {};
 		if type(l__source__2) == "table" then
 			for v10 = 1, #l__source__2 do
@@ -44,7 +44,7 @@ function u1.Preload(p6, p7)
 			v14:Destroy();
 		end;
 		v8.setLoaded();
-	end);
+	end)()
 end;
 local l__iterateGraphemes__3 = v2.iterateGraphemes;
 local function u4(p8, p9)
