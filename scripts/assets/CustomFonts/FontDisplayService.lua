@@ -210,6 +210,11 @@ function u1.WriteToFrame(p13, fontname, size, text, wraps, frame, wordDetectionE
 						v50 = l__source__31;
 					end;
 				end;
+				if type(v50) == "table" then
+					for i,v in pairs(v50) do
+						print(i,v)
+					end
+				end
 				v49.Image = v50;
 				v49.ImageRectOffset = l__isV2__11 and v41.ImageRectOffset or Vector2.new(v41[1], v41[2]);
 				v49.ImageRectSize = l__isV2__11 and v41.ImageRectSize or Vector2.new(v41[8] or v41[3], v41[9] or v41[4]);
