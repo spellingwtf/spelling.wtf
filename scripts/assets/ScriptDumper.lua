@@ -38,10 +38,10 @@ local Configuration = {
     },
 
     Strings = {
-        Credits = "stefanu1k2 hub when?",
         CollectingScripts = "Collecting scripts...",
         CreatingXMLLayout = "Creating XML Layout...",
-        DecompileFail = "-- Failed to decompile script, or script is empty"
+        DecompileFail = "-- Failed to decompile script, or script is empty",
+        Error = "-- Errored during decompilation"
     }
 }
 
@@ -89,12 +89,6 @@ ProgressText.Center = true
 ProgressText.Size = ProgressBar.Size.Y
 ProgressText.Position = ProgressBar.Position + Vector2.new(CompleteBar.Size.X / 2, 35)
 ProgressText.Color = Color3.new(1, 1, 1)
-
-local Credits = Drawing.new("Text")
-Credits.Color = Color3.new(1, 1, 1)
-Credits.Position = Vector2.new(Viewport.X - 100, Viewport.Y - 25)
-Credits.Size = 15
-Credits.Color = Color3.new(1, 1, 1)
 
 -- // Check if an object is allowed
 local function IsAllowed(Item)
@@ -249,11 +243,9 @@ local function Main(_Configuration)
 
     -- // Set drawings stuff
     ProgressText.Text = Configuration.StringFormats.Welcome:format(Configuration.Version)
-    Credits.Text = Configuration.Strings.Credits
 
     ProgressBar.Visible = true
     CompleteBar.Visible = true
-    Credits.Visible = true
     ProgressText.Visible = true
     task.wait(1)
 
@@ -289,16 +281,29 @@ local function Main(_Configuration)
                 if ScriptHash ~= nil then
                     ScriptHashText = "-- Script Hash: "..ScriptHash.."\n"
                 end
+                local failedtodecompile = false
+                local result
 
                 coroutine.wrap(function()
-                    result = decompile(Data.Script, false, 9e9)
+                    local suc, res = pcall(function()
+                        result = decompile(Data.Script, false, 9e9)
+                    end)
+                    if not suc then
+                        failedtodecompile = true
+                        result = res
+                    end
                 end)()
                 repeat
                     task.wait()
-                until result ~= nil
-                print("Finished Decompiling "..Data.Script:GetFullName())
+                until result ~= nil or failedtodecompile == true
 
-                Output[Data.Index] = ScriptHashText..(result == "" and Configuration.Strings.DecompileFail or result)
+                if failedtodecompile ~= true then
+                    print("Finished Decompiling "..Data.Script:GetFullName())
+                    Output[Data.Index] = ScriptHashText..(result == "" and Configuration.Strings.DecompileFail or result)
+                else
+                    print("Failed to decompile: "..Data.Script:GetFullName().." Error: "..tostring(result))
+                    Output[Data.Index] = Configuration.Strings.Error
+                end
 
                 task.wait()
 
@@ -334,7 +339,6 @@ local function Main(_Configuration)
     task.wait(5)
 
     -- // Remove all
-    Credits.Visible = false
     ProgressText.Visible = false
 end
 
