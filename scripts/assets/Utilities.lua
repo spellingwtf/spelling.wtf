@@ -37,7 +37,7 @@ function Utilities.class(p1, p2)
 		if v7 then
 			table.insert(v7.instances, p4);
 		end;
-		if p4.initObject then
+		if p4.initObject ~= nil then
 			p4:initObject();
 		end;
 		return p4;
