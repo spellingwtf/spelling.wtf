@@ -1,2 +1,0 @@
---SynapseX Decompiler
---Decompiler timeout.
