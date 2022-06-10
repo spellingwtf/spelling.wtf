@@ -54,6 +54,31 @@ function Utilities.subclass(p5, p6, p7)
 	return p6;
 end;
 
+function Utilities.debugClasses(p11)
+	if not p11 then
+		table.sort(u2, function(p12, p13)
+			return p12.name < p13.name;
+		end);
+		for v18, v19 in pairs(u2) do
+			if v19.lacksDestroy then
+				print(v19.name .. ": " .. #v19.instances .. " [?]")
+			else
+				print(v19.name .. ": " .. #v19.instances)
+			end;
+		end;
+		return;
+	end;
+	for v21, v22 in pairs(u2) do
+		if v22.name == p11 then
+			if v22.lacksDestroy then
+				print(v22.name .. ": " .. #v22.instances .. " [?]")
+			else
+				print(v22.name .. ": " .. #v22.instances)
+			end;
+		end;
+	end;
+end;
+
 Utilities.gui = Utilities.Create("ScreenGui")({
 	Parent = CoreGui,
 	IgnoreGuiInset = true
