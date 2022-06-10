@@ -1,31 +1,37 @@
+local Utilities = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Utilities.lua"))()
+
 local MainGui
 if not is_sirhurt_closure and syn and syn.protect_gui then
-    MainGui = Instance.new("ScreenGui")
-    MainGui.DisplayOrder = 999
+    MainGui = Utilities.Create("ScreenGui")({
+        DisplayOrder = 999
+    })
     syn.protect_gui(MainGui)
     MainGui.Parent = game:GetService("CoreGui")
 elseif gethui then
-    MainGui  = Instance.new("ScreenGui")
-    MainGui.DisplayOrder = 999
-    MainGui.Parent = gethui()
+    MainGui = Utilities.Create("ScreenGui")({
+        DisplayOrder = 999,
+        Parent = gethui()
+    })
 elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
     MainGui = game:GetService("CoreGui").RobloxGui
 end
 
-local NotificationWindow = Instance.new("Frame")
-NotificationWindow.BackgroundTransparency = 1
-NotificationWindow.Active = false
-NotificationWindow.Size = UDim2.new(1, 0, 1, 0)
-NotificationWindow.Name = "NotificationWindow"
-NotificationWindow.Parent = MainGui
+local NotificationWindow = Utilities.Create("Frame")({
+    BackgroundTransparency = 1,
+    Active = false,
+    Size = UDim2.fromScale(1, 1),
+    Name = "NotificationWindow",
+    Parent = MainGui
+})
 local NotificationSize = UDim2.new(0, 300, 0, 90)
 
 local function bettertween(obj, newpos, dir, style, tim, override)
     coroutine.wrap(function()
-        local frame = Instance.new("Frame")
-        frame.Visible = false
-        frame.Position = obj.Position
-        frame.Parent = MainGui
+        local frame = Utilities.Create("Frame")({
+            Visible = false,
+            Position = obj.Position,
+            Parent = MainGui
+        })
         local connection = frame:GetPropertyChangedSignal("Position"):Connect(function()
             obj.Position = UDim2.new(obj.Position.X.Scale, obj.Position.X.Offset, frame.Position.Y.Scale, frame.Position.Y.Offset)
         end)
@@ -39,10 +45,11 @@ end
 
 local function bettertween2(obj, newpos, dir, style, tim, override)
     coroutine.wrap(function()
-        local frame = Instance.new("Frame")
-        frame.Visible = false
-        frame.Position = obj.Position
-        frame.Parent = MainGui
+        local frame = Utilities.Create("Frame")({
+            Visible = false,
+            Position = obj.Position,
+            Parent = MainGui
+        })
         local connection = frame:GetPropertyChangedSignal("Position"):Connect(function()
             obj.Position = UDim2.new(frame.Position.X.Scale, frame.Position.X.Offset, obj.Position.Y.Scale, obj.Position.Y.Offset)
         end)
@@ -65,33 +72,36 @@ Notifications.Notify = function(title, text, showtime)
         local text = text or "No text has been put here..."
 
         local offset = #NotificationWindow:GetChildren()
-        local ToastNotification = Instance.new("Frame")
-        local Topbar = Instance.new("Frame")
-        local Title = Instance.new("TextLabel")
+        local ToastNotification = Utilities.Create("Frame")({
+            Name = "ToastNotification",
+            Parent = NotificationWindow,
+            BackgroundColor3 = Color3.fromRGB(10, 10, 10),
+            BackgroundTransparency = 0.250,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, 0, 1, -((5 + NotificationSize.Y.Offset) * (offset + 1))),
+            Size = NotificationSize
+        })
+        local Topbar = Utilities.Create("Frame")({
+            Name = "Topbar",
+            Parent = ToastNotification,
+            BackgroundColor3 = Color3.new(0, 255, 0),
+            BackgroundTransparency = 0.6,
+            BorderSizePixel = 0,
+            Size = UDim2.new(0, NotificationSize.X.Offset, 0, NotificationSize.Y.Offset/3.16)
+        })
+        local Title = Utilities.Create("TextLabel")({
+            Name = "Title",
+            Parent = Topbar,
+            BackgroundTransparency = 1.000,
+            Position = UDim2.new(0.0260000005, 0, 0, 0),
+            Size = UDim2.new(0, NotificationSize.X.Offset/1.16326531, 0, NotificationSize.Y.Offset/3.16),
+            Font = Enum.Font.GothamBold,
+            Text = title,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextSize = 16.000, 
+            TextXAlignment = Enum.TextXAlignment.Left
+        })
         local Text = Instance.new("TextLabel")
-        ToastNotification.Name = "ToastNotification"
-        ToastNotification.Parent = NotificationWindow
-        ToastNotification.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-        ToastNotification.BackgroundTransparency = 0.250
-        ToastNotification.BorderSizePixel = 0
-        ToastNotification.Position = UDim2.new(1, 0, 1, -((5 + NotificationSize.Y.Offset) * (offset + 1)))
-        ToastNotification.Size = NotificationSize
-        Topbar.Name = "Topbar"
-        Topbar.Parent = ToastNotification
-        Topbar.BackgroundColor3 = Color3.new(0, 255, 0)
-        Topbar.BackgroundTransparency = 0.6
-        Topbar.BorderSizePixel = 0
-        Topbar.Size = UDim2.new(0, NotificationSize.X.Offset, 0, NotificationSize.Y.Offset/3.16)
-        Title.Name = "Title"
-        Title.Parent = Topbar
-        Title.BackgroundTransparency = 1.000
-        Title.Position = UDim2.new(0.0260000005, 0, 0, 0)
-        Title.Size = UDim2.new(0, NotificationSize.X.Offset/1.16326531, 0, NotificationSize.Y.Offset/3.16)
-        Title.Font = Enum.Font.GothamBold
-        Title.Text = title
-        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Title.TextSize = 16.000
-        Title.TextXAlignment = Enum.TextXAlignment.Left
         Text.Name = "Text"
         Text.Parent = ToastNotification
         Text.BackgroundTransparency = 1.000
