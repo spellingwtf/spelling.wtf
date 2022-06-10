@@ -113,7 +113,7 @@ Notifications.Notify = function(title, text, showtime)
                 Parent = Topbar
             }), 
             Scaled = true,
-            Font = "Outlined", --Fonts: R1, Outlined, FWNums
+            Font = "R1", --Fonts: R1, Outlined, FWNums
             AnimationFadeDisabled = true, --fade transparency at start
             AnimationRate = 10, --speed at which the text types
             WritingToChatBox = false,
@@ -124,7 +124,7 @@ Notifications.Notify = function(title, text, showtime)
             WordDetectionEnabled = true -- wrap words instead of letters
         });
 
-        local Text = Utilities.Create("TextLabel")({
+        --[[local Text = Utilities.Create("TextLabel")({
             Name = "Text",
             Parent = ToastNotification,
             BackgroundTransparency = 1.000,
@@ -137,7 +137,28 @@ Notifications.Notify = function(title, text, showtime)
             TextWrapped = true,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextYAlignment = Enum.TextYAlignment.Top
-        })
+        })]]
+
+        Utilities.Write(text)({
+            Frame = Utilities.Create("Frame")({
+                Size = UDim2.new(0, NotificationSize.X.Offset/1.14, 0, NotificationSize.Y.Offset/1.05333333),
+                Position = UDim2.new(0.0260000005, 0, 0, Topbar.Size.Y.Offset + 5),
+                BorderSizePixel = 0,
+                BackgroundTransparency = 1,
+                ZIndex = 11,
+                Parent = Topbar
+            }), 
+            Scaled = true,
+            Font = "R1", --Fonts: R1, Outlined, FWNums
+            AnimationFadeDisabled = true, --fade transparency at start
+            AnimationRate = 10, --speed at which the text types
+            WritingToChatBox = false,
+            Color = Color3.new(1, 1, 1),
+            TextXAlignment = Enum.TextXAlignment.Left,
+            Transparency = 0,
+            Wraps = true, --makes the text wrap to the x size of the frame
+            WordDetectionEnabled = true -- wrap words instead of letters
+        });
 
         bettertween2(ToastNotification, UDim2.new(1, -(NotificationSize.X.Offset + 5), 1, -((5 + NotificationSize.Y.Offset) * (offset + 1))), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.15, true)
         task.wait(0.15)
