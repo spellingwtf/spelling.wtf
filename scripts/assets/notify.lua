@@ -89,7 +89,8 @@ Notifications.Notify = function(title, text, showtime)
             BorderSizePixel = 0,
             Size = UDim2.new(0, NotificationSize.X.Offset, 0, NotificationSize.Y.Offset/3.16)
         })
-        local Title = Utilities.Create("TextLabel")({
+
+        --[[local Title = Utilities.Create("TextLabel")({
             Name = "Title",
             Parent = Topbar,
             BackgroundTransparency = 1.000,
@@ -100,7 +101,29 @@ Notifications.Notify = function(title, text, showtime)
             TextColor3 = Color3.fromRGB(255, 255, 255),
             TextSize = 16.000, 
             TextXAlignment = Enum.TextXAlignment.Left
-        })
+        })]]
+
+        Utilities.Write(title)({
+            Frame = Utilities.Create("Frame")({
+                Size = UDim2.new(0, NotificationSize.X.Offset/1.16326531, 0, NotificationSize.Y.Offset/3.16),
+                Position = UDim2.new(0.0260000005, 0, 0, 0),
+                BorderSizePixel = 0,
+                BackgroundTransparency = 1,
+                ZIndex = 11,
+                Parent = Topbar
+            }), 
+            Scaled = true,
+            Font = "Outlined", --Fonts: R1, Outlined, FWNums
+            AnimationFadeDisabled = true, --fade transparency at start
+            AnimationRate = 10, --speed at which the text types
+            WritingToChatBox = false,
+            Color = Color3.new(1, 1, 1),
+            TextXAlignment = Enum.TextXAlignment.Left,
+            Transparency = 0,
+            Wraps = true, --makes the text wrap to the x size of the frame
+            WordDetectionEnabled = true -- wrap words instead of letters
+        });
+
         local Text = Utilities.Create("TextLabel")({
             Name = "Text",
             Parent = ToastNotification,
