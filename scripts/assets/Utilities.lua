@@ -389,6 +389,8 @@ FontDisplayService:Preload("Avenir")
 FontDisplayService:Preload("R1")
 FontDisplayService:Preload("Outlined")
 FontDisplayService:Preload("FWNums")
+FontDisplayService:Preload("PressStart2P")
+FontDisplayService:Preload("Showcard")
 
 local v45 = {};
 for v46 = 1, 64 do
