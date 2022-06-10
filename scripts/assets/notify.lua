@@ -146,7 +146,7 @@ Notifications.Notify = function(title, text, showtime)
                 BorderSizePixel = 0,
                 BackgroundTransparency = 1,
                 ZIndex = 11,
-                Parent = Topbar
+                Parent = ToastNotification
             }), 
             Scaled = true,
             Font = "R1", --Fonts: R1, Outlined, FWNums
