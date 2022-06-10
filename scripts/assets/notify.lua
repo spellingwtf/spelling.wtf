@@ -114,9 +114,6 @@ Notifications.Notify = function(title, text, showtime)
             }), 
             Scaled = true,
             Font = "R1", --Fonts: R1, Outlined, FWNums
-            AnimationFadeDisabled = true, --fade transparency at start
-            AnimationRate = 10, --speed at which the text types
-            WritingToChatBox = false,
             Color = Color3.new(1, 1, 1),
             TextXAlignment = Enum.TextXAlignment.Left,
             Transparency = 0,
@@ -150,9 +147,6 @@ Notifications.Notify = function(title, text, showtime)
             }), 
             Scaled = true,
             Font = "R1", --Fonts: R1, Outlined, FWNums
-            AnimationFadeDisabled = true, --fade transparency at start
-            AnimationRate = 10, --speed at which the text types
-            WritingToChatBox = false,
             Color = Color3.new(1, 1, 1),
             TextXAlignment = Enum.TextXAlignment.Left,
             Transparency = 0,
