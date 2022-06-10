@@ -79,6 +79,29 @@ function Utilities.debugClasses(p11)
 	end;
 end;
 
+function Utilities.Create(class)
+    return function(properties)
+		local v73 = Instance.new(class);
+		for v74, v75 in pairs(properties) do
+			local v76, v77 = pcall(function()
+				if type(v74) == "number" then
+					v75.Parent = v73;
+					return;
+				end;
+				if type(v75) ~= "function" then
+					v73[v74] = v75;
+					return;
+				end;
+				v73[v74]:Connect(v75);
+			end);
+			if not v76 then
+				error("Create: could not set property " .. v74 .. " of " .. class .. " (" .. v77 .. ")", 2);
+			end;
+		end;
+		return v73;
+	end;
+end
+
 Utilities.gui = Utilities.Create("ScreenGui")({
 	Parent = CoreGui,
 	IgnoreGuiInset = true
@@ -120,29 +143,6 @@ function Utilities.shallowcopy(p32)
 	end;
 	return v61;
 end;
-
-function Utilities.Create(class)
-    return function(properties)
-		local v73 = Instance.new(class);
-		for v74, v75 in pairs(properties) do
-			local v76, v77 = pcall(function()
-				if type(v74) == "number" then
-					v75.Parent = v73;
-					return;
-				end;
-				if type(v75) ~= "function" then
-					v73[v74] = v75;
-					return;
-				end;
-				v73[v74]:Connect(v75);
-			end);
-			if not v76 then
-				error("Create: could not set property " .. v74 .. " of " .. class .. " (" .. v77 .. ")", 2);
-			end;
-		end;
-		return v73;
-	end;
-end
 
 function Utilities.FadeOut(p42, p43, p44)
 	Utilities.fadeGui.BackgroundColor3 = p43 or Color3.new(0, 0, 0);
