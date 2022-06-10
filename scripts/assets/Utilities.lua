@@ -510,4 +510,12 @@ function Utilities.Signal()
 	return v148;
 end
 
+function Utilities.interpolateDecibel(p133, p134)
+	local v__number__164 = 10 ^ (p133 / 10);
+	local u__number__52 = 10 ^ (p134 / 10) - v__number__164;
+	return function(p135)
+		return 10 * math.log10(v__number__164 + u__number__52 * p135);
+	end;
+end;
+
 return Utilities
