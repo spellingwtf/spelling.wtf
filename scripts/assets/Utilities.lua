@@ -59,6 +59,32 @@ Utilities.fadeGui = Utilities.Create("Frame")({
 	ZIndex = 1
 })
 
+function Utilities.shallowcopy(p32)
+	if type(p32) ~= "table" then
+		return p32;
+	end;
+	local v61 = {};
+	for v62, v63 in pairs(p32) do
+		v61[v62] = v63;
+	end;
+	return v61;
+end;
+
+function Utilities.deepcopy(p31)
+	if type(p31) ~= "table" then
+		return p31;
+	end;
+	local v58 = {};
+	for v59, v60 in pairs(p31) do
+		if type(v60) == "table" then
+			v60 = Utilities.deepcopy(v60);
+		end;
+		v58[v59] = v60;
+	end;
+	setmetatable(v58, (getmetatable(p31)));
+	return v58;
+end
+
 function Utilities.uid(p27)
 	local v47 = nil;
 	if not p27 then
