@@ -101,19 +101,20 @@ Notifications.Notify = function(title, text, showtime)
             TextSize = 16.000, 
             TextXAlignment = Enum.TextXAlignment.Left
         })
-        local Text = Instance.new("TextLabel")
-        Text.Name = "Text"
-        Text.Parent = ToastNotification
-        Text.BackgroundTransparency = 1.000
-        Text.Position = UDim2.new(0.0260000005, 0, 0, Topbar.Size.Y.Offset + 5)
-        Text.Size = UDim2.new(0, NotificationSize.X.Offset/1.14, 0, NotificationSize.Y.Offset/1.05333333)
-        Text.Font = Enum.Font.GothamSemibold
-        Text.Text = text
-        Text.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Text.TextSize = 16.000
-        Text.TextWrapped = true
-        Text.TextXAlignment = Enum.TextXAlignment.Left
-        Text.TextYAlignment = Enum.TextYAlignment.Top
+        local Text = Utilities.Create("TextLabel")({
+            Name = "Text",
+            Parent = ToastNotification,
+            BackgroundTransparency = 1.000,
+            Position = UDim2.new(0.0260000005, 0, 0, Topbar.Size.Y.Offset + 5),
+            Size = UDim2.new(0, NotificationSize.X.Offset/1.14, 0, NotificationSize.Y.Offset/1.05333333),
+            Font = Enum.Font.GothamSemibold,
+            Text = text,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            TextSize = 16.000,
+            TextWrapped = true,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Top
+        })
 
         bettertween2(ToastNotification, UDim2.new(1, -(NotificationSize.X.Offset + 5), 1, -((5 + NotificationSize.Y.Offset) * (offset + 1))), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.15, true)
         task.wait(0.15)
