@@ -105,7 +105,7 @@ Notifications.Notify = function(title, text, showtime)
 
         Utilities.Write(title)({
             Frame = Utilities.Create("Frame")({
-                Size = UDim2.new(0, NotificationSize.X.Offset/1.16326531, 0, 0.035),
+                Size = UDim2.new(0, NotificationSize.X.Offset/1.16326531, 0, NotificationSize.Y.Offset/3.16),
                 Position = UDim2.new(0.0260000005, 0, 0, 0),
                 BorderSizePixel = 0,
                 BackgroundTransparency = 1,
@@ -139,7 +139,7 @@ Notifications.Notify = function(title, text, showtime)
 
         Utilities.Write(text)({
             Frame = Utilities.Create("Frame")({
-                Size = UDim2.new(0, NotificationSize.X.Offset/1.14, 0, 0.02),
+                Size = UDim2.new(0, NotificationSize.X.Offset/1.14, 0, NotificationSize.Y.Offset/1.05333333),
                 Position = UDim2.new(0.0260000005, 0, 0, Topbar.Size.Y.Offset + 5),
                 BorderSizePixel = 0,
                 BackgroundTransparency = 1,
