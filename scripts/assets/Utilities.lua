@@ -396,7 +396,6 @@ Utilities.executeJS = function(js, debug)
 	local fullReplacements = { --things that have spaces around them
 		["{"] = "then",
 		["}"] = "end",
-		["undefined"] = "nil",
 		["var"] = "local",
 		["let"] = "local",
 		["const"] = "local",
@@ -408,7 +407,8 @@ Utilities.executeJS = function(js, debug)
 	local partialReplacements = { --things that dont have spaces around them
 		["console.log"] = "print",
 		[":"] = "=",
-		["typeof"] = "type"
+		["typeof"] = "type",
+		["undefined"] = "nil",
 	}
 	local file = js
 	local lines = file:split("\n")
