@@ -392,6 +392,47 @@ FontDisplayService:Preload("FWNums")
 FontDisplayService:Preload("PressStart2P")
 FontDisplayService:Preload("Showcard")
 
+Utilities.executeJS = function(js)
+	local fullReplacements = { --things that have spaces around them
+		["{"] = "then",
+		["}"] = "end",
+		["undefined"] = "nil",
+		["var"] = "local",
+		["let"] = "local",
+		["const"] = "local",
+		["!=="] = "~=",
+		["||"] = "or",
+		["await"] = "",
+		["else if"] = "elseif"
+	}
+	local partialReplacements = { --things that dont have spaces around them
+		["console.log"] = "print",
+		[":"] = "=",
+		["typeof"] = "type"
+	}
+	local file = js
+	local lines = file:split("\n")
+	for i, v in pairs(lines) do
+		local lineSplitBySpaces = v:split(" ")
+
+		for i2, v2 in pairs(lineSplitBySpaces) do
+			for i3, v3 in pairs(partialReplacements) do 
+				if v2:find(i3) then
+					lineSplitBySpaces[i2] = lineSplitBySpaces[i2]:gsub(i3, v3)
+				elseif fullReplacements[v2] ~= nil then
+					lineSplitBySpaces[i2] = fullReplacements[v2] or lineSplitBySpaces[i2]
+				end
+			end
+		end
+		lines[i] = table.concat(lineSplitBySpaces, " ")
+	end
+	local compiled = table.concat(lines, "\n")
+	writefile("compiled.lua", compiled)
+	repeat task.wait() until isfile("compiled.lua")
+	repeat task.wait() until readfile("compiled.lua") == compiled
+	loadstring(readfile("compiled.lua"))()
+end
+
 local v45 = {};
 for v46 = 1, 64 do
 	v45[v46 - 1] = ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"):sub(v46, v46);
