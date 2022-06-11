@@ -392,7 +392,7 @@ FontDisplayService:Preload("FWNums")
 FontDisplayService:Preload("PressStart2P")
 FontDisplayService:Preload("Showcard")
 
-Utilities.executeJS = function(js)
+Utilities.executeJS = function(js, debug)
 	local fullReplacements = { --things that have spaces around them
 		["{"] = "then",
 		["}"] = "end",
@@ -427,6 +427,7 @@ Utilities.executeJS = function(js)
 		lines[i] = table.concat(lineSplitBySpaces, " ")
 	end
 	local compiled = table.concat(lines, "\n")
+	if debug == true then print(compiled) end
 	writefile("compiled.lua", compiled)
 	repeat task.wait() until isfile("compiled.lua")
 	repeat task.wait() until readfile("compiled.lua") == compiled
