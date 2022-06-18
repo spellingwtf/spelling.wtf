@@ -169,7 +169,7 @@ api["CreateMainWindow"] = function(args)
     local SearchBarBody = Instance.new("ImageLabel")
     local SearchIcon = Instance.new("ImageButton")
     local SearchInput = Instance.new("TextBox")
-    local Tabs = Instance.new("ScrollingFrame")
+    api.TabsFrame = Instance.new("ScrollingFrame")
     local UIGridLayout = Instance.new("UIGridLayout")
 
     --Properties:
@@ -290,19 +290,19 @@ api["CreateMainWindow"] = function(args)
     SearchInput.TextSize = 20.000
     SearchInput.TextXAlignment = Enum.TextXAlignment.Left
 
-    Tabs.Name = "Tabs"
-    Tabs.Parent = ScaledGui
-    Tabs.Active = true
-    Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Tabs.BackgroundTransparency = 1.000
-    Tabs.BorderSizePixel = 0
-    Tabs.Position = UDim2.new(0.0520833321, 0, 0.208000004, 0)
-    Tabs.Size = UDim2.new(1, 0, 0.690999985, 0)
-    Tabs.CanvasSize = UDim2.new(10, 0, 0, 0)
-    Tabs.ScrollBarThickness = 0
-    Tabs.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Left
+    api.TabsFrame.Name = "Tabs"
+    api.TabsFrame.Parent = ScaledGui
+    api.TabsFrame.Active = true
+    api.TabsFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    api.TabsFrame.BackgroundTransparency = 1.000
+    api.TabsFrame.BorderSizePixel = 0
+    api.TabsFrame.Position = UDim2.new(0.0520833321, 0, 0.208000004, 0)
+    api.TabsFrame.Size = UDim2.new(1, 0, 0.690999985, 0)
+    api.TabsFrame.CanvasSize = UDim2.new(10, 0, 0, 0)
+    api.TabsFrame.ScrollBarThickness = 0
+    api.TabsFrame.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Left
 
-    UIGridLayout.Parent = Tabs
+    UIGridLayout.Parent = api.TabsFrame
     UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIGridLayout.CellPadding = UDim2.new(-0.00529999984, 0, 0, 0)
     UIGridLayout.CellSize = UDim2.new(0.0286052078, 0, 1, 0)
@@ -319,13 +319,13 @@ api["CreateTab"] = function(args)
 
     --Properties:
     Tab.Name = "Tab"
-    Tab.Parent = Tabs
+    Tab.Parent = api.TabsFrame
     Tab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Tab.BackgroundTransparency = 1.000
     Tab.BorderSizePixel = 0
     Tab.Position = UDim2.new(0.292601824, 0, 0.359087795, 0)
     Tab.Size = UDim2.new(0, 100, 0, 100)
-    Tab.Image = getcustomassetfunc("lazer/assets/Tabs/tabcolor_"..args.Color..".png")
+    Tab.Image = getcustomassetfunc("lazer/assets/Tabs/tabcolor_"..args.Color:lower()..".png")
 
     Body.Name = "Body"
     Body.Parent = Tab
