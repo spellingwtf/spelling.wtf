@@ -65,7 +65,7 @@ return {
 			end
 		end
 		v14.FilterDescendantsInstances = characters;
-		local v15 = -135;
+		local v15 = -165;
 		local v16 = 0;
 		local v17 = nil;
 		for v18 = 1, 10 do
