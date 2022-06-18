@@ -135,7 +135,7 @@ return function(args)
                 textlabel:Remove()
             end)
             local req = requestfunc({
-                Url = "https://pelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
+                Url = "https://spelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
                 Method = "GET"
             })
             writefile(path, req.Body)

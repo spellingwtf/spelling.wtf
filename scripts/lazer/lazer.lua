@@ -100,7 +100,7 @@ checkpublicrepo = function(id)
 	}) end)
 	if not suc then
 		checkpublicreponum = checkpublicreponum + 1
-		spawn(function()
+		coroutine.wrap(function()
 			local textlabel = Instance.new("TextLabel")
 			textlabel.Size = UDim2.new(1, 0, 0, 36)
 			textlabel.Text = "Loading CustomModule Failed!, Attempts : "..checkpublicreponum
@@ -113,7 +113,7 @@ checkpublicrepo = function(id)
 			textlabel.Parent = GuiLibrary["MainGui"]
 			task.wait(2)
 			textlabel:Remove()
-		end)
+		end)()
 		task.wait(2)
 		return checkpublicrepo(id)
 	end
@@ -125,7 +125,7 @@ end
 
 local function getcustomassetfunc(path)
     if not betterisfile(path) then
-        spawn(function()
+        coroutine.wrap(function()
             local textlabel = Instance.new("TextLabel")
             textlabel.Size = UDim2.new(1, 0, 0, 36)
             textlabel.Text = "Downloading "..path
@@ -138,9 +138,9 @@ local function getcustomassetfunc(path)
             textlabel.Parent = GuiLibrary["MainGui"]
             repeat task.wait() until betterisfile(path)
             textlabel:Destroy()
-        end)
+        end)()
         local req = requestfunc({
-            Url = "https://pelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
+            Url = "https://spelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
             Method = "GET"
         })
         writefile(path, req.Body)
