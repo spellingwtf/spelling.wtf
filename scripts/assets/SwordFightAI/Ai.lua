@@ -1,14 +1,23 @@
 local v1 = {};
-for v2, v3 in pairs(script:GetChildren()) do
-	local v4 = require(v3);
-	if typeof(v4) == "table" then
-		for v5, v6 in pairs(v4) do
-			v1[v5] = v6;
-		end;
-	else
-		v1[v3.Name] = v4;
+
+local v4 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/SwordFightAI/FindBestAngle.lua"))()
+if typeof(v4) == "table" then
+	for v5, v6 in pairs(v4) do
+		v1[v5] = v6;
 	end;
+else
+	v1["FindBestAngle"] = v4;
 end;
+
+local v4 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/SwordFightAI/Util.lua"))()
+if typeof(v4) == "table" then
+	for v5, v6 in pairs(v4) do
+		v1[v5] = v6;
+	end;
+else
+	v1["Util"] = v4;
+end;
+
 Grips = {
 	Up = CFrame.new(0, 0, -1.70000005, 0, 0, 1, 1, 0, 0, 0, 1, 0), 
 	Out = CFrame.new(0, 0, -1.70000005, 0, 1, 0, 1, -0, 0, 0, 0, -1)

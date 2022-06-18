@@ -1,6 +1,8 @@
 -- Script GUID: {B0935656-A6F7-4BF0-8F02-E8D141EA51A9}
 -- Decompiled with the Synapse X Luau decompiler.
 
+local Players = game:GetService("Players")
+
 return {
 	VisualizePosition = function(p1)
 		local v1 = Instance.new("Part");
@@ -11,20 +13,24 @@ return {
 		v1.Anchored = true;
 	end, 
 	GetDist = function(p2, p3)
-		return (p2["Right Arm"].Position - p3).Magnitude;
+		local RightAppendage = p2["Right Arm"] or p3.RightHand
+		return (RightAppendage.Position - p3).Magnitude;
 	end, 
 	GetClosestEnemy = function(p4)
 		local v2 = nil;
 		local v3 = math.huge;
-		for v4, v5 in pairs(workspace.ActivePlayers:GetChildren()) do
-			if v5 ~= p4 then
-				local l__Magnitude__6 = (v5.PrimaryPart.Position - p4.PrimaryPart.Position).Magnitude;
-				if l__Magnitude__6 < v3 then
-					v3 = l__Magnitude__6;
-					v2 = v5;
+		for i, v in pairs(Players) do
+			if v.Character then
+				local v5 = v.Character
+				if v5 ~= p4 then
+					local l__Magnitude__6 = (v5.PrimaryPart.Position - p4.PrimaryPart.Position).Magnitude;
+					if l__Magnitude__6 < v3 then
+						v3 = l__Magnitude__6;
+						v2 = v5;
+					end;
 				end;
-			end;
-		end;
+			end
+		end
 		return v2;
 	end, 
 	GetDistance = function(p5, p6)
@@ -36,7 +42,7 @@ return {
 		for v9, v10 in pairs(p8:GetChildren()) do
 			if v10:IsA("BasePart") then
 				local v11 = Vector3.new(0, 0, 0);
-				if v10.Name == "Right Arm" then
+				if v10.Name == "Right Arm" or v10.Name == "RightHand" then
 					v11 = p8.PrimaryPart.CFrame.LookVector * 3;
 				end;
 				local l__Magnitude__12 = (p7 - (v10.Position + v11)).Magnitude;
@@ -52,7 +58,13 @@ return {
 		local v13 = p9.PrimaryPart.Position - p10.PrimaryPart.Position;
 		local v14 = RaycastParams.new();
 		v14.FilterType = Enum.RaycastFilterType.Blacklist;
-		v14.FilterDescendantsInstances = { workspace.ActivePlayers };
+		local characters = {}
+		for i, v in pairs(Players) do
+			if v.Character then
+				table.insert(characters, v)
+			end
+		end
+		v14.FilterDescendantsInstances = characters;
 		local v15 = -135;
 		local v16 = 0;
 		local v17 = nil;
@@ -72,7 +84,13 @@ return {
 	SideCast = function(p12)
 		local v21 = RaycastParams.new();
 		v21.FilterType = Enum.RaycastFilterType.Blacklist;
-		v21.FilterDescendantsInstances = { workspace.ActivePlayers };
+		local characters = {}
+		for i, v in pairs(Players) do
+			if v.Character then
+				table.insert(characters, v)
+			end
+		end
+		v21.FilterDescendantsInstances = characters
 		local v22 = 0;
 		for v23 = 1, 10 do
 			local v24 = workspace:Raycast(p12.PrimaryPart.Position, (p12.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(v22), 0)).LookVector * 8, v21);
