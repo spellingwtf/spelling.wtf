@@ -13,6 +13,7 @@ local function GetURL(scripturl)
         return readfile("lazer/"..scripturl)
     else
         local res = game:HttpGet("https://spelling.wtf/scripts/lazer/"..scripturl, true)
+        print(res)
         assert(res ~= "404: Not Found", "File not found")
         return res
     end
@@ -53,12 +54,12 @@ if not (getasset and requestfunc and queueteleport) then
 end
 
 
-if shared.lazerExecuted then
+--[[if shared.lazerExecuted then
 	error("lazer Already Injected")
 	return
 else
 	shared.lazerExecuted = true
-end
+end]]
 
 if isfolder(customdir:gsub("/", "")) == false then
 	makefolder(customdir:gsub("/", ""))
@@ -159,48 +160,3 @@ GuiLibrary.CreateTab({
     Title = "Miscellaneous",
     Color = "Orange"
 })
-
-local teleportfunc = game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
-    if State == Enum.TeleportState.Started and not shared.lazerIndependent then
-		local teleportstr = 'shared.lazerSwitchServers = true if shared.lazerDeveloper then loadstring(readfile("lazer/NewMainScript.lua"))() else loadstring(game:HttpGet("https://spelling.wtf/scripts/lazer/lazer.lua", true))() end'
-		if shared.lazerDeveloper then
-			teleportstr = 'shared.lazerDeveloper = true '..teleportstr
-		end
-		if shared.lazerPrivate then
-			teleportstr = 'shared.lazerPrivate = true '..teleportstr
-		end
-		if shared.lazerCustomProfile then 
-			teleportstr = "shared.lazerCustomProfile = '"..shared.lazerCustomProfile.."'"..teleportstr
-		end
-		GuiLibrary["SaveSettings"]()
-		queueteleport(teleportstr)
-    end
-end)
-
-GuiLibrary["SelfDestruct"] = function()
-	spawn(function()
-		coroutine.close(selfdestructsave)
-	end)
-	injected = false
-	GuiLibrary["SaveSettings"]()
-	game:GetService("UserInputService").OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.None
-	for i,v in pairs(GuiLibrary["ObjectsThatCanBeSaved"]) do
-		if (v["Type"] == "Button" or v["Type"] == "OptionsButton") and v["Api"]["Enabled"] then
-			v["Api"]["ToggleButton"](false)
-		end
-	end
-	GuiLibrary["SelfDestructEvent"]:Fire()
-	shared.VapeExecuted = nil
-	shared.VapePrivate = nil
-	shared.VapeFullyLoaded = nil
-	shared.VapeSwitchServers = nil
-	shared.GuiLibrary = nil
-	shared.VapeIndependent = nil
-	shared.VapeManualLoad = nil
-	shared.CustomSaveVape = nil
-	GuiLibrary["KeyInputHandler"]:Disconnect()
-	GuiLibrary["KeyInputHandler2"]:Disconnect()
-	teleportfunc:Disconnect()
-	GuiLibrary["MainGui"]:Remove()
-	GuiLibrary["MainBlur"]:Remove()
-end

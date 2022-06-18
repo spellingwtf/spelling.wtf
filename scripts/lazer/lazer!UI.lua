@@ -160,6 +160,14 @@ api["MainBlur"].Size = 25
 api["MainBlur"].Parent = game:GetService("Lighting")
 api["MainBlur"].Enabled = false
 
+api["RemoveObject"] = function(objname)
+    api["SaveableObjects"][objname]["Object"]:Remove()
+    if api["SaveableObjects"][objname]["Type"] == "OptionsButton" then 
+        api["SaveableObjects"][objname]["ChildrenObject"].Name = "RemovedChildren"
+    end
+    api["SaveableObjects"][objname] = nil
+end
+
 api["CreateMainWindow"] = function(args)
     local windowapi = {}
     local lazerUI = Instance.new("ScreenGui")
@@ -310,12 +318,13 @@ api["CreateMainWindow"] = function(args)
     UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIGridLayout.CellPadding = UDim2.new(-0.00529999984, 0, 0, 0)
     UIGridLayout.CellSize = UDim2.new(0.0286052078, 0, 1, 0)
+    api["ObjectsThatCanBeSaved"]["GUIWindow"] = {["Object"] = ScaledGui, ["ChildrenObject"] = api.TabsFrame, ["Type"] = "Window", ["Api"] = windowapi}
+    return windowapi
 end
 
 api["CreateTab"] = function(args)
+    local tabapi = {}
     local currentexpandedbutton = nil
-    local windowapi = {}
-
     local Tab = Instance.new("ImageLabel")
     local Body = Instance.new("ImageLabel")
     local Title = Instance.new("TextLabel")
@@ -361,5 +370,6 @@ api["CreateTab"] = function(args)
         end
         child.Position = buttonscount[#buttonscount].Position + UDim2.new(-0.0184195992, 0, 0.0948199183, 0)
     end)
+    return tabapi
 end
 return api
