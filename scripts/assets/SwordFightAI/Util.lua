@@ -19,7 +19,7 @@ return {
 	GetClosestEnemy = function(p4)
 		local v2 = nil;
 		local v3 = math.huge;
-		for i, v in pairs(Players) do
+		for i, v in pairs(Players:GetChildren()) do
 			if v.Character then
 				local v5 = v.Character
 				if v5 ~= p4 then
