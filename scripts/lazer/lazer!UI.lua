@@ -105,9 +105,8 @@ local function makepath(path, justFolders)
 end
 
 local function getfile(path)
-    local actualpath = path:gsub("lazer/assets", "assets")
     local req = requestfunc({
-        Url = "https://spelling.wtf/scripts/lazer/"..actualpath,
+        Url = "https://spelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
         Method = "GET"
     })
     makepath(path)
@@ -123,7 +122,7 @@ local function getfile(path)
             textlabel.TextColor3 = Color3.new(1, 1, 1)
             textlabel.Position = UDim2.new(0, 0, 0, -36)
             textlabel.Parent = api.MainGui
-            repeat wait() until betterisfile(path)
+            repeat task.wait() until betterisfile(path)
             textlabel:Destroy()
         end)()
         writefile(path, req.Body)
