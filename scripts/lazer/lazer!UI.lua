@@ -155,6 +155,11 @@ api.UpdateHudEvent = Instance.new("BindableEvent")
 api.SelfDestructEvent = Instance.new("BindableEvent")
 api.LoadSettingsEvent = Instance.new("BindableEvent")
 
+api["MainBlur"] = Instance.new("BlurEffect")
+api["MainBlur"].Size = 25
+api["MainBlur"].Parent = game:GetService("Lighting")
+api["MainBlur"].Enabled = false
+
 api["CreateMainWindow"] = function(args)
     local windowapi = {}
     local lazerUI = Instance.new("ScreenGui")
@@ -172,7 +177,6 @@ api["CreateMainWindow"] = function(args)
     api.TabsFrame = Instance.new("ScrollingFrame")
     local UIGridLayout = Instance.new("UIGridLayout")
 
-    --Properties:
     lazerUI.Name = "osu!lazerUI"
     lazerUI.Parent = api.MainGui
     lazerUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -312,12 +316,10 @@ api["CreateTab"] = function(args)
     local currentexpandedbutton = nil
     local windowapi = {}
 
-    -- Instances:
     local Tab = Instance.new("ImageLabel")
     local Body = Instance.new("ImageLabel")
     local Title = Instance.new("TextLabel")
 
-    --Properties:
     Tab.Name = "Tab"
     Tab.Parent = api.TabsFrame
     Tab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
