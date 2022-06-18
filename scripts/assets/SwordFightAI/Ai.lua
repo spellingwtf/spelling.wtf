@@ -79,8 +79,9 @@ return function(p5)
 				for v25 = 1, 10 do
 					v23 = v23 + v1.FindBestAngle(p5, v14, v16);
 					if v24 == v23 then
+						local v26
 						if v18 then
-							local v26 = v23 + math.random(-10, 10);
+							v26 = v23 + math.random(-10, 10);
 						else
 							v26 = v23 + math.random(-2, 2);
 						end;
@@ -92,13 +93,15 @@ return function(p5)
 				end;
 			end;
 			local v27 = ((p5.PrimaryPart.Position - v14.PrimaryPart.Position).Unit - v14.Humanoid.MoveDirection).Magnitude < 1;
+			local v28
 			if v13 then
-				local v28 = 8;
+				v28 = 8;
 			else
 				v28 = 7;
 			end;
+			local v29
 			if v27 then
-				local v29 = 2;
+				v29 = 2;
 			else
 				v29 = 0;
 			end;
