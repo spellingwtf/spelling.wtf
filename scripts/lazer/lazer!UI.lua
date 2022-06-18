@@ -5,7 +5,6 @@ end
 local VERSION = "1"..(shared.lazerPrivate and " PRIVATE" or "")
 local customdir = (shared.lazerPrivate and "lazer/" or "lazer/")
 
-local cam = game:GetService("Workspace").CurrentCamera
 local getasset = getsynasset or getcustomasset or function(location) return "rbxasset://"..location end
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
     if tab.Method == "GET" then
@@ -39,31 +38,6 @@ local api = {
     ["SaveableObjects"] = {},
 }
 
-local function GetURL(scripturl)
-    if shared.lazerDeveloper then
-        if not betterisfile("lazer/"..scripturl) then
-            error("File not found : lazer/"..scripturl)
-        end
-        return readfile("lazer/"..scripturl)
-    else
-        local res = game:HttpGet("https://spelling.wtf/scripts/lazer/"..scripturl, true)
-        assert(res ~= "404: Not Found", "File not found")
-        return res
-    end
-end
-
-local function getprofile()
-    for i,v in pairs(api.Profiles) do
-        if v.Selected == true then
-            api.CurrentProfile = i
-        end
-    end
-end
-
-local holdingshift = false
-local capturedslider = nil
-local clickgui = {["Visible"] = true}
-
 local function randomString()
     local randomlength = math.random(10,100)
     local array = {}
@@ -82,16 +56,6 @@ api.findObjectInTable = function(temp, object)
         end
     end
     return false
-end
-
-local function RelativeXY(GuiObject, location)
-    local x, y = location.X - GuiObject.AbsolutePosition.X, location.Y - GuiObject.AbsolutePosition.Y
-    local x2 = 0
-    local xm, ym = GuiObject.AbsoluteSize.X, GuiObject.AbsoluteSize.Y
-    x2 = math.clamp(x, 4, xm - 6)
-    x = math.clamp(x, 0, xm)
-    y = math.clamp(y, 0, ym)
-    return x, y, x/xm, y/ym, x2/xm
 end
 
 if not game:IsLoaded() then
@@ -117,9 +81,13 @@ elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
 end
 
 local cachedassets = {}
-local function getcustomassetfunc(path)
-    if not betterisfile(path) then
-        spawn(function()
+local function getfile(path)
+    local req = requestfunc({
+        Url = "https://spelling.wtf/scripts/assets/"..path,
+        Method = "GET"
+    })
+    if not betterisfile(path) then --if file doesnt exist
+        coroutine.wrap(function()
             local textlabel = Instance.new("TextLabel")
             textlabel.Size = UDim2.new(1, 0, 0, 36)
             textlabel.Text = "Downloading "..path
@@ -132,15 +100,21 @@ local function getcustomassetfunc(path)
             textlabel.Parent = api.MainGui
             repeat wait() until betterisfile(path)
             textlabel:Remove()
-        end)
-        local req = requestfunc({
-            Url = "https://spelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
-            Method = "GET"
-        })
+        end)()
         writefile(path, req.Body)
         repeat task.wait() until betterisfile(path)
-        repeat task.wait() until readfile(path) == req.Body
+        repeat task.wait() until readfile(path) == req.Body --wait until its fully downloaded
+    elseif betterisfile(path) then
+        if readfile(path) ~= req.Body then --if outdated file
+            writefile(path, req.Body)
+            repeat task.wait() until betterisfile(path)
+            repeat task.wait() until readfile(path) == req.Body
+        end
     end
+end
+
+local function getcustomassetfunc(path)
+    getfile(path)
     if cachedassets[path] == nil then
         cachedassets[path] = getasset(path) 
     end
