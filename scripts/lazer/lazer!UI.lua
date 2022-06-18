@@ -44,7 +44,7 @@ end
 
 local holdingshift = false
 local capturedslider = nil
-local clickgui = {["Visible"] = true}
+local ClickGui = {["Visible"] = true}
 
 local function randomString()
     local randomlength = math.random(10,100)
@@ -152,14 +152,14 @@ ScaledGui.BackgroundTransparency = 1.000
 ScaledGui.BorderSizePixel = 0
 ScaledGui.Position = UDim2.new(0.5, 0, 0.5, 0)
 ScaledGui.Size = UDim2.new(1, 0, 1, 0)
-local clickgui = Instance.new("Frame")
-clickgui.Name = "ClickGui"
-clickgui.Size = UDim2.new(1, 0, 1, 0)
-clickgui.BackgroundTransparency = 1
-clickgui.BorderSizePixel = 0
-clickgui.BackgroundColor3 = Color3.fromRGB(79, 83, 166)
-clickgui.Visible = false
-clickgui.Parent = ScaledGui
+local ClickGui = Instance.new("Frame")
+ClickGui.Name = "ClickGui"
+ClickGui.Size = UDim2.new(1, 0, 1, 0)
+ClickGui.BackgroundTransparency = 1
+ClickGui.BorderSizePixel = 0
+ClickGui.BackgroundColor3 = Color3.fromRGB(79, 83, 166)
+ClickGui.Visible = false
+ClickGui.Parent = ScaledGui
 api["MainBlur"] = Instance.new("BlurEffect")
 api["MainBlur"].Size = 25
 api["MainBlur"].Parent = game:GetService("Lighting")
@@ -629,9 +629,9 @@ local holdingcontrol = false
 api["KeyInputHandler"] = game:GetService("UserInputService").InputBegan:connect(function(input1)
     if game:GetService("UserInputService"):GetFocusedTextBox() == nil then
         if input1.KeyCode == Enum.KeyCode[api["GUIKeybind"]] and api["KeybindCaptured"] == false then
-            clickgui.Visible = not clickgui.Visible
-            game:GetService("UserInputService").OverrideMouseIconBehavior = (clickgui.Visible and Enum.OverrideMouseIconBehavior.ForceShow or game:GetService("VRService").VREnabled and Enum.OverrideMouseIconBehavior.ForceHide or Enum.OverrideMouseIconBehavior.None)
-            api["MainBlur"].Enabled = clickgui.Visible	
+            ClickGui.Visible = not ClickGui.Visible
+            game:GetService("UserInputService").OverrideMouseIconBehavior = (ClickGui.Visible and Enum.OverrideMouseIconBehavior.ForceShow or game:GetService("VRService").VREnabled and Enum.OverrideMouseIconBehavior.ForceHide or Enum.OverrideMouseIconBehavior.None)
+            api["MainBlur"].Enabled = ClickGui.Visible	
         end
         if input1.KeyCode == Enum.KeyCode.LeftShift then
             holdingshift = true
