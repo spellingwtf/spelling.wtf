@@ -8,7 +8,7 @@ end;
 return function(p3, p4, p5)
 	local v1 = RaycastParams.new();
 	v1.FilterType = Enum.RaycastFilterType.Blacklist;
-	v1.FilterDescendantsInstances = { p3, workspace.Filter, p5, table.unpack(p4.Humanoid:GetAccessories()), workspace.Map };
+	v1.FilterDescendantsInstances = { p3, workspace.Filter, p5, table.unpack(p4.Humanoid:GetAccessories())--[[, workspace.Map]] };
 	local v2 = {};
 	local RightAppendage = p3:FindFirstChild("Right Arm") or p3:FindFirstChild("RightHand")
 	table.insert(v2, { workspace:Raycast(RightAppendage.Position, p3.PrimaryPart.CFrame.LookVector * 10, v1), 0 });
