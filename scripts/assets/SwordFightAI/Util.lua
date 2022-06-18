@@ -13,7 +13,7 @@ return {
 		v1.Anchored = true;
 	end, 
 	GetDist = function(p2, p3)
-		local RightAppendage = p2["Right Arm"] or p3.RightHand
+		local RightAppendage = p3:FindFirstChild("Right Arm") or p3:FindFirstChild("RightHand")
 		return (RightAppendage.Position - p3).Magnitude;
 	end, 
 	GetClosestEnemy = function(p4)
