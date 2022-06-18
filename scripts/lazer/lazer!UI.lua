@@ -138,9 +138,8 @@ local function getcustomassetfunc(path)
             Method = "GET"
         })
         writefile(path, req.Body)
-        repeat
-            task.wait()
-        until readfile(path) == req.Body
+        repeat task.wait() until betterisfile(path)
+        repeat task.wait() until readfile(path) == req.Body
     end
     if cachedassets[path] == nil then
         cachedassets[path] = getasset(path) 
