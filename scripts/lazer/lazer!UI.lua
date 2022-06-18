@@ -81,12 +81,27 @@ elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
 end
 
 local cachedassets = {}
+
+local function makepath(path, justFolders) 
+    local folders = path:split("/")
+    local pathCreating = ""
+    for i,v in next, folders do 
+        if not (#folders==i and not justFolders) then
+            if not isfolder(v) then 
+                pathCreating = pathCreating..v.."/"
+                makefolder(pathCreating)
+            end
+        end
+    end
+end
+
 local function getfile(path)
+    local actualpath = path:gsub("lazer/assets", "assets")
     local req = requestfunc({
-        Url = "https://spelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
+        Url = "https://spelling.wtf/scripts/lazer/"..actualpath,
         Method = "GET"
     })
-    print(path)
+    makepath(path, false)
     if not betterisfile(path) then --if file doesnt exist
         coroutine.wrap(function()
             local textlabel = Instance.new("TextLabel")
