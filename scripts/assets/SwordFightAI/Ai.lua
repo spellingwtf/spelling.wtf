@@ -1,4 +1,5 @@
 local v1 = {};
+local RenderStepped = game:GetService("RunService").RenderStepped
 
 local v4 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/SwordFightAI/FindBestAngle.lua"))()
 if typeof(v4) == "table" then
@@ -35,7 +36,7 @@ return function(p5)
 	if not v9 then
 		while true do
 			v9 = p5:FindFirstChildOfClass("Tool");
-			wait();
+			RenderStepped:Wait();
 			if v9 then
 				break;
 			end;		
@@ -46,7 +47,7 @@ return function(p5)
 	local v12 = 0;
 	local v13 = false;
 	while p5.PrimaryPart and l__Humanoid__7.Health > 0 do
-		v10 = v10 + game:GetService("RunService").RenderStepped:Wait();
+		v10 = v10 + RenderStepped:Wait();
 		local v14 = v1.GetClosestEnemy(p5);
 		if v14 then
 			local v15 = v1.GetClosestPart(v9.Handle.Position, v14);
