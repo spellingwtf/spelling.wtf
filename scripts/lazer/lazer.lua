@@ -53,13 +53,12 @@ if not (getasset and requestfunc and queueteleport) then
 	return
 end
 
-
---[[if shared.lazerExecuted then
+if shared.lazerExecuted then
 	error("lazer Already Injected")
 	return
 else
 	shared.lazerExecuted = true
-end]]
+end
 
 if isfolder(customdir:gsub("/", "")) == false then
 	makefolder(customdir:gsub("/", ""))
@@ -114,7 +113,7 @@ checkpublicrepo = function(id)
 			textlabel.Position = UDim2.new(0, 0, 0, -36)
 			textlabel.Parent = GuiLibrary["MainGui"]
 			task.wait(2)
-			textlabel:Remove()
+			textlabel:Destroy()
 		end)()
 		task.wait(2)
 		return checkpublicrepo(id)
@@ -132,7 +131,7 @@ local selfdestructsave = coroutine.create(function()
 	while task.wait(10) do
 		if GuiLibrary and injected then
 			if not injected then return end
-			--GuiLibrary["SaveSettings"]()
+			GuiLibrary["SaveSettings"]()
 		else
 			break
 		end
