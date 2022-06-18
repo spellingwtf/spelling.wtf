@@ -52,12 +52,13 @@ if not (getasset and requestfunc and queueteleport) then
 	return
 end
 
+--[[
 if shared.lazerExecuted then
 	error("lazer Already Injected")
 	return
 else
 	shared.lazerExecuted = true
-end
+end]]
 
 if isfolder(customdir:gsub("/", "")) == false then
 	makefolder(customdir:gsub("/", ""))
