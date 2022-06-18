@@ -155,7 +155,7 @@ return function(args)
 
     api["CreateMainWindow"] = function(args)
         local windowapi = {}
-        local osulazerUI = Instance.new("ScreenGui")
+        local lazerUI = Instance.new("ScreenGui")
         local ScaledGui = Instance.new("Frame")
         local BottomBar = Instance.new("ImageLabel")
         local Uninject = Instance.new("ImageButton")
@@ -171,12 +171,12 @@ return function(args)
         local UIGridLayout = Instance.new("UIGridLayout")
 
         --Properties:
-        osulazerUI.Name = "osu!lazerUI"
-        osulazerUI.Parent = api.MainGui
-        osulazerUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        lazerUI.Name = "osu!lazerUI"
+        lazerUI.Parent = api.MainGui
+        lazerUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
         ScaledGui.Name = "ScaledGui"
-        ScaledGui.Parent = osulazerUI
+        ScaledGui.Parent = lazerUI
         ScaledGui.AnchorPoint = Vector2.new(0.5, 0.5)
         ScaledGui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         ScaledGui.BackgroundTransparency = 1.000
