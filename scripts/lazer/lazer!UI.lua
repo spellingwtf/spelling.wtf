@@ -83,7 +83,7 @@ end
 local cachedassets = {}
 local function getfile(path)
     local req = requestfunc({
-        Url = "https://spelling.wtf/scripts/assets/"..path,
+        Url = "https://spelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
         Method = "GET"
     })
     if not betterisfile(path) then --if file doesnt exist
