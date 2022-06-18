@@ -179,9 +179,9 @@ local teleportfunc = game:GetService("Players").LocalPlayer.OnTeleport:Connect(f
 end)
 
 GuiLibrary["SelfDestruct"] = function()
-	spawn(function()
+	coroutine.wrap(function()
 		coroutine.close(selfdestructsave)
-	end)
+	end)()
 	injected = false
 	game:GetService("UserInputService").OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.None
 	for i,v in pairs(GuiLibrary["SaveableObjects"]) do
