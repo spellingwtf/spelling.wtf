@@ -87,6 +87,7 @@ elseif gethui then
 elseif game:GetService("CoreGui"):FindFirstChild('RobloxGui') then
     api.MainGui = game:GetService("CoreGui").RobloxGui
 end
+api.MainGui.Name = "lazer!UI"
 
 local cachedassets = {}
 
@@ -123,7 +124,7 @@ local function getfile(path)
             textlabel.Position = UDim2.new(0, 0, 0, -36)
             textlabel.Parent = api.MainGui
             repeat wait() until betterisfile(path)
-            textlabel:Remove()
+            textlabel:Destroy()
         end)()
         writefile(path, req.Body)
         repeat task.wait() until betterisfile(path)
@@ -142,7 +143,7 @@ local function getfile(path)
                 textlabel.Position = UDim2.new(0, 0, 0, -36)
                 textlabel.Parent = api.MainGui
                 repeat wait() until betterisfile(path)
-                textlabel:Remove()
+                textlabel:Destroy()
             end)()
             writefile(path, req.Body)
             repeat task.wait() until betterisfile(path)
@@ -163,13 +164,32 @@ api.UpdateHudEvent = Instance.new("BindableEvent")
 api.SelfDestructEvent = Instance.new("BindableEvent")
 api.LoadSettingsEvent = Instance.new("BindableEvent")
 
+local ScaledGui = Instance.new("Frame")
+ScaledGui.Name = "ScaledGui"
+ScaledGui.Parent = api.MainGui
+ScaledGui.AnchorPoint = Vector2.new(0.5, 0.5)
+ScaledGui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ScaledGui.BackgroundTransparency = 1.000
+ScaledGui.BorderSizePixel = 0
+ScaledGui.Position = UDim2.new(0.5, 0, 0.5, 0)
+ScaledGui.Size = UDim2.new(1, 0, 1, 0)
+local clickgui = Instance.new("Frame")
+clickgui.Name = "ClickGui"
+clickgui.Size = UDim2.new(1, 0, 1, 0)
+clickgui.BackgroundTransparency = 1
+clickgui.BorderSizePixel = 0
+clickgui.BackgroundColor3 = Color3.fromRGB(79, 83, 166)
+clickgui.Visible = false
+clickgui.Parent = ScaledGui
 api["MainBlur"] = Instance.new("BlurEffect")
 api["MainBlur"].Size = 25
 api["MainBlur"].Parent = game:GetService("Lighting")
 api["MainBlur"].Enabled = false
+api["MainRescale"] = Instance.new("UIScale")
+api["MainRescale"].Parent = ScaledGui
 
 api["RemoveObject"] = function(objname)
-    api["SaveableObjects"][objname]["Object"]:Remove()
+    api["SaveableObjects"][objname]["Object"]:Destroy()
     if api["SaveableObjects"][objname]["Type"] == "OptionsButton" then 
         api["SaveableObjects"][objname]["ChildrenObject"].Name = "RemovedChildren"
     end
@@ -428,8 +448,6 @@ end
 
 api["CreateMainWindow"] = function(args)
     local windowapi = {}
-    local lazerUI = Instance.new("ScreenGui")
-    local ScaledGui = Instance.new("Frame")
     local BottomBar = Instance.new("ImageLabel")
     local Uninject = Instance.new("ImageButton")
     local Text = Instance.new("TextLabel")
@@ -442,19 +460,6 @@ api["CreateMainWindow"] = function(args)
     local SearchInput = Instance.new("TextBox")
     api.TabsFrame = Instance.new("ScrollingFrame")
     local UIGridLayout = Instance.new("UIGridLayout")
-
-    lazerUI.Name = "osu!lazerUI"
-    lazerUI.Parent = api.MainGui
-    lazerUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-    ScaledGui.Name = "ScaledGui"
-    ScaledGui.Parent = lazerUI
-    ScaledGui.AnchorPoint = Vector2.new(0.5, 0.5)
-    ScaledGui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    ScaledGui.BackgroundTransparency = 1.000
-    ScaledGui.BorderSizePixel = 0
-    ScaledGui.Position = UDim2.new(0.5, 0, 0.5, 0)
-    ScaledGui.Size = UDim2.new(1, 0, 1, 0)
 
     BottomBar.Name = "BottomBar"
     BottomBar.Parent = ScaledGui
@@ -633,6 +638,14 @@ api["CreateTab"] = function(args)
     end)
     return tabapi
 end
+
+api["LoadedAnimation"] = function(enabled)
+    if enabled then
+        api["CreateNotification"]("Finished Loading", "Press "..string.upper(api["GUIKeybind"]).." to open GUI", 9.5)
+    end
+end
+
+local holdingcontrol = false
 
 api["KeyInputHandler"] = game:GetService("UserInputService").InputBegan:connect(function(input1)
     if game:GetService("UserInputService"):GetFocusedTextBox() == nil then
