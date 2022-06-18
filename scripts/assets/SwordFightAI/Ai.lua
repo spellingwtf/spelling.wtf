@@ -70,7 +70,7 @@ return function(p5)
 				p5:SetPrimaryPartCFrame(u2(l__PrimaryPart__8.Position, v16.Handle.Position + v14.PrimaryPart.CFrame.LookVector * v16.Handle.Size.Y * 2.2));
 			else
 				if v9.Parent ~= p5 then
-					v9.Equip:FireServer();
+					print("please equip sword")
 				end;
 				v9.Parent = p5;
 				p5:SetPrimaryPartCFrame(CFrame.lookAt(l__PrimaryPart__8.Position, v15.Position - Vector3.new(0, v15.Position.Y - l__PrimaryPart__8.Position.Y, 0)) * CFrame.Angles(0, math.rad(17.5), 0));
