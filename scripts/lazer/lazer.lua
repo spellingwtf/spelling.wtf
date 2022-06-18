@@ -95,7 +95,7 @@ local checkpublicreponum = 0
 local checkpublicrepo
 checkpublicrepo = function(id)
 	local suc, req = pcall(function() return requestfunc({
-		Url = "https://spelling.wtf/scripts/lazer/CustomModules/"..id..".lua",
+		Url = "https://spelling.wtf/scripts/lazer/CustomModules/lazer!"..id..".lua",
 		Method = "GET"
 	}) end)
 	if not suc then
