@@ -59,7 +59,7 @@ return {
 		local v14 = RaycastParams.new();
 		v14.FilterType = Enum.RaycastFilterType.Blacklist;
 		local characters = {}
-		for i, v in pairs(Players) do
+		for i, v in pairs(Players:GetChildren()) do
 			if v.Character then
 				table.insert(characters, v)
 			end
@@ -85,7 +85,7 @@ return {
 		local v21 = RaycastParams.new();
 		v21.FilterType = Enum.RaycastFilterType.Blacklist;
 		local characters = {}
-		for i, v in pairs(Players) do
+		for i, v in pairs(Players:GetChildren()) do
 			if v.Character then
 				table.insert(characters, v)
 			end
