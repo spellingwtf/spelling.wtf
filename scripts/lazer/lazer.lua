@@ -197,6 +197,8 @@ GuiLibrary["SelfDestruct"] = function()
 	shared.lazerIndependent = nil
 	shared.lazerManualLoad = nil
 	shared.CustomSavelazer = nil
+    GuiLibrary["KeyInputHandler"]:Disconnect()
+	GuiLibrary["KeyInputHandler2"]:Disconnect()
 	teleportfunc:Disconnect()
 	GuiLibrary["MainGui"]:Destroy()
 	GuiLibrary["MainBlur"]:Destroy()

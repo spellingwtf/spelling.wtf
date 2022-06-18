@@ -42,6 +42,10 @@ local function getprofile()
     end
 end
 
+local holdingshift = false
+local capturedslider = nil
+local clickgui = {["Visible"] = true}
+
 local function randomString()
     local randomlength = math.random(10,100)
     local array = {}
@@ -629,4 +633,36 @@ api["CreateTab"] = function(args)
     end)
     return tabapi
 end
+api["KeyInputHandler"] = game:GetService("UserInputService").InputBegan:connect(function(input1)
+    if game:GetService("UserInputService"):GetFocusedTextBox() == nil then
+        if input1.KeyCode == Enum.KeyCode[api["GUIKeybind"]] and api["KeybindCaptured"] == false then
+            clickgui.Visible = not clickgui.Visible
+            game:GetService("UserInputService").OverrideMouseIconBehavior = (clickgui.Visible and Enum.OverrideMouseIconBehavior.ForceShow or game:GetService("VRService").VREnabled and Enum.OverrideMouseIconBehavior.ForceHide or Enum.OverrideMouseIconBehavior.None)
+            api["MainBlur"].Enabled = clickgui.Visible	
+        end
+        if input1.KeyCode == Enum.KeyCode.LeftShift then
+            holdingshift = true
+        end
+        if api["KeybindCaptured"] and input1.KeyCode ~= Enum.KeyCode.LeftShift then
+            local hah = string.gsub(tostring(input1.KeyCode), "Enum.KeyCode.", "")
+            api["PressedKeybindKey"] = (hah ~= "Unknown" and hah or "")
+        end
+        for modules,aapi in pairs(api["SaveableObjects"]) do
+            if (aapi["Type"] == "OptionsButton" or aapi["Type"] == "Button") and (aapi["Api"]["Keybind"] ~= nil and aapi["Api"]["Keybind"] ~= "") and api["KeybindCaptured"] == false then
+                if input1.KeyCode == Enum.KeyCode[aapi["Api"]["Keybind"]] and aapi["Api"]["Keybind"] ~= api["GUIKeybind"] then
+                    aapi["Api"]["ToggleButton"](false)
+                    if api["ToggleNotifications"] then
+                        api["CreateNotification"]("Module Toggled", aapi["Api"]["Name"]..' <font color="#FFFFFF">has been</font> <font color="'..(aapi["Api"]["Enabled"] and '#32CD32' or '#FF6464')..'">'..(aapi["Api"]["Enabled"] and "Enabled" or "Disabled")..'</font><font color="#FFFFFF">!</font>', 1)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+api["KeyInputHandler2"] = game:GetService("UserInputService").InputEnded:connect(function(input1)
+    if input1.KeyCode == Enum.KeyCode.LeftShift then
+        holdingshift = false
+    end
+end)
 return api
