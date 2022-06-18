@@ -106,6 +106,20 @@ local function getfile(path)
         repeat task.wait() until readfile(path) == req.Body --wait until its fully downloaded
     elseif betterisfile(path) then
         if readfile(path) ~= req.Body then --if outdated file
+            coroutine.wrap(function()
+                local textlabel = Instance.new("TextLabel")
+                textlabel.Size = UDim2.new(1, 0, 0, 36)
+                textlabel.Text = "Updating "..path
+                textlabel.BackgroundTransparency = 1
+                textlabel.TextStrokeTransparency = 0
+                textlabel.TextSize = 30
+                textlabel.Font = Enum.Font.SourceSans
+                textlabel.TextColor3 = Color3.new(1, 1, 1)
+                textlabel.Position = UDim2.new(0, 0, 0, -36)
+                textlabel.Parent = api.MainGui
+                repeat wait() until betterisfile(path)
+                textlabel:Remove()
+            end)()
             writefile(path, req.Body)
             repeat task.wait() until betterisfile(path)
             repeat task.wait() until readfile(path) == req.Body
