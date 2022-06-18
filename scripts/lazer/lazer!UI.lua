@@ -84,11 +84,11 @@ local cachedassets = {}
 
 local function makepath(path, justFolders) 
     local folders = path:split("/")
-    local pathCreating = ""
+    local pathCreating=""
     for i,v in next, folders do 
         if not (#folders==i and not justFolders) then
-            if not isfolder(v) then 
-                pathCreating = pathCreating..v.."/"
+            pathCreating = pathCreating..v.."/"
+            if not isfolder(pathCreating) then 
                 makefolder(pathCreating)
             end
         end
