@@ -1,7 +1,3 @@
-if shared.lazerExecuted == true then 
-    return
-end
-
 local VERSION = "1"..(shared.lazerPrivate and " PRIVATE" or "")
 local customdir = (shared.lazerPrivate and "lazer/" or "lazer/")
 
