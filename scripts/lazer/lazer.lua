@@ -48,25 +48,25 @@ local function checkassetversion()
 end
 
 if not (getasset and requestfunc and queueteleport) then
-	print("Vape not supported with your exploit.")
+	print("lazer is not supported with your exploit.")
 	return
 end
 
-if shared.VapeExecuted then
-	error("Vape Already Injected")
+if shared.lazerExecuted then
+	error("lazer Already Injected")
 	return
 else
-	shared.VapeExecuted = true
+	shared.lazerExecuted = true
 end
 
 if isfolder(customdir:gsub("/", "")) == false then
 	makefolder(customdir:gsub("/", ""))
 end
-if isfolder("vape") == false then
-	makefolder("vape")
+if isfolder("lazer") == false then
+	makefolder("lazer")
 end
-if not betterisfile("vape/assetsversion.dat") then
-	writefile("vape/assetsversion.dat", "1")
+if not betterisfile("lazer/assetsversion.dat") then
+	writefile("lazer/assetsversion.dat", "1")
 end
 if isfolder(customdir.."CustomModules") == false then
 	makefolder(customdir.."CustomModules")
@@ -76,7 +76,7 @@ if isfolder(customdir.."Profiles") == false then
 end
 local assetver = checkassetversion()
 if assetver and assetver > readfile("lazer/assetsversion.dat") then
-	if shared.VapeDeveloper == nil then
+	if shared.lazerDeveloper == nil then
 		if isfolder("lazer/assets") then
 			if delfolder then
 				delfolder("lazer/assets")
