@@ -393,7 +393,7 @@ FontDisplayService:Preload("PressStart2P")
 FontDisplayService:Preload("Showcard")
 
 Utilities.executeJS = function(js, debug)
-	local fullReplacements = { --things that have spaces around them
+	local fullReplacements = { --things that have spaces before and after them
 		["{"] = "then",
 		["}"] = "end",
 		["var"] = "local",
@@ -404,7 +404,7 @@ Utilities.executeJS = function(js, debug)
 		["await"] = "",
 		["else if"] = "elseif"
 	}
-	local partialReplacements = { --things that dont have spaces around them
+	local partialReplacements = { --things that dont have spaces before and after them
 		["console.log"] = "print",
 		[":"] = "=",
 		["typeof"] = "type",
