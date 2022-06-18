@@ -34,6 +34,14 @@ local api = {
     ["SaveableObjects"] = {},
 }
 
+local function getprofile()
+    for i,v in pairs(api["Profiles"]) do
+        if v["Selected"] then
+            api["CurrentProfile"] = i
+        end
+    end
+end
+
 local function randomString()
     local randomlength = math.random(10,100)
     local array = {}
@@ -162,6 +170,256 @@ api["RemoveObject"] = function(objname)
         api["SaveableObjects"][objname]["ChildrenObject"].Name = "RemovedChildren"
     end
     api["SaveableObjects"][objname] = nil
+end
+
+api["SaveSettings"] = function()
+    if loadedsuccessfully then
+        writefile(customdir.."Profiles/"..(shared.CustomSavelazer or game.PlaceId)..".lazerprofiles.txt", game:GetService("HttpService"):JSONEncode(api["Profiles"]))
+        local WindowTable = {}
+        for i,v in pairs(api["SaveableObjects"]) do
+            if v["Type"] == "Window" then
+                WindowTable[i] = {["Type"] = "Window", ["Visible"] = v["Object"].Visible, ["Expanded"] = v["ChildrenObject"].Visible, ["Position"] = {v["Object"].Position.X.Scale, v["Object"].Position.X.Offset, v["Object"].Position.Y.Scale, v["Object"].Position.Y.Offset}}
+            end
+            if v["Type"] == "CustomWindow" then
+                if v["Api"]["Bypass"] then
+                    api["Settings"][i] = {["Type"] = "CustomWindow", ["Visible"] = v["Object"].Visible, ["Pinned"] = v["Api"]["Pinned"], ["Position"] = {v["Object"].Position.X.Scale, v["Object"].Position.X.Offset, v["Object"].Position.Y.Scale, v["Object"].Position.Y.Offset}}
+                else
+                    WindowTable[i] = {["Type"] = "CustomWindow", ["Visible"] = v["Object"].Visible, ["Pinned"] = v["Api"]["Pinned"], ["Position"] = {v["Object"].Position.X.Scale, v["Object"].Position.X.Offset, v["Object"].Position.Y.Scale, v["Object"].Position.Y.Offset}}
+                end
+            end
+            if (v["Type"] == "ButtonMain" or v["Type"] == "ToggleMain") then
+                WindowTable[i] = {["Type"] = "ButtonMain", ["Enabled"] = v["Api"]["Enabled"], ["Keybind"] = v["Api"]["Keybind"]}
+            end
+            if v["Type"] == "ColorSliderMain" then
+                WindowTable[i] = {["Type"] = "ColorSliderMain", ["Value"] = v["Api"]["Value"], ["RainbowValue"] = v["Api"]["RainbowValue"]}
+            end
+            if v["Type"] == "SliderMain" then
+                WindowTable[i] = {["Type"] = "SliderMain", ["Value"] = v["Api"]["Value"]}
+            end
+            if (v["Type"] == "Button" or v["Type"] == "Toggle" or v["Type"] == "ExtrasButton" or v["Type"] == "TargetButton") then
+                api["Settings"][i] = {["Type"] = "Button", ["Enabled"] = v["Api"]["Enabled"], ["Keybind"] = v["Api"]["Keybind"]}
+            end
+            if (v["Type"] == "OptionsButton" or v["Type"] == "ExtrasButton") then
+                api["Settings"][i] = {["Type"] = "OptionsButton", ["Enabled"] = v["Api"]["Enabled"], ["Keybind"] = v["Api"]["Keybind"]}
+            end
+            if v["Type"] == "TextList" then
+                api["Settings"][i] = {["Type"] = "TextList", ["ObjectTable"] = v["Api"]["ObjectList"]}
+            end
+            if v["Type"] == "TextCircleList" then
+                api["Settings"][i] = {["Type"] = "TextCircleList", ["ObjectTable"] = v["Api"]["ObjectList"], ["ObjectTableEnabled"] = v["Api"]["ObjectListEnabled"]}
+            end
+            if v["Type"] == "TextBox" then
+                api["Settings"][i] = {["Type"] = "TextBox", ["Value"] = v["Api"]["Value"]}
+            end
+            if v["Type"] == "Dropdown" then
+                api["Settings"][i] = {["Type"] = "Dropdown", ["Value"] = v["Api"]["Value"]}
+            end
+            if v["Type"] == "Slider" then
+                api["Settings"][i] = {["Type"] = "Slider", ["Value"] = v["Api"]["Value"], ["OldMax"] = v["Api"]["Max"], ["OldDefault"] = v["Api"]["Default"]}
+            end
+            if v["Type"] == "TwoSlider" then
+                api["Settings"][i] = {["Type"] = "TwoSlider", ["Value"] = v["Api"]["Value"], ["Value2"] = v["Api"]["Value2"], ["SliderPos1"] = (v["Object"]:FindFirstChild("Slider") and v["Object"].Slider.ButtonSlider.Position.X.Scale or 0), ["SliderPos2"] = (v["Object"]:FindFirstChild("Slider") and v["Object"].Slider.ButtonSlider2.Position.X.Scale or 0)}
+            end
+            if v["Type"] == "ColorSlider" then
+                api["Settings"][i] = {["Type"] = "ColorSlider", ["Hue"] = v["Api"]["Hue"], ["Sat"] = v["Api"]["Sat"], ["Value"] = v["Api"]["Value"], ["RainbowValue"] = v["Api"]["RainbowValue"]}
+            end
+        end
+        WindowTable["GUIKeybind"] = {["Type"] = "GUIKeybind", ["Value"] = api["GUIKeybind"]}
+        writefile(customdir.."Profiles/"..(api["CurrentProfile"] == "default" and "" or api["CurrentProfile"])..(shared.CustomSavelazer or game.PlaceId)..".lazerprofile.txt", game:GetService("HttpService"):JSONEncode(api["Settings"]))
+        writefile(customdir.."Profiles/"..(game.GameId).."GUIPositions.lazerprofile.txt", game:GetService("HttpService"):JSONEncode(WindowTable))
+    end
+end
+
+api["LoadSettings"] = function(customprofile)
+    if identifyexecutor and identifyexecutor():find("ScriptWare") == nil and listfiles then
+        for i,v in pairs(listfiles(customdir.."Profiles")) do 
+            local newstr = v:gsub(customdir.."Profiles", ""):sub(2, v:len())
+            local ext = (v:len() >= 12 and v:sub(v:len() - 12, v:len()))
+            if (ext and ext:find("lazerprofile") and ext:find("txt") == nil) then
+                writefile(customdir.."Profiles/"..newstr..".txt", readfile(customdir.."Profiles/"..newstr))
+                if delfile then
+                    delfile(customdir.."Profiles/"..newstr)
+                end
+            end
+        end
+    end
+    if betterisfile("lazer/Profiles/GUIPositions.lazerprofile.txt") and game.GameId == 2619619496 then
+        writefile("lazer/Profiles/"..(game.GameId).."GUIPositions.lazerprofile.txt", readfile("lazer/Profiles/GUIPositions.lazerprofile.txt"))
+        if delfile then delfile("lazer/Profiles/GUIPositions.lazerprofile.txt") end
+    end
+    if shared.lazerPrivate then
+        if betterisfile("lazerprivate/Profiles/"..(game.GameId).."GUIPositions.lazerprofile.txt") == false and betterisfile("lazer/Profiles/"..(game.GameId).."GUIPositions.lazerprofile.txt") then
+            writefile("lazerprivate/Profiles/"..(game.GameId).."GUIPositions.lazerprofile.txt", readfile("lazer/Profiles/"..(game.GameId).."GUIPositions.lazerprofile.txt"))
+        end
+        if betterisfile("lazerprivate/Profiles/"..(shared.CustomSavelazer or game.PlaceId)..".lazerprofiles.txt") == false and betterisfile("lazer/Profiles/"..(shared.CustomSavelazer or game.PlaceId)..".lazerprofiles.txt") then
+            writefile("lazerprivate/Profiles/"..(shared.CustomSavelazer or game.PlaceId)..".lazerprofiles.txt", readfile("lazer/Profiles/"..(shared.CustomSavelazer or game.PlaceId)..".lazerprofiles.txt"))
+        end
+        if betterisfile("lazerprivate/Profiles/"..(api["CurrentProfile"] == "default" and "" or api["CurrentProfile"])..(shared.CustomSavelazer or game.PlaceId)..".lazerprofile.txt") == false and betterisfile("lazer/Profiles/"..(api["CurrentProfile"] == "default" and "" or api["CurrentProfile"])..(shared.CustomSavelazer or game.PlaceId)..".lazerprofile.txt") then
+            writefile("lazerprivate/Profiles/"..(api["CurrentProfile"] == "default" and "" or api["CurrentProfile"])..(shared.CustomSavelazer or game.PlaceId)..".lazerprofile.txt", readfile("lazer/Profiles/"..(api["CurrentProfile"] == "default" and "" or api["CurrentProfile"])..(shared.CustomSavelazer or game.PlaceId)..".lazerprofile.txt"))
+        end
+    end
+    local success2, result2 = pcall(function()
+        return game:GetService("HttpService"):JSONDecode(readfile(customdir.."Profiles/"..(shared.CustomSavelazer or game.PlaceId)..".lazerprofiles.txt"))
+    end)
+    if success2 and type(result2) == "table" then
+        api["Profiles"] = result2
+    end
+    getprofile()
+    if customprofile then 
+        api["Profiles"][api["CurrentProfile"]]["Selected"] = false
+        api["Profiles"][customprofile] = api["Profiles"][customprofile] or {["Keybind"] = "", ["Selected"] = true}
+        api["CurrentProfile"] = customprofile
+    end
+    local success3, result3 = pcall(function()
+        return game:GetService("HttpService"):JSONDecode(readfile(customdir.."Profiles/"..(game.GameId).."GUIPositions.lazerprofile.txt"))
+    end)
+    if success3 and type(result3) == "table" then
+        for i,v in pairs(result3) do
+            local obj = api["SaveableObjects"][i]
+            if obj then
+                if v["Type"] == "Window" then
+                    obj["Object"].Position = UDim2.new(v["Position"][1], v["Position"][2], v["Position"][3], v["Position"][4])
+                    obj["Object"].Visible = v["Visible"]
+                    if v["Expanded"] then
+                        obj["Api"]["ExpandToggle"]()
+                    end
+                end
+                if v["Type"] == "CustomWindow" then
+                    obj["Object"].Position = UDim2.new(v["Position"][1], v["Position"][2], v["Position"][3], v["Position"][4])
+                    obj["Object"].Visible = v["Visible"]
+                    if v["Pinned"] then
+                        obj["Api"]["PinnedToggle"]()
+                    end
+                    obj["Api"]["CheckVis"]()
+                end
+                if v["Type"] == "ButtonMain" then
+                    if obj["Type"] == "ToggleMain" then
+                        obj["Api"]["ToggleButton"](v["Enabled"], true)
+                        if v["Keybind"] ~= "" then
+                            obj["Api"]["Keybind"] = v["Keybind"]
+                        end
+                    else
+                        if v["Enabled"] then
+                            obj["Api"]["ToggleButton"](false)
+                            if v["Keybind"] ~= "" then
+                                obj["Api"]["SetKeybind"](v["Keybind"])
+                            end
+                        end
+                    end
+                end
+                if v["Type"] == "ColorSliderMain" then
+                    obj["Api"]["SetValue"](v["Value"])
+                    obj["Api"]["SetRainbow"](v["RainbowValue"])
+                --	obj["Object"].Slider.ButtonSlider.Position = UDim2.new(math.clamp(v["Value"], 0.02, 0.95), -7, 0, -7)
+                end
+                if v["Type"] == "SliderMain" then
+                    obj["Api"]["SetValue"](v["Value"])
+                --	obj["Object"].Slider.ButtonSlider.Position = UDim2.new(math.clamp(v["Value"], 0.02, 0.95), -7, 0, -7)
+                end
+            end
+            if v["Type"] == "GUIKeybind" then
+                api["GUIKeybind"] = v["Value"]
+            end
+        end
+    end
+    local success, result = pcall(function()
+        return game:GetService("HttpService"):JSONDecode(readfile(customdir.."Profiles/"..(api["CurrentProfile"] == "default" and "" or api["CurrentProfile"])..(shared.CustomSavelazer or game.PlaceId)..".lazerprofile.txt"))
+    end)
+    if success and type(result) == "table" then
+        api["LoadSettingsEvent"]:Fire(result)
+        for i,v in pairs(result) do
+            if v["Type"] == "Custom" and api["Settings"][i] then
+                api["Settings"][i] = v
+            end
+            local obj = api["SaveableObjects"][i]
+            if obj then
+                if v["Type"] == "Dropdown" then
+                    obj["Api"]["SetValue"](v["Value"])
+                end
+                if v["Type"] == "CustomWindow" then
+                    obj["Object"].Position = UDim2.new(v["Position"][1], v["Position"][2], v["Position"][3], v["Position"][4])
+                    obj["Object"].Visible = v["Visible"]
+                    if v["Pinned"] then
+                        obj["Api"]["PinnedToggle"]()
+                    end
+                    obj["Api"]["CheckVis"]()
+                end
+                if v["Type"] == "Button" then
+                    if obj["Type"] == "Toggle" then
+                        obj["Api"]["ToggleButton"](v["Enabled"], true)
+                        if v["Keybind"] ~= "" then
+                            obj["Api"]["Keybind"] = v["Keybind"]
+                        end
+                    elseif obj["Type"] == "TargetButton" then
+                        obj["Api"]["ToggleButton"](v["Enabled"], true)
+                    else
+                        if v["Enabled"] then
+                            obj["Api"]["ToggleButton"](false)
+                            if v["Keybind"] ~= "" then
+                                obj["Api"]["SetKeybind"](v["Keybind"])
+                            end
+                        end
+                    end
+                end
+                if v["Type"] == "NewToggle" then
+                    obj["Api"]["ToggleButton"](v["Enabled"], true)
+                    if v["Keybind"] ~= "" then
+                        obj["Api"]["Keybind"] = v["Keybind"]
+                    end
+                end
+                if v["Type"] == "Slider" then
+                    obj["Api"]["SetValue"](v["OldMax"] ~= obj["Api"]["Max"] and v["Value"] > obj["Api"]["Max"] and obj["Api"]["Max"] or (v["OldDefault"] ~= obj["Api"]["Default"] and v["Value"] == v["OldDefault"] and obj["Api"]["Default"] or v["Value"]))
+                end
+                if v["Type"] == "TextBox" then
+                    obj["Api"]["SetValue"](v["Value"])
+                end
+                if v["Type"] == "TextList" then
+                    obj["Api"]["RefreshValues"]((v["ObjectTable"] or {}))
+                end
+                if v["Type"] == "TextCircleList" then
+                    obj["Api"]["RefreshValues"]((v["ObjectTable"] or {}), (v["ObjectTableEnabled"] or {}))
+                end
+                if v["Type"] == "TwoSlider" then
+                    obj["Api"]["SetValue"](v["Value"] == obj["Api"]["Min"] and 0 or v["Value"])
+                    obj["Api"]["SetValue2"](v["Value2"])
+                    obj["Object"].Slider.ButtonSlider.Position = UDim2.new(v["SliderPos1"], -8, 1, -9)
+                    obj["Object"].Slider.ButtonSlider2.Position = UDim2.new(v["SliderPos2"], -8, 1, -9)
+                    obj["Object"].Slider.FillSlider.Size = UDim2.new(0, obj["Object"].Slider.ButtonSlider2.AbsolutePosition.X - obj["Object"].Slider.ButtonSlider.AbsolutePosition.X, 1, 0)
+                    obj["Object"].Slider.FillSlider.Position = UDim2.new(obj["Object"].Slider.ButtonSlider.Position.X.Scale, 0, 0, 0)
+                    --obj["Object"].Slider.FillSlider.Size = UDim2.new((v["Value"] < obj["Api"]["Max"] and v["Value"] or obj["Api"]["Max"]) / obj["Api"]["Max"], 0, 1, 0)
+                end
+                if v["Type"] == "ColorSlider" then
+                    v["Hue"] = v["Hue"] or 0.44
+                    v["Sat"] = v["Sat"] or 1
+                    v["Value"] = v["Value"] or 1
+                    obj["Api"]["SetValue"](v["Hue"], v["Sat"], v["Value"])
+                    obj["Api"]["SetRainbow"](v["RainbowValue"])
+                    obj["Object"].Slider.ButtonSlider.Position = UDim2.new(math.clamp(v["Hue"], 0.02, 0.95), -9, 0, -7)
+                    pcall(function()
+                        obj["Object2"].Slider.ButtonSlider.Position = UDim2.new(math.clamp(v["Sat"], 0.02, 0.95), -9, 0, -7)
+                        obj["Object3"].Slider.ButtonSlider.Position = UDim2.new(math.clamp(v["Value"], 0.02, 0.95), -9, 0, -7)
+                    end)
+                end
+            end
+        end
+        for i,v in pairs(result) do
+            local obj = api["SaveableObjects"][i]
+            if obj then 
+                if v["Type"] == "OptionsButton" then
+                    if v["Enabled"] then
+                        --print(api["SaveableObjects"][i]["Api"]["ToggleButton"], i, v["Enabled"])
+                        --local time = tick()
+                        api["SaveableObjects"][i]["Api"]["ToggleButton"](false)
+                        --print('Loaded '..i..' in '..tick() - time)
+                    end
+                    if v["Keybind"] ~= "" then
+                        api["SaveableObjects"][i]["Api"]["SetKeybind"](v["Keybind"])
+                    end
+                end
+            end
+        end
+    end
+    loadedsuccessfully = true
 end
 
 api["CreateMainWindow"] = function(args)
