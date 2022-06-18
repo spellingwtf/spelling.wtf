@@ -165,4 +165,7 @@ local selfdestructsave = coroutine.create(function()
 	end
 end)
 
-local Gui = GuiLibrary.CreateMainWindow()
+local Gui = GuiLibrary.CreateMainWindow({
+    Title = "testing",
+    Description = "this is a test GUI"
+})
