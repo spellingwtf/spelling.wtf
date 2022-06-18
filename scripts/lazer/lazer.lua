@@ -160,3 +160,45 @@ GuiLibrary.CreateTab({
     Title = "Miscellaneous",
     Color = "Orange"
 })
+
+local teleportfunc = game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
+    if State == Enum.TeleportState.Started and not shared.VapeIndependent then
+		local teleportstr = 'shared.VapeSwitchServers = true if shared.VapeDeveloper then loadstring(readfile("vape/NewMainScript.lua"))() else loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))() end'
+		if shared.VapeDeveloper then
+			teleportstr = 'shared.VapeDeveloper = true '..teleportstr
+		end
+		if shared.VapePrivate then
+			teleportstr = 'shared.VapePrivate = true '..teleportstr
+		end
+		if shared.VapeCustomProfile then 
+			teleportstr = "shared.VapeCustomProfile = '"..shared.VapeCustomProfile.."'"..teleportstr
+		end
+		GuiLibrary["SaveSettings"]()
+		queueteleport(teleportstr)
+    end
+end)
+
+GuiLibrary["SelfDestruct"] = function()
+	spawn(function()
+		coroutine.close(selfdestructsave)
+	end)
+	injected = false
+	game:GetService("UserInputService").OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.None
+	for i,v in pairs(GuiLibrary["ObjectsThatCanBeSaved"]) do
+		if (v["Type"] == "Button" or v["Type"] == "OptionsButton") and v["Api"]["Enabled"] then
+			v["Api"]["ToggleButton"](false)
+		end
+	end
+	GuiLibrary["SelfDestructEvent"]:Fire()
+	shared.VapeExecuted = nil
+	shared.VapePrivate = nil
+	shared.VapeFullyLoaded = nil
+	shared.VapeSwitchServers = nil
+	shared.GuiLibrary = nil
+	shared.VapeIndependent = nil
+	shared.VapeManualLoad = nil
+	shared.CustomSaveVape = nil
+	teleportfunc:Disconnect()
+	GuiLibrary["MainGui"]:Destroy()
+	GuiLibrary["MainBlur"]:Destroy()
+end

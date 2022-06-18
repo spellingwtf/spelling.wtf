@@ -214,6 +214,9 @@ api["CreateMainWindow"] = function(args)
     Uninject.Position = UDim2.new(0.805205405, 0, 0.207081825, 0)
     Uninject.Size = UDim2.new(0.170235306, 0, 0.258933187, 0)
     Uninject.Image = getcustomassetfunc("lazer/assets/BottomBar/bluebutton.png")
+    Uninject.MouseButton1Click:Connect(function()
+        api["SelfDestruct"]()
+    end)
 
     Text.Name = "Text"
     Text.Parent = Uninject
