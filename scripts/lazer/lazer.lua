@@ -148,10 +148,14 @@ GuiLibrary.CreateTab({
     Color = "Blue"
 })
 GuiLibrary.CreateTab({
-    Title = "Fighting",
-    Color = "Blue"
+    Title = "Blatant",
+    Color = "Red"
 })
 GuiLibrary.CreateTab({
-    Title = "Fighting",
-    Color = "Blue"
+    Title = "Utilities",
+    Color = "Lime"
+})
+GuiLibrary.CreateTab({
+    Title = "Miscellaneous",
+    Color = "Orange"
 })
