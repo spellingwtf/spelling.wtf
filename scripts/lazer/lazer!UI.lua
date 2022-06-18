@@ -101,7 +101,7 @@ local function getfile(path)
         Url = "https://spelling.wtf/scripts/lazer/"..actualpath,
         Method = "GET"
     })
-    makepath(path, false)
+    makepath(path)
     if not betterisfile(path) then --if file doesnt exist
         coroutine.wrap(function()
             local textlabel = Instance.new("TextLabel")
