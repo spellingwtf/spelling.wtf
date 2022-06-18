@@ -116,7 +116,7 @@ return function(p5)
 				v30 = v30 + 2;
 			end;
 			if v19 < 15 then
-				v9.Use:FireServer();
+				mouse1click()
 			end;
 			if v20 > 8 and p5.Humanoid.Health < v14.Humanoid.Health then
 				v30 = v30 + 10;
