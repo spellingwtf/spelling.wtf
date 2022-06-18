@@ -321,7 +321,7 @@ api["CreateMainWindow"] = function(args)
     UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIGridLayout.CellPadding = UDim2.new(-0.00529999984, 0, 0, 0)
     UIGridLayout.CellSize = UDim2.new(0.0286052078, 0, 1, 0)
-    api["ObjectsThatCanBeSaved"]["GUIWindow"] = {["Object"] = ScaledGui, ["ChildrenObject"] = api.TabsFrame, ["Type"] = "Window", ["Api"] = windowapi}
+    api["SaveableObjects"]["GUIWindow"] = {["Object"] = ScaledGui, ["ChildrenObject"] = api.TabsFrame, ["Type"] = "Window", ["Api"] = windowapi}
     return windowapi
 end
 

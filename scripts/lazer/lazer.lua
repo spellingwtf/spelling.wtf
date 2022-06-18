@@ -162,16 +162,16 @@ GuiLibrary.CreateTab({
 })
 
 local teleportfunc = game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
-    if State == Enum.TeleportState.Started and not shared.VapeIndependent then
-		local teleportstr = 'shared.VapeSwitchServers = true if shared.VapeDeveloper then loadstring(readfile("vape/NewMainScript.lua"))() else loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))() end'
-		if shared.VapeDeveloper then
-			teleportstr = 'shared.VapeDeveloper = true '..teleportstr
+    if State == Enum.TeleportState.Started and not shared.lazerIndependent then
+		local teleportstr = 'shared.lazerSwitchServers = true if shared.lazerDeveloper then loadstring(readfile("lazer/lazer.lua"))() else loadstring(game:HttpGet("https://spelling.wtf/scripts/lazer/lazer.lua", true))() end'
+		if shared.lazerDeveloper then
+			teleportstr = 'shared.lazerDeveloper = true '..teleportstr
 		end
-		if shared.VapePrivate then
-			teleportstr = 'shared.VapePrivate = true '..teleportstr
+		if shared.lazerPrivate then
+			teleportstr = 'shared.lazerPrivate = true '..teleportstr
 		end
-		if shared.VapeCustomProfile then 
-			teleportstr = "shared.VapeCustomProfile = '"..shared.VapeCustomProfile.."'"..teleportstr
+		if shared.lazerCustomProfile then 
+			teleportstr = "shared.lazerCustomProfile = '"..shared.lazerCustomProfile.."'"..teleportstr
 		end
 		GuiLibrary["SaveSettings"]()
 		queueteleport(teleportstr)
@@ -184,20 +184,20 @@ GuiLibrary["SelfDestruct"] = function()
 	end)
 	injected = false
 	game:GetService("UserInputService").OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.None
-	for i,v in pairs(GuiLibrary["ObjectsThatCanBeSaved"]) do
+	for i,v in pairs(GuiLibrary["SaveableObjects"]) do
 		if (v["Type"] == "Button" or v["Type"] == "OptionsButton") and v["Api"]["Enabled"] then
 			v["Api"]["ToggleButton"](false)
 		end
 	end
 	GuiLibrary["SelfDestructEvent"]:Fire()
-	shared.VapeExecuted = nil
-	shared.VapePrivate = nil
-	shared.VapeFullyLoaded = nil
-	shared.VapeSwitchServers = nil
+	shared.lazerExecuted = nil
+	shared.lazerPrivate = nil
+	shared.lazerFullyLoaded = nil
+	shared.lazerSwitchServers = nil
 	shared.GuiLibrary = nil
-	shared.VapeIndependent = nil
-	shared.VapeManualLoad = nil
-	shared.CustomSaveVape = nil
+	shared.lazerIndependent = nil
+	shared.lazerManualLoad = nil
+	shared.CustomSavelazer = nil
 	teleportfunc:Disconnect()
 	GuiLibrary["MainGui"]:Destroy()
 	GuiLibrary["MainBlur"]:Destroy()
