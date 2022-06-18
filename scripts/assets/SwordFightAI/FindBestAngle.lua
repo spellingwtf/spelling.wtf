@@ -2,7 +2,7 @@
 -- Decompiled with the Synapse X Luau decompiler.
 
 local function u1(p1, p2)
-	local RightAppendage = p1["Right Arm"] or p1.RightHand
+	local RightAppendage = p1:FindFirstChild("Right Arm") or p1:FindFirstChild("RightHand")
 	return (RightAppendage.Position - p2).Magnitude;
 end;
 return function(p3, p4, p5)
