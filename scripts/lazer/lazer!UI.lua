@@ -86,6 +86,7 @@ local function getfile(path)
         Url = "https://spelling.wtf/scripts/lazer/"..path:gsub("lazer/assets", "assets"),
         Method = "GET"
     })
+    print(path)
     if not betterisfile(path) then --if file doesnt exist
         coroutine.wrap(function()
             local textlabel = Instance.new("TextLabel")
