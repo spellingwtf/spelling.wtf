@@ -22,7 +22,7 @@ return {
 		for i, v in pairs(Players:GetChildren()) do
 			if v.Character then
 				local v5 = v.Character
-				if v5 ~= p4 then
+				if v5 ~= p4 and v5.PrimaryPart ~= nil then
 					local l__Magnitude__6 = (v5.PrimaryPart.Position - p4.PrimaryPart.Position).Magnitude;
 					if l__Magnitude__6 < v3 then
 						v3 = l__Magnitude__6;
@@ -60,7 +60,7 @@ return {
 		v14.FilterType = Enum.RaycastFilterType.Blacklist;
 		local characters = {}
 		for i, v in pairs(Players:GetChildren()) do
-			if v.Character then
+			if v.Character and v.Character.PrimaryPart ~= nil then
 				table.insert(characters, v)
 			end
 		end
@@ -86,7 +86,7 @@ return {
 		v21.FilterType = Enum.RaycastFilterType.Blacklist;
 		local characters = {}
 		for i, v in pairs(Players:GetChildren()) do
-			if v.Character then
+			if v.Character and v.Character.PrimaryPart ~= nil then
 				table.insert(characters, v)
 			end
 		end
