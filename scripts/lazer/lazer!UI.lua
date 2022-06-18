@@ -47,7 +47,7 @@ return function(args)
             end
             return readfile("lazer/"..scripturl)
         else
-            local res = game:HttpGet("https://pelling.wtf/scripts/lazer/"..scripturl, true)
+            local res = game:HttpGet("https://spelling.wtf/scripts/lazer/"..scripturl, true)
             assert(res ~= "404: Not Found", "File not found")
             return res
         end
