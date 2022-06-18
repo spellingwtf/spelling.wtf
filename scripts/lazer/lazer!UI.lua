@@ -633,6 +633,7 @@ api["CreateTab"] = function(args)
     end)
     return tabapi
 end
+
 api["KeyInputHandler"] = game:GetService("UserInputService").InputBegan:connect(function(input1)
     if game:GetService("UserInputService"):GetFocusedTextBox() == nil then
         if input1.KeyCode == Enum.KeyCode[api["GUIKeybind"]] and api["KeybindCaptured"] == false then
@@ -651,9 +652,6 @@ api["KeyInputHandler"] = game:GetService("UserInputService").InputBegan:connect(
             if (aapi["Type"] == "OptionsButton" or aapi["Type"] == "Button") and (aapi["Api"]["Keybind"] ~= nil and aapi["Api"]["Keybind"] ~= "") and api["KeybindCaptured"] == false then
                 if input1.KeyCode == Enum.KeyCode[aapi["Api"]["Keybind"]] and aapi["Api"]["Keybind"] ~= api["GUIKeybind"] then
                     aapi["Api"]["ToggleButton"](false)
-                    if api["ToggleNotifications"] then
-                        api["CreateNotification"]("Module Toggled", aapi["Api"]["Name"]..' <font color="#FFFFFF">has been</font> <font color="'..(aapi["Api"]["Enabled"] and '#32CD32' or '#FF6464')..'">'..(aapi["Api"]["Enabled"] and "Enabled" or "Disabled")..'</font><font color="#FFFFFF">!</font>', 1)
-                    end
                 end
             end
         end

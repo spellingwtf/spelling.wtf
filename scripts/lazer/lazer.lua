@@ -144,12 +144,16 @@ local GUI = GuiLibrary.CreateMainWindow({
 })
 
 GuiLibrary.CreateTab({
-    Title = "Fighting",
+    Title = "Combat",
     Color = "Blue"
 })
 GuiLibrary.CreateTab({
     Title = "Blatant",
     Color = "Red"
+})
+GuiLibrary.CreateTab({
+    Title = "Render",
+    Color = "Lime"
 })
 GuiLibrary.CreateTab({
     Title = "Utilities",
@@ -158,6 +162,10 @@ GuiLibrary.CreateTab({
 GuiLibrary.CreateTab({
     Title = "Miscellaneous",
     Color = "Orange"
+})
+GuiLibrary.CreateTab({
+    Title = "World",
+    Color = "Lime"
 })
 
 local teleportfunc = game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
