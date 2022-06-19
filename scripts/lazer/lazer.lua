@@ -1,6 +1,6 @@
 repeat task.wait() until game:IsLoaded() == true
 local injected = true
-local customdir = (shared.lazerPrivate and "lazer/" or "lazer/")
+local customdir = shared.lazerPrivate and "lazerprivate/" or "lazer/"
 local betterisfile = function(file)
 	local suc, res = pcall(function() return readfile(file) end)
 	return suc and res ~= nil
@@ -124,8 +124,6 @@ checkpublicrepo = function(id)
 end
 
 shared.GuiLibrary = GuiLibrary
-local workspace = game:GetService("Workspace")
-local Camera = workspace.CurrentCamera
 local SelfDestructSave = coroutine.create(function()
 	while task.wait(10) do
 		if GuiLibrary and injected then

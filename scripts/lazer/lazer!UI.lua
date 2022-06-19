@@ -1,5 +1,5 @@
 local VERSION = "1"..(shared.lazerPrivate and " PRIVATE" or "")
-local customdir = (shared.lazerPrivate and "lazer/" or "lazer/")
+local customdir = shared.lazerPrivate and "lazerprivate/" or "lazer/"
 
 local getasset = getsynasset or getcustomasset or function(location) return "rbxasset://"..location end
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function(tab)
