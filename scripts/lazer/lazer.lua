@@ -13,7 +13,6 @@ local function GetURL(scripturl)
         return readfile("lazer/"..scripturl)
     else
         local res = game:HttpGet("https://spelling.wtf/scripts/lazer/"..scripturl, true)
-        print(res)
         assert(res ~= "404: Not Found", "File not found")
         return res
     end
@@ -126,8 +125,8 @@ end
 
 shared.GuiLibrary = GuiLibrary
 local workspace = game:GetService("Workspace")
-local cam = workspace.CurrentCamera
-local selfdestructsave = coroutine.create(function()
+local Camera = workspace.CurrentCamera
+local SelfDestructSave = coroutine.create(function()
 	while task.wait(10) do
 		if GuiLibrary and injected then
 			if not injected then return end
@@ -142,7 +141,6 @@ local GUI = GuiLibrary.CreateMainWindow({
     Title = "testing",
     Description = "this is a test GUI"
 })
-
 GuiLibrary.CreateTab({
     Title = "Combat",
     Color = "Blue"
@@ -187,7 +185,7 @@ end)
 
 GuiLibrary["SelfDestruct"] = function()
 	coroutine.wrap(function()
-		coroutine.close(selfdestructsave)
+		coroutine.close(SelfDestructSave)
 	end)()
 	injected = false
 	game:GetService("UserInputService").OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.None
@@ -211,3 +209,38 @@ GuiLibrary["SelfDestruct"] = function()
 	GuiLibrary["MainGui"]:Destroy()
 	GuiLibrary["MainBlur"]:Destroy()
 end
+
+loadstring(GetURL("CustomModules/lazer!Universal.lua"))()
+if betterisfile("lazer/CustomModules/lazer!"..game.PlaceId..".lua") then
+	loadstring(readfile("lazer/CustomModules/lazer!"..game.PlaceId..".lua"))()
+else
+	local publicrepo = checkpublicrepo(game.PlaceId)
+	if publicrepo then
+		loadstring(publicrepo)()
+	end
+end
+if shared.lazerPrivate then
+	if pcall(function() readfile("lazerprivate/CustomModules/lazer!"..game.PlaceId..".lua") end) then
+		loadstring(readfile("lazerprivate/CustomModules/lazer!"..game.PlaceId..".lua"))()
+	end	
+end
+GuiLibrary["LoadSettings"](shared.lazerCustomProfile)
+local profiles = {}
+for i,v in pairs(GuiLibrary["Profiles"]) do 
+	table.insert(profiles, i)
+end
+table.sort(profiles, function(a, b) return b == "default" and true or a:lower() < b:lower() end)
+if not shared.lazerSwitchServers then
+	--GuiLibrary["LoadedAnimation"](true)
+	print("lazer loaded")
+else
+	shared.lazerSwitchServers = nil
+end
+if shared.lazerOpenGui then
+	GuiLibrary["MainGui"].ScaledGui.ClickGui.Visible = true
+	GuiLibrary["MainBlur"].Enabled = true	
+	shared.lazerOpenGui = nil
+end
+
+coroutine.resume(SelfDestructSave)
+shared.lazerFullyLoaded = true

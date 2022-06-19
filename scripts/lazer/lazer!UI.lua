@@ -24,7 +24,7 @@ end
 local mouse = game:GetService("Players").LocalPlayer:GetMouse()
 local loadedsuccessfully = false
 local api = {
-    ["Settings"] = {["GUIObject"] = {["Type"] = "Custom", ["Color"] = 0.64}, ["SearchObject"] = {["Type"] = "Custom", ["List"] = {}}},
+    ["Settings"] = {["GUIObject"] = {["Type"] = "Custom"}, ["SearchObject"] = {["Type"] = "Custom", ["List"] = {}}},
     ["Profiles"] = {
         ["default"] = {["Keybind"] = "", ["Selected"] = true}
     },
