@@ -64,7 +64,16 @@ function module.get_real_value(value)
     if _t == 'Instance' then
         return module.get_path(value)
     elseif _t == 'string' then
-        return [["]]..value..[["]]
+        local startclose
+        local endclose
+        if value:find("\n") then
+            startclose = "[["
+            endclose = "]]"
+        else
+            startclose = '"'
+            endclose = '"'
+        end
+        return startclose..value..endclose
     elseif _t == 'table' then 
         return module.table_to_string(value)
     elseif _t == 'function' then
