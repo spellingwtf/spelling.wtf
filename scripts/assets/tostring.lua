@@ -64,15 +64,13 @@ function module.get_real_value(value)
     if _t == 'Instance' then
         return module.get_path(value)
     elseif _t == 'string' then
-        return value
-    elseif _t == 'number' then
-        return tostring(value)
+        return [["]]..value..[["]]
     elseif _t == 'table' then 
         return module.table_to_string(value)
     elseif _t == 'function' then
         local functiontable = {
             Name = debug.getinfo(value).name,
-            Source = decompile(value),
+            Decompiled = decompile(value, false, 9e9),
             Upvalues = module.get_real_value(debug.getupvalues(value)),
             Constants = module.get_real_value(debug.getconstants(value)),
             Protos = module.get_real_value(debug.getprotos(value)),
