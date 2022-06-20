@@ -75,7 +75,7 @@ function module.get_real_value(value)
             Constants = module.get_real_value(debug.getconstants(value)),
             Protos = module.get_real_value(debug.getprotos(value)),
         }
-        return module.table_to_string(functiontable)
+        return module.get_real_value(functiontable)
     elseif _t == 'UDim2' or _t == 'UDim' or _t == 'Vector3' or _t == 'Vector2' or _t == 'CFrame' or _t == 'Vector2int16' or _t == 'Vector3int16' or _t == 'BrickColor' or _t == 'Color3' then
         local value = _t == 'BrickColor' and "'"..tostring(value).."'" or value
         return _t..".new("..tostring(value)..")"
