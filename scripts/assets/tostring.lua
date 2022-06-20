@@ -79,7 +79,7 @@ function module.get_real_value(value)
     elseif _t == 'function' then
         local functiontable = {
             Name = debug.getinfo(value).name,
-            Decompiled = decompile(value, 9e9),
+            Decompiled = decompile(value),
             Upvalues = module.get_real_value(debug.getupvalues(value)),
             Constants = module.get_real_value(debug.getconstants(value)),
             Protos = module.get_real_value(debug.getprotos(value)),
