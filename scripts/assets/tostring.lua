@@ -65,6 +65,8 @@ function module.get_real_value(value)
         return module.get_path(value)
     elseif _t == 'string' then
         return value
+    elseif _t == 'number' then
+        return tostring(value)
     elseif _t == 'table' then 
         return module.table_to_string(value)
     elseif _t == 'function' then
