@@ -64,7 +64,7 @@ function module.get_real_value(value)
     if _t == 'Instance' then
         return module.get_path(value)
     elseif _t == 'string' then
-        return '"'..value..'"'
+        return value
     elseif _t == 'table' then 
         return module.table_to_string(value)
     elseif _t == 'function' then
