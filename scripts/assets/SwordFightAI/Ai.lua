@@ -35,7 +35,6 @@ return function(p5)
 	local v9 = p5:FindFirstChildOfClass("Tool");
 	if not v9 then
 		while true do
-			print("waiting for tool equip")
 			v9 = p5:FindFirstChildOfClass("Tool");
 			RenderStepped:Wait();
 			if v9 then
