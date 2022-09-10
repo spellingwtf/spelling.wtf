@@ -22,7 +22,7 @@ return {
 		for i, v in pairs(Players:GetChildren()) do
 			if v.Character then
 				local v5 = v.Character
-				if v5 ~= p4 and v5.PrimaryPart ~= nil and v:FindFirstChildWhichIsA("Humanoid") ~= nil then
+				if v5 ~= p4 and v5.PrimaryPart ~= nil and v5:FindFirstChildWhichIsA("Humanoid") ~= nil then
 					local l__Magnitude__6 = (v5.PrimaryPart.Position - p4.PrimaryPart.Position).Magnitude;
 					if l__Magnitude__6 < v3 then
 						v3 = l__Magnitude__6;
