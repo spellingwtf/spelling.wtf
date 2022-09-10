@@ -22,18 +22,16 @@ return {
 		for i, v in pairs(Players:GetChildren()) do
 			if v.Character then
 				local v5 = v.Character
-				if v5 ~= p4 --[[and v5.PrimaryPart ~= nil]] and v:FindFirstChildWhichIsA("Humanoid") ~= nil then
+				if v5 ~= p4 and v5.PrimaryPart ~= nil and v:FindFirstChildWhichIsA("Humanoid") ~= nil then
 					local l__Magnitude__6 = (v5.PrimaryPart.Position - p4.PrimaryPart.Position).Magnitude;
 					if l__Magnitude__6 < v3 then
 						v3 = l__Magnitude__6;
 						v2 = v5;
 					end;
-				else
-					print(v5.PrimaryPart)
-					print(v5~=p4)
 				end;
 			end
 		end
+		print(v2)
 		return v2;
 	end, 
 	GetDistance = function(p5, p6)
