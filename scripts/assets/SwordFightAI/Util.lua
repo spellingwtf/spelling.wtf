@@ -3,6 +3,15 @@
 
 local Players = game:GetService("Players")
 
+
+local function getPlayerFromCharacter(character)
+	for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+		if player.Character == character then
+			return player
+		end
+	end
+end
+
 return {
 	VisualizePosition = function(p1)
 		local v1 = Instance.new("Part");
@@ -22,7 +31,7 @@ return {
 		for i, v in pairs(Players:GetChildren()) do
 			if v.Character then
 				local v5 = v.Character
-				if v5 ~= p4 and v5.PrimaryPart ~= nil and v5:FindFirstChildWhichIsA("Humanoid") ~= nil and v.Team ~= p4:GetPlayerFromCharacter().Team then
+				if v5 ~= p4 and v5.PrimaryPart ~= nil and v5:FindFirstChildWhichIsA("Humanoid") ~= nil and v.Team ~= getPlayerFromCharacter(p4).Team then
 					local l__Magnitude__6 = (v5.PrimaryPart.Position - p4.PrimaryPart.Position).Magnitude;
 					if l__Magnitude__6 < v3 then
 						v3 = l__Magnitude__6;
@@ -31,7 +40,6 @@ return {
 				end;
 			end
 		end
-		print(v2)
 		return v2;
 	end, 
 	GetDistance = function(p5, p6)
