@@ -29,7 +29,8 @@ return {
 						v2 = v5;
 					end;
 				else
-					print("ded")
+					print(v5.PrimaryPart)
+					print(v5~=p4)
 				end;
 			end
 		end
