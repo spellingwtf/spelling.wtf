@@ -30,7 +30,8 @@ end
 	
 function Library:Init(options)
 	options = Library:validate({
-		name = "UI Library Test"
+		name = "UI Library Test",
+        size = UDim2.new(0, 400, 0, 300)
 	}, options or {})	
 	
 	local GUI = {
@@ -49,7 +50,7 @@ function Library:Init(options)
 		GUI["2"]["BorderSizePixel"] = 0;
 		GUI["2"]["BackgroundColor3"] = Color3.fromRGB(49, 49, 49);
 		GUI["2"]["AnchorPoint"] = Vector2.new(0, 0);
-		GUI["2"]["Size"] = UDim2.new(0, 400, 0, 300);
+		GUI["2"]["Size"] = options.size;
 		GUI["2"]["Position"] = UDim2.fromOffset((ViewportSize.X / 2) - (GUI["2"].Size.X.Offset / 2), (ViewportSize.Y / 2) - (GUI["2"].Size.Y.Offset / 2));
 		GUI["2"]["Name"] = [[Main]];
 
@@ -865,3 +866,5 @@ function Library:Init(options)
 	
 	return GUI
 end
+
+return Library
