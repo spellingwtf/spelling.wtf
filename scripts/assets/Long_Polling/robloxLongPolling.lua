@@ -4,7 +4,7 @@ local Connection = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/
 
 local robloxLongPolling = {}
 
-function robloxLongPolling:Connect(url, password)
+function robloxLongPolling.Connect(url, password)
     local response
     local connectionRequest
     repeat
