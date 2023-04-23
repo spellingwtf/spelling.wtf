@@ -141,7 +141,6 @@ function Connection:disconnect()
 		self.keepAlive = false
 		self.lastPing = 0;
 		self.handlers = {}
-		self.id = nil
 		self.password = nil
 		self.url = nil
 	end)()
