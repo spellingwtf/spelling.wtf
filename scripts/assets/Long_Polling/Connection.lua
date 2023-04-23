@@ -39,6 +39,7 @@ function Connection.new(url, id, password)
 		newConnection = Connection.new("https://DoodleWorldLongPoll.spellingwtf.repl.co", response.socketId, "")
 
 		newConnection.handlers = handlers
+		print("reconnected")
 	end
 	
 	newConnection.handlers = {
