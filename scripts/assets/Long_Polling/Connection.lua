@@ -84,8 +84,12 @@ end
 
 function Connection:disconnect()
 	requestfunc({
-		Url = self.url.."/connection/"..self.id,
-		Method = "DELETE",
+		Url = self.url.."/disconnect/"..self.id,
+		Method = "POST",
+		Headers = {
+			["content-type"] = "application/json"
+		},
+		Body = HttpService:JSONEncode({})
 	})
 	self.connected = false
 	self.keepAlive = false
