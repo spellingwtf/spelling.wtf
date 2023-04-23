@@ -11,7 +11,6 @@ function Connection.new(url, id, password)
 
 	newConnection.url = url;
 	newConnection.id = id;
-	newConnection.password = password;
 	newConnection.lastPing = 0;
 	newConnection.keepAlive = false;
 	newConnection.disconnectCalled = false;
