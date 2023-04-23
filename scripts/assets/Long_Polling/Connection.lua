@@ -22,7 +22,6 @@ function Connection.new(url, id, password)
 		newConnection:disconnect()
 		newConnection = LongPolling.Connect(LongPollURL, LongPollPassword)
 		newConnection.handlers = handlers
-		print("[Server] Reconnected")
 	end
 	
 	newConnection.handlers = {
@@ -40,8 +39,8 @@ function Connection.new(url, id, password)
 		end
 	};
 	
-	print("[Server] Connected")
 	newConnection.connected = true
+	print("[Server] Connected")
 
 	--// Event
 	coroutine.wrap(function()
