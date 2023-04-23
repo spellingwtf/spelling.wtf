@@ -83,14 +83,16 @@ function Connection:on(event, handler)
 end
 
 function Connection:disconnect()
-    coroutine.wrap(function()
+    --coroutine.wrap(function()
     	requestfunc({
     		Url = self.url.."/connection/"..self.id,
     		Method = "DELETE",
     	})
-	end)()
+	--end)()
+	self.connected = false
+	self.keepAlive = false
+	self.lastPing = 0;
 	self.handlers = {}
-    self.connected = false
 end
 
 return Connection
