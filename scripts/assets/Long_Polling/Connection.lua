@@ -19,25 +19,9 @@ function Connection.new(url, id, password)
 		newConnection.disconnectCalled = true
 		local handlers = newConnection.handlers
 		newConnection:disconnect()
-
-		local response
-		local connectionRequest
-		repeat
-			connectionRequest = requestfunc({
-				Url = "https://DoodleWorldLongPoll.spellingwtf.repl.co/connection",
-				Method = "POST",
-				Headers = {
-					["content-type"] = "application/json",
-				},
-				Body = HttpService:JSONEncode({
-					password = ""
-				})
-			})
-			response = HttpService:JSONDecode(connectionRequest.Body);
-			task.wait()
-		until response.success == true
-		newConnection = Connection.new("https://DoodleWorldLongPoll.spellingwtf.repl.co", response.socketId, "")
-
+		print("reconnecting")
+		newConnection = robloxLongPolling.Connect("https://DoodleWorldLongPoll.spellingwtf.repl.co", "")
+		print("readding event handlers")
 		newConnection.handlers = handlers
 		print("reconnected")
 	end
