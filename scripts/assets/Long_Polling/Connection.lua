@@ -83,18 +83,10 @@ function Connection:on(event, handler)
 end
 
 function Connection:disconnect()
-    --coroutine.wrap(function()
-		print("sending request")
-    	requestfunc({
-    		Url = self.url.."/disconnect/"..self.id,
-    		Method = "POST",
-			Headers = {
-				["content-type"] = "application/json"
-			},
-			Body = HttpService:JSONEncode({})
-    	})
-		print("sent request")
-	--end)()
+	requestfunc({
+		Url = self.url.."/connection/"..self.id,
+		Method = "DELETE",
+	})
 	self.connected = false
 	self.keepAlive = false
 	self.lastPing = 0;
