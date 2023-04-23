@@ -40,6 +40,7 @@ function Connection.new(url, id, password)
 		end
 	};
 	
+	print("[Server] Connected")
 	newConnection.connected = true
 
 	--// Event
