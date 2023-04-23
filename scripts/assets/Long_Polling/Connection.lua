@@ -20,11 +20,9 @@ function Connection.new(url, id, password)
 		newConnection.disconnectCalled = true
 		local handlers = newConnection.handlers
 		newConnection:disconnect()
-		print("reconnecting")
 		newConnection = LongPolling.Connect(LongPollURL, LongPollPassword)
-		print("readding event handlers")
 		newConnection.handlers = handlers
-		print("reconnected")
+		print("[Server] Reconnected")
 	end
 	
 	newConnection.handlers = {
@@ -36,6 +34,7 @@ function Connection.new(url, id, password)
 		end,
 		["disconnection"] = function(socketid)
 			if newConnection.id == socketid and newConnection.disconnectCalled == false then
+				print("[Server] Client has gone down, reconnecting...")
 				reconnect()
 			end
 		end
@@ -80,14 +79,15 @@ function Connection.new(url, id, password)
 	    until not newConnection.connected
 	end)()
 
-	--Keep Alive (Server to Client) (For if server goes down)
+	--// Keep Alive (Server to Client) (For if server goes down)
 	coroutine.wrap(function()
 		repeat task.wait() until newConnection.keepAlive == true
 		while task.wait() do
 			if newConnection.keepAlive == true then
 				if tick() - newConnection.lastPing > 5 then
-					print("no ping receive")
+					print("[Server] Server has gone down, reconnecting...")
 					reconnect()
+					break
 				end
 			end
 		end
