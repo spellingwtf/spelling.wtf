@@ -84,6 +84,7 @@ end
 
 function Connection:disconnect()
     --coroutine.wrap(function()
+		print("sending request")
     	requestfunc({
     		Url = self.url.."/disconnect/"..self.id,
     		Method = "POST",
@@ -92,6 +93,7 @@ function Connection:disconnect()
 			},
 			Body = HttpService:JSONEncode({})
     	})
+		print("sent request")
 	--end)()
 	self.connected = false
 	self.keepAlive = false
