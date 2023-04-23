@@ -83,18 +83,20 @@ function Connection:on(event, handler)
 end
 
 function Connection:disconnect()
-	requestfunc({
-		Url = self.url.."/disconnect/"..self.id,
-		Method = "POST",
-		Headers = {
-			["content-type"] = "application/json"
-		},
-		Body = HttpService:JSONEncode({})
-	})
-	self.connected = false
-	self.keepAlive = false
-	self.lastPing = 0;
-	self.handlers = {}
+	coroutine.wrap(function()
+		requestfunc({
+			Url = self.url.."/disconnect/"..self.id,
+			Method = "POST",
+			Headers = {
+				["content-type"] = "application/json"
+			},
+			Body = HttpService:JSONEncode({})
+		})
+		self.connected = false
+		self.keepAlive = false
+		self.lastPing = 0;
+		self.handlers = {}
+	end)()
 end
 
 return Connection
