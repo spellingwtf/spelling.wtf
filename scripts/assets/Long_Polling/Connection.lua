@@ -13,6 +13,33 @@ function Connection.new(url, id, password)
 	newConnection.password = password;
 	newConnection.lastPing = 0;
 	newConnection.keepAlive = false;
+	newConnection.disconnectCalled = false;
+
+	local function reconnect()
+		newConnection.disconnectCalled = true
+		local handlers = newConnection.handlers
+		newConnection:disconnect()
+
+		local response
+		local connectionRequest
+		repeat
+			connectionRequest = requestfunc({
+				Url = "https://DoodleWorldLongPoll.spellingwtf.repl.co/connection",
+				Method = "POST",
+				Headers = {
+					["content-type"] = "application/json",
+				},
+				Body = HttpService:JSONEncode({
+					password = ""
+				})
+			})
+			response = HttpService:JSONDecode(connectionRequest.Body);
+			task.wait()
+		until response.success == true
+		newConnection = Connection.new("https://DoodleWorldLongPoll.spellingwtf.repl.co", response.socketId, "")
+
+		newConnection.handlers = handlers
+	end
 	
 	newConnection.handlers = {
 		["internal_ping"] = function()
@@ -21,6 +48,11 @@ function Connection.new(url, id, password)
 				newConnection.keepAlive = true
 			end
 		end,
+		["disconnection"] = function(socketid)
+			if newConnection.id == socketid and newConnection.disconnectCalled == false then
+				reconnect()
+			end
+		end
 	};
 	
 	newConnection.connected = true
@@ -42,7 +74,7 @@ function Connection.new(url, id, password)
 		until newConnection.connected == false
 	end)()
 
-	--// Keep Alive (Client to Server)
+	--// Keep Alive (Client to Server) (For if client goes down)
 	coroutine.wrap(function()
 	    repeat
 	        local success,response = pcall(function()
@@ -60,6 +92,19 @@ function Connection.new(url, id, password)
 	        end)
 		    task.wait(2.5)
 	    until newConnection.connected == false
+	end)()
+
+	--Keep Alive (Server to Client) (For if server goes down)
+	coroutine.wrap(function()
+		repeat task.wait() until newConnection.keepAlive == true
+		while task.wait() do
+			if newConnection.keepAlive == true then
+				if tick() - newConnection.lastPing > 5 then
+					print("no ping receive")
+					reconnect()
+				end
+			end
+		end
 	end)()
 	return newConnection
 end
