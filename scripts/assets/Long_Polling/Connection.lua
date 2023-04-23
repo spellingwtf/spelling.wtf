@@ -37,7 +37,7 @@ function Connection.new(url, id, password)
 				if response.success == true then
 					newConnection.handlers[response.event.name](response.event.data)
 				else
-					print(response)
+					print(bettertostring(response))
 				end
 		    end)
 		    task.wait()
