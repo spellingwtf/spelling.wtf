@@ -143,6 +143,7 @@ function Connection:disconnect()
 		self.handlers = {}
 		self.password = nil
 		self.url = nil
+		self.disconnectCalled = false;
 	end)()
 end
 
