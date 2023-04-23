@@ -119,7 +119,7 @@ function Connection:disconnect()
 			Headers = {
 				["content-type"] = "application/json"
 			},
-			Body = HttpService:JSONEncode({})
+			Body = "[]"
 		})
 	end)()
 	self = {}
