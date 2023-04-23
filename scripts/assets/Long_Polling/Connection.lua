@@ -138,12 +138,13 @@ function Connection:disconnect()
 			Body = HttpService:JSONEncode({})
 		})
 		self.connected = false
-		self.keepAlive = false
+		--[[self.keepAlive = false
 		self.lastPing = 0;
 		self.handlers = {}
 		self.password = nil
 		self.url = nil
-		self.disconnectCalled = false;
+		self.disconnectCalled = false;]]
+		self = {}
 	end)()
 end
 
