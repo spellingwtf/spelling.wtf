@@ -1,3 +1,5 @@
+local HttpService = game:GetService("HttpService")
+local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
 local Base64 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Base.lua"))()
 
 local Connection = {}
@@ -19,7 +21,7 @@ function Connection.new(url, id, password)
 		local handlers = newConnection.handlers
 		newConnection:disconnect()
 		print("reconnecting")
-		newConnection = robloxLongPolling.Connect("https://DoodleWorldLongPoll.spellingwtf.repl.co", "")
+		newConnection = LongPolling.Connect(LongPollURL, LongPollPassword)
 		print("readding event handlers")
 		newConnection.handlers = handlers
 		print("reconnected")
@@ -108,7 +110,7 @@ function Connection:send(name, data)
 end
 
 function Connection:on(event, handler)
-	self.handlers[event] = handler;
+	self.handlers[event] = function(args) handler(args) end;
 end
 
 function Connection:disconnect()
