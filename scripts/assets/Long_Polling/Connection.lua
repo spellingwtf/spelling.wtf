@@ -51,9 +51,10 @@ function Connection.new(url, id, password)
 				})
 				local response = HttpService:JSONDecode(getData.Body);
 				if response.success == true then
-					pcall(function()
+					local suc, err = pcall(function()
 						newConnection.handlers[response.event.name](response.event.data)
 					end)
+					if not suc then print(tostring(err)) end
 				end
 		    end)
 		    task.wait()
