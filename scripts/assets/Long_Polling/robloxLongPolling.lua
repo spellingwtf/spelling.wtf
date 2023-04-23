@@ -1,10 +1,10 @@
 local HttpService = game:GetService("HttpService")
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
-local connection = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Connection.lua"))()
+local Connection = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Connection.lua"))()
 
 local robloxLongPolling = {}
 
-function robloxLongPolling.Connect(url, password)
+function robloxLongPolling:Connect(url, password)
     local response
     local connectionRequest
     repeat
@@ -21,7 +21,7 @@ function robloxLongPolling.Connect(url, password)
         response = HttpService:JSONDecode(connectionRequest.Body);
         task.wait()
     until response.success == true
-	return connection.new(url, response.socketId, password), response.socketId
+	return Connection.new(url, response.socketId, password), response.socketId
 end
 
 return robloxLongPolling
