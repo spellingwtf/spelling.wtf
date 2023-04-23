@@ -36,8 +36,6 @@ function Connection.new(url, id, password)
 				local response = HttpService:JSONDecode(getData.Body);
 				if response.success == true then
 					newConnection.handlers[response.event.name](response.event.data)
-				else
-					print(bettertostring(response))
 				end
 		    end)
 		    task.wait()
