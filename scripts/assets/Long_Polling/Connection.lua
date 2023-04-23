@@ -1,7 +1,6 @@
-local HttpService = game:GetService("HttpService")
-local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
 local Base64 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Base.lua"))()
-Connection = {}
+
+local Connection = {}
 Connection.__index = Connection
 
 function Connection.new(url, id, password)
