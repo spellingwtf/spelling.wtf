@@ -54,7 +54,7 @@ function Connection.new(url, id, password)
 					},
 					Body = HttpService:JSONEncode({
 						name = Base64.encode("internal_ping"),
-						data = Base64.encode("whats poppin lo gang")
+						data = Base64.encode("client to server ping")
 					})
 				})
 	        end)
