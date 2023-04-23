@@ -1,20 +1,32 @@
 local HttpService = game:GetService("HttpService")
 local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or getgenv().request or request or nil
+local robloxLongPolling = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/robloxLongPolling.lua"))()
 local Base64 = loadstring(game:HttpGet("https://spelling.wtf/scripts/assets/Long_Polling/Base.lua"))()
 Connection = {}
 Connection.__index = Connection
 
-function Connection.new(url, id)
+function Connection.new(url, id, password)
 	local newConnection = {}
 	setmetatable(newConnection, Connection)
 
 	newConnection.url = url;
 	newConnection.id = id;
+	newConnection.password = password;
+	newConnection.lastPing = 0;
+	newConnection.keepAlive = false;
 	
-	newConnection.handlers = {};
+	newConnection.handlers = {
+		["internal_ping"] = function()
+			newConnection.lastPing = tick()
+			if newConnection.keepAlive == false then
+				newConnection.keepAlive = true
+			end
+		end,
+	};
 	
 	newConnection.connected = true
 
+	--// Event
 	coroutine.wrap(function()
 		repeat
 		    pcall(function()
@@ -30,6 +42,8 @@ function Connection.new(url, id)
 		    task.wait()
 		until newConnection.connected == false
 	end)()
+
+	--// Keep Alive (Client to Server)
 	coroutine.wrap(function()
 	    repeat
 	        local success,response = pcall(function()

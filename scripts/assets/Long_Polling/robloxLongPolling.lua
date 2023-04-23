@@ -21,7 +21,7 @@ function robloxLongPolling.Connect(url, password)
         response = HttpService:JSONDecode(connectionRequest.Body);
         task.wait()
     until response.success == true
-	return connection.new(url, response.socketId), response.socketId
+	return connection.new(url, response.socketId, password), response.socketId
 end
 
 return robloxLongPolling
