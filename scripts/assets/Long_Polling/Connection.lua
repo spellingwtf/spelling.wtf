@@ -56,7 +56,7 @@ function Connection.new(url, id, password)
 				end
 		    end)
 		    task.wait()
-		until newConnection.connected == false
+		until not newConnection.connected
 	end)()
 
 	--// Keep Alive (Client to Server) (For if client goes down)
@@ -76,7 +76,7 @@ function Connection.new(url, id, password)
 				})
 	        end)
 		    task.wait(2.5)
-	    until newConnection.connected == false
+	    until not newConnection.connected
 	end)()
 
 	--Keep Alive (Server to Client) (For if server goes down)
@@ -122,15 +122,8 @@ function Connection:disconnect()
 			},
 			Body = HttpService:JSONEncode({})
 		})
-		self.connected = false
-		--[[self.keepAlive = false
-		self.lastPing = 0;
-		self.handlers = {}
-		self.password = nil
-		self.url = nil
-		self.disconnectCalled = false;]]
-		self = {}
 	end)()
+	self = {}
 end
 
 return Connection
