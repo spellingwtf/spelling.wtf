@@ -48,7 +48,7 @@ function Connection.new(url, id, password)
 				Url = url.."/poll/"..id,
 				Method = "GET",
 			})
-			if Data.Success == true then --timeout
+			if Data.Success == true then
 				local response = HttpService:JSONDecode(Data.Body);
 				newConnection.handlers[response.event.name](response.event.data)
 			end
