@@ -50,7 +50,6 @@ function Connection.new(url, id, password)
 					Method = "GET",
 				})
 				repeat task.wait() until Data
-				print("got message")
 				if Data.StatusCode ~= 502 then --timeout
 					local response = HttpService:JSONDecode(Data.Body);
 					if response.success == true then
@@ -58,6 +57,8 @@ function Connection.new(url, id, password)
 							newConnection.handlers[response.event.name](response.event.data)
 						end)
 						if not suc then print(tostring(err)) end
+					else
+						print(response)
 					end
 				end
 		    end)
