@@ -80,7 +80,7 @@ end
 
 function Connection:disconnect()
 	requestfunc({
-		Url = self.url.."/"..self.id,
+		Url = self.url.."/connection/"..self.id,
 		Method = "DELETE",
 		Headers = {
 			["content-type"] = "application/json"
