@@ -11,11 +11,9 @@ function Connection.new(url, id, password)
 
 	newConnection.url = url;
 	newConnection.id = id;
-	newConnection.disconnectCalled = false;
 	newConnection.handlers = {};
 
 	local function reconnect()
-		newConnection.disconnectCalled = true
 		local handlers = newConnection.handlers
 		newConnection:disconnect()
 		newConnection = LongPolling.Connect(LongPollURL, LongPollPassword)
