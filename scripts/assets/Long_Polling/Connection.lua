@@ -51,6 +51,8 @@ function Connection.new(url, id, password)
 			if Data.Success == true then
 				local response = HttpService:JSONDecode(Data.Body);
 				newConnection.handlers[response.event.name](response.event.data)
+			else
+				print(bettertostring(Data))
 			end
 		    task.wait()
 		until not newConnection.connected
