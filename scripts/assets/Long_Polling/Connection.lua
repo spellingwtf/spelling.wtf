@@ -11,8 +11,6 @@ function Connection.new(url, id, password)
 
 	newConnection.url = url;
 	newConnection.id = id;
-	newConnection.lastPing = 0;
-	newConnection.keepAlive = false;
 	newConnection.disconnectCalled = false;
 
 	local function reconnect()
@@ -24,12 +22,6 @@ function Connection.new(url, id, password)
 	end
 	
 	newConnection.handlers = {
-		["internal_ping"] = function()
-			newConnection.lastPing = tick()
-			if newConnection.keepAlive == false then
-				newConnection.keepAlive = true
-			end
-		end,
 		["disconnection"] = function(socketid)
 			if newConnection.id == socketid and newConnection.disconnectCalled == false then
 				print("[Server] Client has gone down, reconnecting...")
@@ -52,6 +44,7 @@ function Connection.new(url, id, password)
 				local response = HttpService:JSONDecode(Data.Body);
 				newConnection.handlers[response.event.name](response.event.data)
 			else
+				print("[Server] Server has gone down, reconnecting...")
 				reconnect()
 				break
 			end
@@ -61,34 +54,11 @@ function Connection.new(url, id, password)
 
 	--// Keep Alive (Client to Server) (For if client goes down)
 	coroutine.wrap(function()
+		repeat task.wait() until typeof(newConnection.send) == "function"
 	    repeat
-			requestfunc({
-				Url = newConnection.url.."/poll/"..newConnection.id,
-				Method = "POST",
-				Headers = {
-					["content-type"] = "application/json"
-				},
-				Body = HttpService:JSONEncode({
-					name = Base64.encode("internal_ping"),
-					data = Base64.encode("client to server ping")
-				})
-			})
+			newConnection:send("internal_ping", "client to server ping")
 		    task.wait(2.5)
 	    until not newConnection.connected
-	end)()
-
-	--// Keep Alive (Server to Client) (For if server goes down)
-	coroutine.wrap(function()
-		repeat task.wait() until newConnection.keepAlive == true
-		while task.wait() do
-			if newConnection.keepAlive == true then
-				if tick() - newConnection.lastPing > 5 then
-					print("[Server] Server has gone down, reconnecting...")
-					reconnect()
-					break
-				end
-			end
-		end
 	end)()
 	return newConnection
 end
