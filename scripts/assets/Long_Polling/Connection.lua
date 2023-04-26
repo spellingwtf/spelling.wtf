@@ -44,6 +44,7 @@ function Connection.new(url, id, password)
 	--// Recieving Messages
 	coroutine.wrap(function()
 		repeat
+			print("request")
 			local Data = requestfunc({
 				Url = url.."/poll/"..id,
 				Method = "GET",
