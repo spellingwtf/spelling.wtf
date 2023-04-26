@@ -34,6 +34,7 @@ function Connection.new(url, id, password)
 			})
 			if Data.Success == true then
 				local response = HttpService:JSONDecode(Data.Body);
+				print("[Server] Recieved "..response.event.name)
 				newConnection.handlers[response.event.name](response.event.data)
 			else
 				print("[Server] Server has gone down, reconnecting...")
