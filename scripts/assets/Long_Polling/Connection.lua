@@ -52,9 +52,8 @@ function Connection.new(url, id, password)
 				local response = HttpService:JSONDecode(Data.Body);
 				newConnection.handlers[response.event.name](response.event.data)
 			else
-				print("polling failed")
-				print(bettertostring(Data))
 				reconnect()
+				break
 			end
 		    task.wait()
 		until not newConnection.connected
