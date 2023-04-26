@@ -54,7 +54,7 @@ function Connection.new(url, id, password)
 
 	--// Keep Alive (Client to Server) (For if client goes down)
 	coroutine.wrap(function()
-		repeat task.wait() until typeof(newConnection.send) == "function"
+		repeat task.wait() until type(newConnection.send) == "function"
 	    repeat
 			newConnection:send("internal_ping", "client to server ping")
 		    task.wait(2.5)
