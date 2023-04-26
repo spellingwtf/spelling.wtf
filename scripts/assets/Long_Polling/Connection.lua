@@ -79,16 +79,13 @@ function Connection:on(event, handler)
 end
 
 function Connection:disconnect()
-	coroutine.wrap(function()
-		requestfunc({
-			Url = self.url.."/disconnect/"..self.id,
-			Method = "POST",
-			Headers = {
-				["content-type"] = "application/json"
-			},
-			Body = "[]"
-		})
-	end)()
+	requestfunc({
+		Url = self.url.."/"..self.id,
+		Method = "DELETE",
+		Headers = {
+			["content-type"] = "application/json"
+		},
+	})
 	self = {}
 end
 
