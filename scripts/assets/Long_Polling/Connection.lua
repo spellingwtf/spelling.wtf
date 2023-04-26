@@ -44,24 +44,14 @@ function Connection.new(url, id, password)
 	--// Recieving Messages
 	coroutine.wrap(function()
 		repeat
-		    pcall(function()
-				local Data = requestfunc({
-					Url = url.."/poll/"..id,
-					Method = "GET",
-				})
-				repeat task.wait() until Data
-				if Data.StatusCode ~= 502 then --timeout
-					local response = HttpService:JSONDecode(Data.Body);
-					if response.success == true then
-						local suc, err = pcall(function()
-							newConnection.handlers[response.event.name](response.event.data)
-						end)
-						if not suc then print(tostring(err)) end
-					else
-						print(response)
-					end
-				end
-		    end)
+			local Data = requestfunc({
+				Url = url.."/poll/"..id,
+				Method = "GET",
+			})
+			if Data.Success == true then --timeout
+				local response = HttpService:JSONDecode(Data.Body);
+				newConnection.handlers[response.event.name](response.event.data)
+			end
 		    task.wait()
 		until not newConnection.connected
 	end)()
@@ -117,7 +107,10 @@ function Connection:send(name, data)
 end
 
 function Connection:on(event, handler)
-	self.handlers[event] = function(args) handler(args) end;
+	self.handlers[event] = function(args)
+		local suc, err = pcall(handler, args)
+		if not suc then print(tostring(err)) end
+	end;
 end
 
 function Connection:disconnect()
