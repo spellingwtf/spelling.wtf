@@ -59,19 +59,17 @@ function Connection.new(url, id, password)
 	--// Keep Alive (Client to Server) (For if client goes down)
 	coroutine.wrap(function()
 	    repeat
-	        local success,response = pcall(function()
-				requestfunc({
-					Url = newConnection.url.."/poll/"..newConnection.id,
-					Method = "POST",
-					Headers = {
-						["content-type"] = "application/json"
-					},
-					Body = HttpService:JSONEncode({
-						name = Base64.encode("internal_ping"),
-						data = Base64.encode("client to server ping")
-					})
+			requestfunc({
+				Url = newConnection.url.."/poll/"..newConnection.id,
+				Method = "POST",
+				Headers = {
+					["content-type"] = "application/json"
+				},
+				Body = HttpService:JSONEncode({
+					name = Base64.encode("internal_ping"),
+					data = Base64.encode("client to server ping")
 				})
-	        end)
+			})
 		    task.wait(2.5)
 	    until not newConnection.connected
 	end)()
