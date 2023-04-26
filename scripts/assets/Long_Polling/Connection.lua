@@ -12,6 +12,7 @@ function Connection.new(url, id, password)
 	newConnection.url = url;
 	newConnection.id = id;
 	newConnection.disconnectCalled = false;
+	newConnection.handlers = {};
 
 	local function reconnect()
 		newConnection.disconnectCalled = true
@@ -20,15 +21,6 @@ function Connection.new(url, id, password)
 		newConnection = LongPolling.Connect(LongPollURL, LongPollPassword)
 		newConnection.handlers = handlers
 	end
-	
-	newConnection.handlers = {
-		["disconnection"] = function(socketid)
-			if newConnection.id == socketid and newConnection.disconnectCalled == false then
-				print("[Server] Client has gone down, reconnecting...")
-				reconnect()
-			end
-		end
-	};
 	
 	newConnection.connected = true
 	print("[Server] Connected")
