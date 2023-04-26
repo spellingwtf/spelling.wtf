@@ -82,9 +82,6 @@ function Connection:disconnect()
 	requestfunc({
 		Url = self.url.."/connection/"..self.id,
 		Method = "DELETE",
-		Headers = {
-			["content-type"] = "application/json"
-		},
 	})
 	self = {}
 end
