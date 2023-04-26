@@ -41,20 +41,24 @@ function Connection.new(url, id, password)
 	newConnection.connected = true
 	print("[Server] Connected")
 
-	--// Event
+	--// Recieving Messages
 	coroutine.wrap(function()
 		repeat
 		    pcall(function()
-				local getData = requestfunc({
+				local Data = requestfunc({
 					Url = url.."/poll/"..id,
 					Method = "GET",
 				})
-				local response = HttpService:JSONDecode(getData.Body);
-				if response.success == true then
-					local suc, err = pcall(function()
-						newConnection.handlers[response.event.name](response.event.data)
-					end)
-					if not suc then print(tostring(err)) end
+				repeat task.wait() until Data
+				print("got message")
+				if Data.StatusCode ~= 502 then --timeout
+					local response = HttpService:JSONDecode(Data.Body);
+					if response.success == true then
+						local suc, err = pcall(function()
+							newConnection.handlers[response.event.name](response.event.data)
+						end)
+						if not suc then print(tostring(err)) end
+					end
 				end
 		    end)
 		    task.wait()
