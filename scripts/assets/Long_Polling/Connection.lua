@@ -48,7 +48,6 @@ function Connection.new(url, id, password)
 				Url = url.."/poll/"..id,
 				Method = "GET",
 			})
-			repeat task.wait() until typeof(Data) == "table" and typeof(Data.Success) == "boolean"
 			if Data.Success == true then
 				local response = HttpService:JSONDecode(Data.Body);
 				newConnection.handlers[response.event.name](response.event.data)
