@@ -54,6 +54,7 @@ function Connection.new(url, id, password)
 			else
 				print("polling failed")
 				print(bettertostring(Data))
+				reconnect()
 			end
 		    task.wait()
 		until not newConnection.connected
